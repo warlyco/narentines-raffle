@@ -1,25 +1,28 @@
 import { useEffect, useState } from "react";
 // pages/client-side.js
 
-import Head from "next/head";
-import styles from "../styles/Home.module.css";
 import ClientOnly from "features/client-only";
 import RaffleItemList from "features/raffle-item-list";
+import Image from "next/image";
 
 export default function ClientSide() {
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Narentines Raffle</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1>RAFFLE</h1>
-        <ClientOnly>
-          <RaffleItemList />
-        </ClientOnly>
-      </main>
+    <div className="h-full pt-32 w-full max-w-6xl mx-auto">
+      {/* top section */}
+      <div className="flex w-full justify-between items-center h-64">
+        <Image
+          height={500}
+          width={500}
+          src="https://www.fillmurray.com/500/500"
+          alt="Frog Image"
+        />
+        <div className="flex flex-col">
+          <h1 className="text-6xl">RAFFLE</h1>
+        </div>
+      </div>
+      <ClientOnly>
+        <RaffleItemList />
+      </ClientOnly>
     </div>
   );
 }

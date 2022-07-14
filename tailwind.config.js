@@ -18,6 +18,7 @@ module.exports = {
     "flex-col",
     "flex-1",
     "items-center",
+    "bg-amber-400",
     "justify-center",
   ],
 };

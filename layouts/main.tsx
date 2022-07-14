@@ -11,9 +11,9 @@ type Props = {
 export default function MainLayout({ children }: Props) {
   return (
     <>
-      <Navbar />
       {/* eslint-disable-next-line react/no-children-prop */}
       <MainContent children={children} />
+      <Navbar />
       <Footer />
     </>
   );
