@@ -5,14 +5,19 @@ module.exports = {
     extend: {
       colors: {
         amber: {
+          200: "#e9cfa6",
           400: "#d7ad6d",
+        },
+        green: {
+          800: "#69754e",
         },
       },
     },
   },
   plugins: [],
   safelist: [
-    "h-screen",
+    "min-h-screen",
+    "h-full",
     "w-full",
     "flex",
     "flex-col",
@@ -20,5 +25,6 @@ module.exports = {
     "items-center",
     "bg-amber-400",
     "justify-center",
+    "px-4",
   ],
 };
