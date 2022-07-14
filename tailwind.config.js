@@ -19,6 +19,7 @@ module.exports = {
     "min-h-screen",
     "h-full",
     "w-full",
+    "max-w-5xl",
     "flex",
     "flex-col",
     "flex-1",
