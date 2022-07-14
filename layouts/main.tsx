@@ -1,6 +1,8 @@
 import { NAV_HEIGHT_IN_REMS } from "constants/constants";
 import Navbar from "features/navbar/navbar";
 import classNames from "classnames";
+import Footer from "features/footer";
+import { MainContent } from "layouts/main-content";
 
 type Props = {
   children: any;
@@ -10,18 +12,9 @@ export default function MainLayout({ children }: Props) {
   return (
     <>
       <Navbar />
-      <div>
-        {children}
-        <footer className="flex w-full">
-          <a
-            href="https://vercel.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Powered by
-          </a>
-        </footer>
-      </div>
+      {/* eslint-disable-next-line react/no-children-prop */}
+      <MainContent children={children} />
+      <Footer />
     </>
   );
 }

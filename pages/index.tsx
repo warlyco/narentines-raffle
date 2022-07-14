@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 
 const Home: NextPage = () => {
   return (
-    <div className="min-h-screen w-full flex flex-col flex-1 items-center justify-center">
+    <div className="">
       <div className="max-w-6xl m-auto p-4 py-6 text-2xl">NARENTINES</div>
     </div>
   );
