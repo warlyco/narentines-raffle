@@ -2,7 +2,13 @@
 module.exports = {
   content: ["./pages/**/*.{js,ts,jsx,tsx}", "./features/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        amber: {
+          400: "#d7ad6d",
+        },
+      },
+    },
   },
   plugins: [],
   safelist: [

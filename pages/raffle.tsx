@@ -10,7 +10,7 @@ export default function ClientSide() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Create Next App</title>
+        <title>Narentines Raffle</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
