@@ -10,13 +10,17 @@ export default function MainLayout({ children }: Props) {
   return (
     <>
       <Navbar />
-      <div
-        style={{
-          marginTop: `-${NAV_HEIGHT_IN_REMS}rem`,
-          height: `calc(100vh - ${NAV_HEIGHT_IN_REMS}rem)`,
-        }}
-      >
+      <div>
         {children}
+        <footer className="flex w-full">
+          <a
+            href="https://vercel.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Powered by
+          </a>
+        </footer>
       </div>
     </>
   );

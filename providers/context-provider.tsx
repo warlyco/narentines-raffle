@@ -32,6 +32,8 @@ import {
   useAutoConnect,
 } from "providers/auto-connect-provider";
 import { Provider } from "react-redux";
+import { ApolloProvider } from "@apollo/client";
+import client from "apollo/client";
 
 const theme = createTheme({
   palette: {
@@ -123,15 +125,17 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
 export const ContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <Provider store={store}>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <SnackbarProvider>
-            <AutoConnectProvider>
-              <WalletContextProvider>{children}</WalletContextProvider>
-            </AutoConnectProvider>
-          </SnackbarProvider>
-        </ThemeProvider>
-      </StyledEngineProvider>
+      <ApolloProvider client={client}>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={theme}>
+            <SnackbarProvider>
+              <AutoConnectProvider>
+                <WalletContextProvider>{children}</WalletContextProvider>
+              </AutoConnectProvider>
+            </SnackbarProvider>
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </ApolloProvider>
     </Provider>
   );
 };
