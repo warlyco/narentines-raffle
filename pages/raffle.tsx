@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-// pages/client-side.js
-
 import ClientOnly from "features/client-only";
-import RaffleItemList from "features/raffle-item-list";
 import Image from "next/image";
+import { RaffleList } from "features/raffle-list";
 
 export default function ClientSide() {
   return (
@@ -20,7 +17,7 @@ export default function ClientSide() {
         </div>
         <div className="flex flex-col space-y-4 w-full md:w-1/2 max-w-sm pt-24">
           <h1 className="text-8xl italic">RAFFLE</h1>
-          <div className="text-3xl max-w-xs">
+          <div className="text-3xl w-full md:max-w-xs">
             Aye, Aye. Rool the dice ya amphibian coward!
           </div>
           <div className="flex py-8 justify-between w-full">
@@ -34,7 +31,7 @@ export default function ClientSide() {
         </div>
       </div>
       <ClientOnly>
-        <RaffleItemList />
+        <RaffleList />
       </ClientOnly>
     </div>
   );

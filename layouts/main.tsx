@@ -10,7 +10,7 @@ type Props = {
 
 export default function MainLayout({ children }: Props) {
   return (
-    <div className="h-full w-full relative">
+    <div className="h-full w-full relative min-h-screen">
       {/* eslint-disable-next-line react/no-children-prop */}
       <MainContent children={children} />
       <Navbar />
