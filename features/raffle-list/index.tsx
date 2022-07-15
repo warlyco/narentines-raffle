@@ -16,7 +16,7 @@ export const RaffleList = () => {
   return (
     <div className="grid grid-cols-3 gap-8">
       {items.map((item, i) => (
-        <RaffleListItem key={i} item={items[0]} />
+        <RaffleListItem key={i} item={item} />
       ))}
     </div>
   );
