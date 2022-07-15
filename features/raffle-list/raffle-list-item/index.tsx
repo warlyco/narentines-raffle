@@ -2,6 +2,10 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { Raffle } from "types";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { RequestAirdrop } from "features/solana/request-air-drop";
+import { SendTransaction } from "features/solana/send-transaction";
+import { useState } from "react";
 
 dayjs.extend(relativeTime);
 
@@ -10,7 +14,10 @@ type Props = {
 };
 
 export const RaffleListItem = ({ raffle }: Props) => {
+  const wallet = useWallet();
+
   const {
+    id,
     name,
     endsAt,
     totalTicketCount,
@@ -18,6 +25,8 @@ export const RaffleListItem = ({ raffle }: Props) => {
     priceInGoods,
     imgSrc,
   } = raffle;
+
+  const count = 0;
 
   return (
     <div className="flex flex-col w-full p-3 bg-amber-200 border-black border-2 space-y-2">
@@ -31,7 +40,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
       </div>
       <div>
         <div className="text-lg text-green-800 font-semibold">Your tickets</div>
-        <div className="text-lg font-bold">42</div>
+        <div className="text-lg font-bold">{count}</div>
       </div>
       <div>
         <div className="text-lg text-green-800 font-semibold">Tickets Sold</div>
@@ -47,9 +56,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
         <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
       </div>
-      <button className="w-full py-3 bg-red-600 text-amber-200 uppercase rounded-lg">
-        Join Raffle
-      </button>
+      <SendTransaction raffleId={id} newCount={count + 1} />
     </div>
   );
 };
