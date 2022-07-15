@@ -1,33 +1,41 @@
+import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from "dayjs";
 import Image from "next/image";
+import { Raffle } from "types";
+
+dayjs.extend(relativeTime);
 
 type Props = {
-  item: any;
+  raffle: Raffle;
 };
 
-export const RaffleListItem = ({ item }: Props) => {
+export const RaffleListItem = ({ raffle }: Props) => {
   const {
     name,
-    endTime,
+    endsAt,
     totalTicketCount,
-    totalUserTicketCount,
-    totalSoldTicketCount,
-    pricePerTicketInGoods,
+    soldTicketCount,
+    priceInGoods,
     imgSrc,
-  } = item;
+  } = raffle;
+
   return (
     <div className="flex flex-col w-full p-3 bg-amber-200 border-black border-2 space-y-2">
       <Image height={250} width={250} src={imgSrc} alt="raffle item" />
+      <div className="text-2xl font-bold py-1">{name}</div>
       <div>
         <div className="text-lg text-green-800 font-semibold">Ends in</div>
-        <div className="text-lg font-bold">{endTime}</div>
+        <div className="text-lg font-bold">
+          {dayjs(Date.now()).to(endsAt).replace("in ", "")}
+        </div>
       </div>
       <div>
         <div className="text-lg text-green-800 font-semibold">Your tickets</div>
-        <div className="text-lg font-bold">{totalUserTicketCount}</div>
+        <div className="text-lg font-bold">42</div>
       </div>
       <div>
-        <div className="text-lg text-green-800 font-semibold">Sold Tickets</div>
-        <div className="text-lg font-bold">{totalSoldTicketCount}</div>
+        <div className="text-lg text-green-800 font-semibold">Tickets Sold</div>
+        <div className="text-lg font-bold">{soldTicketCount}</div>
       </div>
       <div>
         <div className="text-lg text-green-800 font-semibold">
@@ -37,7 +45,7 @@ export const RaffleListItem = ({ item }: Props) => {
       </div>
       <div className="pb-3">
         <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
-        <div className="text-lg font-bold">{pricePerTicketInGoods} $GOODS</div>
+        <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
       </div>
       <button className="w-full py-3 bg-red-600 text-amber-200 uppercase rounded-lg">
         Join Raffle

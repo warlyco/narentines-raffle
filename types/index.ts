@@ -4,3 +4,17 @@ export type NftWithMeta = {
   nft: Nft;
   meta: JsonMetadata;
 };
+
+export type Raffle = {
+  id: string;
+  name: string;
+  mintAddress: string;
+  endsAt: string;
+  createdAt: string;
+  startsAt: string;
+  updatedAt: string;
+  totalTicketCount: number;
+  soldTicketCount: number;
+  priceInGoods: number;
+  imgSrc: string;
+};

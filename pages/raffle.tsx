@@ -1,6 +1,6 @@
 import ClientOnly from "features/client-only";
 import Image from "next/image";
-import { RaffleList } from "features/raffle-list";
+import RaffleList from "features/raffle-list";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
 

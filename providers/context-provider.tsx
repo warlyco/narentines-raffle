@@ -124,8 +124,8 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 export const ContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
-    <Provider store={store}>
-      <ApolloProvider client={client}>
+    <ApolloProvider client={client}>
+      <Provider store={store}>
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={theme}>
             <SnackbarProvider>
@@ -135,7 +135,7 @@ export const ContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
             </SnackbarProvider>
           </ThemeProvider>
         </StyledEngineProvider>
-      </ApolloProvider>
-    </Provider>
+      </Provider>
+    </ApolloProvider>
   );
 };
