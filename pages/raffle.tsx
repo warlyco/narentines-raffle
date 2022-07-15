@@ -1,8 +1,19 @@
 import ClientOnly from "features/client-only";
 import Image from "next/image";
 import { RaffleList } from "features/raffle-list";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useEffect, useState } from "react";
 
-export default function ClientSide() {
+const ClientSide = () => {
+  const [publicKey, setPublicKey] = useState<string | null>(null);
+
+  const wallet = useWallet();
+
+  useEffect(() => {
+    if (!wallet?.publicKey) return;
+    setPublicKey(wallet.publicKey?.toString());
+  }, [wallet, wallet.publicKey]);
+
   return (
     <div className="h-full w-full pb-48">
       {/* top section */}
@@ -31,8 +42,14 @@ export default function ClientSide() {
         </div>
       </div>
       <ClientOnly>
-        <RaffleList />
+        {publicKey ? (
+          <RaffleList />
+        ) : (
+          <div className="text-center py-16 text-6xl">connect your wallet</div>
+        )}
       </ClientOnly>
     </div>
   );
-}
+};
+
+export default ClientSide;
