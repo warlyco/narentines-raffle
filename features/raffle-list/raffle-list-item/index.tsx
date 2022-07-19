@@ -33,6 +33,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
   const { publicKey } = wallet;
   const [entryCount, setEntryCount] = useState(0);
   const [raffleIsOver, setRaffleIsOver] = useState(false);
+  const [numberOfTicketsToBuy, setNumberOfTicketsToBuy] = useState("0");
 
   const {
     data,
@@ -45,16 +46,6 @@ export const RaffleListItem = ({ raffle }: Props) => {
     },
   });
 
-  useEffect(() => {
-    if (data?.entries?.[0]?.count) {
-      setEntryCount(data.entries[0].count);
-      setRaffleIsOver(
-        entryCount >= raffle.totalTicketCount ||
-          new Date(raffle.endsAt) < new Date()
-      );
-    }
-  }, [data?.entries]);
-
   const {
     id,
     name,
@@ -65,12 +56,27 @@ export const RaffleListItem = ({ raffle }: Props) => {
     imgSrc,
   } = raffle;
 
+  useEffect(() => {
+    setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
+    if (data?.entries?.[0]?.count) {
+      setEntryCount(data.entries[0].count);
+    }
+  }, [
+    data?.entries,
+    endsAt,
+    entryCount,
+    raffle.endsAt,
+    raffle.totalTicketCount,
+  ]);
+
   return (
     <div className="flex flex-col w-full p-3 bg-amber-200 border-black border-2 space-y-2">
       <Image height={250} width={250} src={imgSrc} alt="raffle item" />
       <div className="text-2xl font-bold py-1">{name}</div>
       <div>
-        <div className="text-lg text-green-800 font-semibold">Ends in</div>
+        <div className="text-lg text-green-800 font-semibold">
+          {dayjs().isAfter(dayjs(endsAt)) ? "Ended" : "Ends in"}
+        </div>
         <div className="text-lg font-bold">
           {dayjs(Date.now()).to(endsAt).replace("in ", "")}
         </div>
@@ -89,16 +95,34 @@ export const RaffleListItem = ({ raffle }: Props) => {
         </div>
         <div className="text-lg font-bold">{totalTicketCount}</div>
       </div>
-      <div className="pb-3">
+      <div>
         <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
         <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
       </div>
-      <SendTransaction
-        raffleId={id}
-        newCount={entryCount + 1}
-        newSoldTicketCount={raffle.soldTicketCount - 1}
-        raffleIsOver={raffleIsOver}
-      />
+      {!raffleIsOver &&
+        Number(numberOfTicketsToBuy) <
+          raffle.totalTicketCount - raffle.soldTicketCount && (
+          <div>
+            <div className="text-lg text-green-800 font-semibold mb-1">
+              Number of Tickets
+            </div>
+            <input
+              className="w-full p-2 rounded"
+              value={numberOfTicketsToBuy}
+              type="number"
+              onChange={(event) => setNumberOfTicketsToBuy(event.target.value)}
+            />
+          </div>
+        )}
+      <div className="pt-3">
+        <SendTransaction
+          raffle={raffle}
+          raffleIsOver={raffleIsOver}
+          entryCount={entryCount}
+          numberOfTicketsToBuy={numberOfTicketsToBuy}
+          setNumberOfTicketsToBuy={setNumberOfTicketsToBuy}
+        />
+      </div>
     </div>
   );
 };

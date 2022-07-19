@@ -9,23 +9,28 @@ import {
 } from "@solana/web3.js";
 import { GET_ENTRIES_COUNT } from "graphql/queries/get-entries-count";
 import { ADD_RAFFLE_ENTRY } from "graphql/mutations/add-raffle-entry";
-import { useCallback } from "react";
+import { SetStateAction, useCallback } from "react";
 import toast from "react-hot-toast";
 import classNames from "classnames";
+import { Action, Dispatch } from "redux";
+import { Raffle } from "types";
+import { TOKEN_PROGRAM_ID, createTransferInstruction } from "@solana/spl-token";
 
 const { NEXT_PUBLIC_COLLECTION_WALLET } = process.env;
 
 type Props = {
-  raffleId: string;
-  newCount: number;
-  newSoldTicketCount: number;
+  raffle: Raffle;
+  entryCount: number;
+  numberOfTicketsToBuy: string;
+  setNumberOfTicketsToBuy: any;
   raffleIsOver: boolean;
 };
 
 export const SendTransaction = ({
-  raffleId,
-  newCount,
-  newSoldTicketCount,
+  raffle,
+  entryCount,
+  numberOfTicketsToBuy,
+  setNumberOfTicketsToBuy,
   raffleIsOver,
 }: Props) => {
   const { connection } = useConnection();
@@ -36,7 +41,10 @@ export const SendTransaction = ({
       refetchQueries: [
         {
           query: GET_ENTRIES_COUNT,
-          variables: { raffleId, walletAddress: publicKey?.toString() },
+          variables: {
+            raffleId: raffle.id,
+            walletAddress: publicKey?.toString(),
+          },
         },
       ],
     }
@@ -50,13 +58,29 @@ export const SendTransaction = ({
 
     let signature: TransactionSignature = "";
     try {
+      // SOL
+      const solInLamports =
+        (LAMPORTS_PER_SOL / 100) * Number(numberOfTicketsToBuy);
+
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
           toPubkey: new PublicKey(NEXT_PUBLIC_COLLECTION_WALLET),
-          lamports: LAMPORTS_PER_SOL / 100,
+          lamports: solInLamports,
         })
       );
+
+      // SPL TOKEN
+      // const transaction = new Transaction().add(
+      //   createTransferInstruction(
+      //     publicKey,
+      //     new PublicKey(NEXT_PUBLIC_COLLECTION_WALLET),
+      //     publicKey,
+      //     Number(numberOfTicketsToBuy),
+      //     [],
+      //     TOKEN_PROGRAM_ID
+      //   )
+      // );
 
       signature = await sendTransaction(transaction, connection);
       console.log("info", "Transaction sent:", signature);
@@ -85,37 +109,67 @@ export const SendTransaction = ({
       addRaffleEntry({
         variables: {
           walletAddress: publicKey.toString(),
-          count: newCount,
-          soldTicketCount: newSoldTicketCount,
-          raffleId,
+          count: entryCount + Number(numberOfTicketsToBuy),
+          soldTicketCount:
+            raffle.soldTicketCount + Number(numberOfTicketsToBuy),
+          raffleId: raffle.id,
         },
       });
     } catch (error: any) {
       console.log("error", `Transaction failed! ${error?.message}`, signature);
       return;
+    } finally {
+      setNumberOfTicketsToBuy(0);
     }
   }, [
     publicKey,
+    numberOfTicketsToBuy,
     sendTransaction,
     connection,
-    newSoldTicketCount,
     addRaffleEntry,
-    newCount,
-    raffleId,
+    entryCount,
+    raffle.soldTicketCount,
+    raffle.id,
+    setNumberOfTicketsToBuy,
   ]);
+
+  const getButtonText = () => {
+    if (raffleIsOver) return "Raffle is over";
+    if (loading) return "Submitting...";
+    if (
+      Number(numberOfTicketsToBuy) >=
+      raffle.totalTicketCount - raffle.soldTicketCount
+    )
+      return "Sold Out";
+
+    return "Buy tickets";
+  };
 
   return (
     <button
       onClick={onClick}
-      disabled={raffleIsOver || !publicKey || loading}
+      disabled={
+        raffleIsOver ||
+        !publicKey ||
+        loading ||
+        Number(numberOfTicketsToBuy) <= 0 ||
+        Number(numberOfTicketsToBuy) >
+          raffle.totalTicketCount - raffle.soldTicketCount
+      }
       className={classNames({
-        "w-full py-3 bg-red-600 text-amber-200 uppercase rounded-lg": true,
-        "opacity-50 cursor-not-allowed": raffleIsOver || !publicKey || loading,
+        "w-full py-3 uppercase rounded-lg": true,
+        "bg-red-600 text-amber-200": !raffleIsOver,
+        "border border-green-800 text-green-800": raffleIsOver,
+        "opacity-80 cursor-not-allowed":
+          raffleIsOver ||
+          !publicKey ||
+          loading ||
+          Number(numberOfTicketsToBuy) <= 0 ||
+          Number(numberOfTicketsToBuy) >
+            raffle.totalTicketCount - raffle.soldTicketCount,
       })}
     >
-      {raffleIsOver && "Raffle is over"}
-      {loading && "Submitting..."}
-      {!loading && !raffleIsOver && "Buy tickets"}
+      {getButtonText()}
     </button>
   );
 };
