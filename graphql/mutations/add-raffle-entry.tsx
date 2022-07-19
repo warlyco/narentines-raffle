@@ -10,7 +10,14 @@ export const ADD_RAFFLE_ENTRY = gql`
       objects: [
         { walletAddress: $walletAddress, raffleId: $raffleId, count: $count }
       ]
-      on_conflict: { constraint: entries_pkey, update_columns: [count] }
+      on_conflict: {
+        update_columns: [count]
+        where: {
+          raffleId: { _eq: $raffleId }
+          _and: { walletAddress: { _eq: $walletAddress } }
+        }
+        constraint: entries_walletAddress_raffleId_key
+      }
     ) {
       returning {
         id
