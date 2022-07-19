@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import { NAV_HEIGHT_IN_REMS } from "constants/constants";
 import Navbar from "features/navbar/navbar";
 import classNames from "classnames";
@@ -12,6 +13,7 @@ export default function MainLayout({ children }: Props) {
   return (
     <div className="h-full w-full relative min-h-screen">
       {/* eslint-disable-next-line react/no-children-prop */}
+      <Toaster />
       <MainContent children={children} />
       <Navbar />
       <Footer />

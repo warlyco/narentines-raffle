@@ -32,6 +32,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
   const wallet = useWallet();
   const { publicKey } = wallet;
   const [entryCount, setEntryCount] = useState(0);
+  const [raffleIsOver, setRaffleIsOver] = useState(false);
 
   const {
     data,
@@ -47,6 +48,10 @@ export const RaffleListItem = ({ raffle }: Props) => {
   useEffect(() => {
     if (data?.entries?.[0]?.count) {
       setEntryCount(data.entries[0].count);
+      setRaffleIsOver(
+        entryCount >= raffle.totalTicketCount ||
+          new Date(raffle.endsAt) < new Date()
+      );
     }
   }, [data?.entries]);
 
@@ -88,7 +93,12 @@ export const RaffleListItem = ({ raffle }: Props) => {
         <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
         <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
       </div>
-      <SendTransaction raffleId={id} newCount={entryCount + 1} />
+      <SendTransaction
+        raffleId={id}
+        newCount={entryCount + 1}
+        newSoldTicketCount={raffle.soldTicketCount - 1}
+        raffleIsOver={raffleIsOver}
+      />
     </div>
   );
 };

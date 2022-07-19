@@ -5,6 +5,7 @@ export const ADD_RAFFLE_ENTRY = gql`
     $walletAddress: String
     $raffleId: uuid
     $count: Int
+    $soldTicketCount: Int
   ) {
     insert_entries(
       objects: [
@@ -22,6 +23,15 @@ export const ADD_RAFFLE_ENTRY = gql`
       returning {
         id
         count
+      }
+    }
+    update_raffles(
+      where: { id: { _eq: $raffleId } }
+      _set: { soldTicketCount: $soldTicketCount }
+    ) {
+      returning {
+        id
+        soldTicketCount
       }
     }
   }
