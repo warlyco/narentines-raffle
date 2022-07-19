@@ -22,7 +22,7 @@ const ClientSide = () => {
           <Image
             height={500}
             width={500}
-            src="https://www.fillmurray.com/500/500"
+            src="https://place-hold.it/500"
             alt="Frog Image"
           />
         </div>

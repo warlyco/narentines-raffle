@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["www.fillmurray.com", "gateway.pinata.cloud"],
+    domains: ["place-hold.it", "gateway.pinata.cloud"],
   },
 };
 

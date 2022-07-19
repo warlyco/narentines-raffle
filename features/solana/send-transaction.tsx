@@ -70,7 +70,7 @@ export const SendTransaction = ({ raffleId, newCount }: Props) => {
       disabled={!publicKey}
       className="w-full py-3 bg-red-600 text-amber-200 uppercase rounded-lg"
     >
-      Join Raffle
+      {loading ? "Submitting..." : "Join Raffle"}
     </button>
   );
 };

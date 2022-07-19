@@ -1,6 +1,6 @@
 export const Footer = () => (
-  <footer className="w-full fixed bottom-0 bg-black text-amber-400 px-4">
-    <div className="flex justify-between max-w-6xl mx-auto py-12">
+  <footer className="w-full sticky bottom-0 bg-black text-amber-400 px-4">
+    <div className="flex justify-between max-w-6xl mx-auto py-4">
       <div className="text-4xl">SWAMP LABS</div>
       <div className="flex flex-col">
         <div>Join us on social media</div>
