@@ -4,7 +4,7 @@ import { Raffle } from "types";
 
 const QUERY = gql`
   query Raffles {
-    raffles {
+    raffles(order_by: { endsAt: desc }) {
       id
       name
       mintAddress

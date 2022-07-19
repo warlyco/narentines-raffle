@@ -71,7 +71,14 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
   return (
     <div className="flex flex-col w-full p-3 bg-amber-200 border-black border-2 space-y-2">
-      <Image height={250} width={250} src={imgSrc} alt="raffle item" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        height={250}
+        width={250}
+        src={imgSrc}
+        alt="raffle item"
+        className="w-full"
+      />
       <div className="text-2xl font-bold py-1">{name}</div>
       <div>
         <div className="text-lg text-green-800 font-semibold">
@@ -99,21 +106,19 @@ export const RaffleListItem = ({ raffle }: Props) => {
         <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
         <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
       </div>
-      {!raffleIsOver &&
-        Number(numberOfTicketsToBuy) <
-          raffle.totalTicketCount - raffle.soldTicketCount && (
-          <div>
-            <div className="text-lg text-green-800 font-semibold mb-1">
-              Number of Tickets
-            </div>
-            <input
-              className="w-full p-2 rounded"
-              value={numberOfTicketsToBuy}
-              type="number"
-              onChange={(event) => setNumberOfTicketsToBuy(event.target.value)}
-            />
+      {!raffleIsOver && (
+        <div>
+          <div className="text-lg text-green-800 font-semibold mb-1">
+            Number of Tickets
           </div>
-        )}
+          <input
+            className="w-full p-2 rounded"
+            value={numberOfTicketsToBuy}
+            type="number"
+            onChange={(event) => setNumberOfTicketsToBuy(event.target.value)}
+          />
+        </div>
+      )}
       <div className="pt-3">
         <SendTransaction
           raffle={raffle}

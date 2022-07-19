@@ -21,7 +21,7 @@ const Admin: NextPage = () => {
       {isAdmin ? (
         <AdminPanel />
       ) : (
-        <div className="text-2xl">
+        <div className="text-2xl pt-24 text-center w-full">
           you need to be an admin to view this page
         </div>
       )}

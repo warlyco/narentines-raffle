@@ -136,11 +136,12 @@ export const SendTransaction = ({
   const getButtonText = () => {
     if (raffleIsOver) return "Raffle is over";
     if (loading) return "Submitting...";
+    if (raffle.totalTicketCount <= raffle.soldTicketCount) return "Sold Out";
     if (
       Number(numberOfTicketsToBuy) >=
       raffle.totalTicketCount - raffle.soldTicketCount
     )
-      return "Sold Out";
+      return "Not enough tickets";
 
     return "Buy tickets";
   };
