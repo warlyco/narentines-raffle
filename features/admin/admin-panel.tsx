@@ -2,6 +2,7 @@ import { useMutation } from "@apollo/client";
 import classNames from "classnames";
 import { MouseEvent, useState } from "react";
 import { ADD_RAFFLE } from "graphql/mutations/add-raffle";
+import toast from "react-hot-toast";
 
 const AdminPanel = () => {
   const [walletAddressInputValue, setWalletAddressInputValue] =
@@ -18,15 +19,26 @@ const AdminPanel = () => {
 
   const [addRaffle, { data, loading, error }] = useMutation(ADD_RAFFLE);
 
-  const handleAddRaffle = (e: MouseEvent) => {
+  const clearForm = () => {
+    setWalletAddressInputValue("");
+    setNftMintAddress("");
+    setNftName("");
+    setEndDateTime("");
+    setStartDateTime("");
+    setImgUrl("");
+    setPricePerTicketInGoods("3");
+    setTotalTicketCount("500");
+  };
+
+  const handleAddRaffle = async (e: MouseEvent) => {
     e.preventDefault();
 
     setIsLoading(true);
     try {
-      addRaffle({
+      await addRaffle({
         variables: {
           endsAt: endDateTime,
-          startsAt: Date.now(),
+          startsAt: String(Date.now()),
           imgSrc: imgUrl,
           mintAddress: nftMintAddress,
           name: nftName,
@@ -34,6 +46,9 @@ const AdminPanel = () => {
           totalTicketCount: parseInt(totalTicketCount),
         },
       });
+      console.log(data);
+      toast("Raffle added successfully!");
+      clearForm();
     } catch (error) {
       console.error(error);
     } finally {

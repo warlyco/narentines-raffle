@@ -12,7 +12,7 @@ export const ADD_RAFFLE = gql`
   ) {
     insert_raffles_one(
       object: {
-        startsAt: $startsAt
+        startsAt: "now()"
         endsAt: $endsAt
         imgSrc: $imgSrc
         mintAddress: $mintAddress
