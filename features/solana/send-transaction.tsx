@@ -41,7 +41,7 @@ export const SendTransaction = ({
   raffleIsOver,
 }: Props) => {
   const { connection } = useConnection();
-  const { publicKey: fromPublicKey, signTransaction } = useWallet();
+  const { publicKey: fromPublicKey, sendTransaction } = useWallet();
   const [addRaffleEntry, { data, loading, error }] = useMutation(
     ADD_RAFFLE_ENTRY,
     {
@@ -58,7 +58,7 @@ export const SendTransaction = ({
   );
 
   const onClick = useCallback(async () => {
-    if (!fromPublicKey || !signTransaction) {
+    if (!fromPublicKey || !sendTransaction) {
       console.log("error", "Wallet not connected!");
       return;
     }
@@ -76,79 +76,82 @@ export const SendTransaction = ({
     let signature: TransactionSignature = "";
     try {
       // SOL
-      // const solInLamports =
-      //   (LAMPORTS_PER_SOL / 100) * Number(numberOfTicketsToBuy);
+      const solInLamports =
+        (LAMPORTS_PER_SOL / 100) * Number(numberOfTicketsToBuy);
 
-      // const transaction = new Transaction().add(
-      //   SystemProgram.transfer({
-      //     fromPubkey: publicKey,
-      //     toPubkey: new PublicKey(NEXT_PUBLIC_COLLECTION_WALLET),
-      //     lamports: solInLamports,
-      //   })
-      // );
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: fromPublicKey,
+          toPubkey: new PublicKey(process.env.NEXT_PUBLIC_COLLECTION_WALLET),
+          lamports: solInLamports,
+        })
+      );
 
       // SPL TOKEN
 
-      const toAddress = process.env.NEXT_PUBLIC_COLLECTION_WALLET;
-      const toPublicKey = new PublicKey(toAddress);
-      const amount = Number(numberOfTicketsToBuy) * raffle.priceInGoods;
+      // const toAddress = process.env.NEXT_PUBLIC_COLLECTION_WALLET;
+      // const toPublicKey = new PublicKey(toAddress);
+      // const amount = Number(numberOfTicketsToBuy) * raffle.priceInGoods;
 
-      const tokenPublicKey = new PublicKey(
-        process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS
-      );
+      // const tokenPublicKey = new PublicKey(
+      //   process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS
+      // );
 
-      const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
-        connection,
-        fromPublicKey,
-        tokenPublicKey,
-        fromPublicKey,
-        signTransaction
-      );
-      console.log(fromTokenAccount);
+      // const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
+      //   connection,
+      //   fromPublicKey,
+      //   tokenPublicKey,
+      //   fromPublicKey,
+      //   signTransaction
+      // );
+      // console.log(fromTokenAccount);
 
-      const toTokenAccount = await getOrCreateAssociatedTokenAccount(
-        connection,
-        fromPublicKey,
-        tokenPublicKey,
-        toPublicKey,
-        signTransaction
-      );
+      // const toTokenAccount = await getOrCreateAssociatedTokenAccount(
+      //   connection,
+      //   fromPublicKey,
+      //   tokenPublicKey,
+      //   toPublicKey,
+      //   signTransaction
+      // );
 
-      const transaction = new Transaction().add(
-        createTransferInstruction(
-          // imported from '@solana/spl-token'
-          fromTokenAccount.address,
-          toTokenAccount.address,
-          fromPublicKey,
-          amount, // tokens have 6 decimals of precision so your amount needs to have the same
-          [],
-          TOKEN_PROGRAM_ID // imported from '@solana/spl-token'
-        )
-      );
+      // const transaction = new Transaction().add(
+      //   createTransferInstruction(
+      //     // imported from '@solana/spl-token'
+      //     fromTokenAccount.address,
+      //     toTokenAccount.address,
+      //     fromPublicKey,
+      //     amount, // tokens have 6 decimals of precision so your amount needs to have the same
+      //     [],
+      //     TOKEN_PROGRAM_ID // imported from '@solana/spl-token'
+      //   )
+      // );
 
-      const latestBlockHash = await connection.getLatestBlockhash();
-      transaction.recentBlockhash = latestBlockHash.blockhash;
+      // const latestBlockHash = await connection.getLatestBlockhash();
+      // transaction.recentBlockhash = latestBlockHash.blockhash;
 
       // set who is the fee payer for that transaction
-      transaction.feePayer = fromPublicKey;
+      // transaction.feePayer = fromPublicKey;
 
       // const { signatures } = await signTransaction(transaction);
-      const signed = await signTransaction(transaction);
+      // const signed = await signTransaction(transaction);
 
-      debugger;
-      console.log("info", "Transaction sent:", signed);
-      const signature = await connection.sendRawTransaction(signed.serialize());
-      toast.custom(
-        <div className="flex bg-white rounded-xl shadow-lg p-3 border-slate-400">
-          <div>Transaction sent...</div>
-        </div>
-      );
-      await connection.confirmTransaction({
-        signature,
-        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-        blockhash: latestBlockHash.blockhash,
-      });
-      console.log("success", "Transaction successful!", signature);
+      // debugger;
+      // console.log("info", "Transaction sent:", signed);
+      // const signature = await connection.sendRawTransaction(signed.serialize());
+      // toast.custom(
+      //   <div className="flex bg-white rounded-xl shadow-lg p-3 border-slate-400">
+      //     <div>Transaction sent...</div>
+      //   </div>
+      // );
+      // await connection.confirmTransaction({
+      //   signature,
+      //   lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+      //   blockhash: latestBlockHash.blockhash,
+      // });
+      // console.log("success", "Transaction successful!", signature);
+
+      signature = await sendTransaction(transaction, connection);
+
       toast.custom(
         <div className="flex bg-white rounded-xl shadow-xl p-3 border-slate-400">
           <div>Transaction successful!</div>
@@ -180,11 +183,11 @@ export const SendTransaction = ({
     }
   }, [
     fromPublicKey,
-    signTransaction,
+    sendTransaction,
+    numberOfTicketsToBuy,
     connection,
     addRaffleEntry,
     entryCount,
-    numberOfTicketsToBuy,
     raffle.soldTicketCount,
     raffle.id,
     setNumberOfTicketsToBuy,

@@ -26,7 +26,7 @@ const AdminPanel = () => {
       addRaffle({
         variables: {
           endsAt: endDateTime,
-          startsAt: startDateTime,
+          startsAt: Date.now(),
           imgSrc: imgUrl,
           mintAddress: nftMintAddress,
           name: nftName,
@@ -73,7 +73,7 @@ const AdminPanel = () => {
               onChange={(e) => setImgUrl(e.target.value)}
             />
           </label>
-          <label htmlFor="start-time" className="flex space-x-4 items-center">
+          {/* <label htmlFor="start-time" className="flex space-x-4 items-center">
             <div className="whitespace-nowrap">Starts at</div>
             <input
               type="datetime-local"
@@ -82,7 +82,7 @@ const AdminPanel = () => {
               value={startDateTime}
               onChange={(e) => setStartDateTime(e.target.value)}
             />
-          </label>
+          </label> */}
           <label htmlFor="end-time" className="flex space-x-4 items-center">
             <div className="whitespace-nowrap">Ends at</div>
             <input
