@@ -40,6 +40,7 @@ const sendTransaction = async (req: Request, res: Response) => {
 
   // Sign transaction, broadcast, and confirm
   const signature = await sendAndConfirmTransaction(connection, transaction, [
+    // @ts-ignore
     from,
   ]);
   return signature;
