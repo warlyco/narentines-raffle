@@ -1,7 +1,7 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { Raffle } from "types";
+import { Raffle } from "types/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { RequestAirdrop } from "features/solana/request-air-drop";
 import { SendTransaction } from "features/solana/send-transaction";

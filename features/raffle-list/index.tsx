@@ -1,6 +1,6 @@
 import { useQuery, gql } from "@apollo/client";
 import RaffleListItem from "features/raffle-list/raffle-list-item";
-import { Raffle } from "types";
+import { Raffle } from "types/types";
 
 const QUERY = gql`
   query Raffles {

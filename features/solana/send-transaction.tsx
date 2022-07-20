@@ -14,7 +14,7 @@ import { SetStateAction, useCallback } from "react";
 import toast from "react-hot-toast";
 import classNames from "classnames";
 import { Action, Dispatch } from "redux";
-import { Raffle } from "types";
+import { Raffle } from "types/types";
 import {
   TOKEN_PROGRAM_ID,
   createTransferInstruction,
