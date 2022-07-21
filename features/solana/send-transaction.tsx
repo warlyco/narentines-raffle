@@ -102,21 +102,6 @@ export const SendTransaction = ({
 
     // SPL TOKEN
     try {
-      const { data } = await refetch();
-      const updatedRaffle = data?.raffles?.find(
-        (r: Raffle) => r.id === raffle.id
-      );
-      const { totalTicketCount, soldTicketCount } = updatedRaffle;
-      if (totalTicketCount - soldTicketCount <= 0) {
-        toast("Raffle is sold out!");
-        throw new Error("Raffle is sold out!");
-        return;
-      }
-      if (totalTicketCount - soldTicketCount < Number(numberOfTicketsToBuy)) {
-        toast("Not enough tickets left");
-        throw new Error("Not enough tickets left");
-        return;
-      }
       const toAddress = process.env.NEXT_PUBLIC_COLLECTION_WALLET;
       const toPublicKey = new PublicKey(toAddress);
       const amount = Number(numberOfTicketsToBuy) * raffle.priceInGoods;
@@ -161,6 +146,22 @@ export const SendTransaction = ({
       transaction.feePayer = fromPublicKey;
 
       const signed = await signTransaction(transaction);
+
+      const { data } = await refetch();
+      const updatedRaffle = data?.raffles?.find(
+        (r: Raffle) => r.id === raffle.id
+      );
+      const { totalTicketCount, soldTicketCount } = updatedRaffle;
+      if (totalTicketCount - soldTicketCount <= 0) {
+        toast("Raffle is sold out!");
+        throw new Error("Raffle is sold out!");
+        return;
+      }
+      if (totalTicketCount - soldTicketCount < Number(numberOfTicketsToBuy)) {
+        toast("Not enough tickets left");
+        throw new Error("Not enough tickets left");
+        return;
+      }
 
       const signature = await connection.sendRawTransaction(signed.serialize());
       toast.custom(
