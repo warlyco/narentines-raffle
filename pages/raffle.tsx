@@ -34,7 +34,7 @@ const ClientSide = () => {
             alt="Raffle Title"
           />
           <div className="text-4xl w-full md:max-w-sm">
-            Aye, Aye. Rool the dice ya amphibian coward!
+            Aye, Aye. Roll the dice ya amphibian coward!
           </div>
           {/* <div className="flex py-8 justify-between w-full">
             <button className="w-[47%] bg-amber-200 rounded-lg py-2 text-lg uppercase font-medium">
