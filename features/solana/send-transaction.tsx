@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { ApolloQueryResult, useMutation } from "@apollo/client";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
   Keypair,
@@ -10,20 +10,17 @@ import {
 } from "@solana/web3.js";
 import { GET_ENTRIES_COUNT } from "graphql/queries/get-entries-count";
 import { ADD_RAFFLE_ENTRY } from "graphql/mutations/add-raffle-entry";
-import { SetStateAction, useCallback } from "react";
+import { useCallback } from "react";
 import toast from "react-hot-toast";
 import classNames from "classnames";
-import { Action, Dispatch } from "redux";
 import { Raffle } from "types/types";
 import {
   TOKEN_PROGRAM_ID,
   createTransferInstruction,
   getOrCreateAssociatedTokenAccount,
-  createTransferCheckedInstruction,
-  createMint,
+  TokenAccountNotFoundError,
+  TokenInvalidAccountOwnerError,
 } from "@solana/spl-token";
-
-import bs58 from "bs58";
 
 type Props = {
   raffle: Raffle;
@@ -31,7 +28,7 @@ type Props = {
   numberOfTicketsToBuy: string;
   setNumberOfTicketsToBuy: any;
   raffleIsOver: boolean;
-  refetch: () => void;
+  refetch: () => Promise<ApolloQueryResult<any>>;
 };
 
 export const SendTransaction = ({
@@ -43,7 +40,11 @@ export const SendTransaction = ({
   refetch,
 }: Props) => {
   const { connection } = useConnection();
-  const { publicKey: fromPublicKey, sendTransaction } = useWallet();
+  const {
+    publicKey: fromPublicKey,
+    sendTransaction,
+    signTransaction,
+  } = useWallet();
   const [addRaffleEntry, { data, loading, error }] = useMutation(
     ADD_RAFFLE_ENTRY,
     {
@@ -60,7 +61,7 @@ export const SendTransaction = ({
   );
 
   const onClick = useCallback(async () => {
-    if (!fromPublicKey || !sendTransaction) {
+    if (!fromPublicKey || !sendTransaction || !signTransaction) {
       console.log("error", "Wallet not connected!");
       return;
     }
@@ -76,6 +77,30 @@ export const SendTransaction = ({
     }
 
     let signature: TransactionSignature = "";
+    // try {
+    //   const { data } = await refetch();
+    //   const updatedRaffle = data?.raffles?.find(
+    //     (r: Raffle) => r.id === raffle.id
+    //   );
+    //   const { totalTicketCount, soldTicketCount } = updatedRaffle;
+    //   if (totalTicketCount - soldTicketCount <= 0) {
+    //     toast("Raffle is sold out!");
+    //     throw new Error("Raffle is sold out!");
+    //     return;
+    //   }
+    //   // SOL
+    //   const solInLamports =
+    //     (LAMPORTS_PER_SOL / 100) * Number(numberOfTicketsToBuy);
+
+    //   const transaction = new Transaction().add(
+    //     SystemProgram.transfer({
+    //       fromPubkey: fromPublicKey,
+    //       toPubkey: new PublicKey(process.env.NEXT_PUBLIC_COLLECTION_WALLET),
+    //       lamports: solInLamports,
+    //     })
+    //   );
+
+    // SPL TOKEN
     try {
       const { data } = await refetch();
       const updatedRaffle = data?.raffles?.find(
@@ -87,82 +112,68 @@ export const SendTransaction = ({
         throw new Error("Raffle is sold out!");
         return;
       }
-      // SOL
-      const solInLamports =
-        (LAMPORTS_PER_SOL / 100) * Number(numberOfTicketsToBuy);
+      if (totalTicketCount - soldTicketCount < Number(numberOfTicketsToBuy)) {
+        toast("Not enough tickets left");
+        throw new Error("Not enough tickets left");
+        return;
+      }
+      const toAddress = process.env.NEXT_PUBLIC_COLLECTION_WALLET;
+      const toPublicKey = new PublicKey(toAddress);
+      const amount = Number(numberOfTicketsToBuy) * raffle.priceInGoods;
 
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: fromPublicKey,
-          toPubkey: new PublicKey(process.env.NEXT_PUBLIC_COLLECTION_WALLET),
-          lamports: solInLamports,
-        })
+      const tokenPublicKey = new PublicKey(
+        process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS
       );
 
-      // SPL TOKEN
+      const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
+        connection,
+        // @ts-ignore
+        fromPublicKey,
+        tokenPublicKey,
+        fromPublicKey,
+        signTransaction
+      );
 
-      // const toAddress = process.env.NEXT_PUBLIC_COLLECTION_WALLET;
-      // const toPublicKey = new PublicKey(toAddress);
-      // const amount = Number(numberOfTicketsToBuy) * raffle.priceInGoods;
+      const toTokenAccount = await getOrCreateAssociatedTokenAccount(
+        connection,
+        // @ts-ignore
+        fromPublicKey,
+        tokenPublicKey,
+        toPublicKey,
+        signTransaction
+      );
 
-      // const tokenPublicKey = new PublicKey(
-      //   process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS
-      // );
+      const transaction = new Transaction().add(
+        createTransferInstruction(
+          // imported from '@solana/spl-token'
+          fromTokenAccount.address,
+          toTokenAccount.address,
+          fromPublicKey,
+          amount * 100, // tokens have 6 decimals of precision so your amount needs to have the same
+          [],
+          TOKEN_PROGRAM_ID // imported from '@solana/spl-token'
+        )
+      );
 
-      // const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
-      //   connection,
-      //   fromPublicKey,
-      //   tokenPublicKey,
-      //   fromPublicKey,
-      //   signTransaction
-      // );
-      // console.log(fromTokenAccount);
+      const latestBlockHash = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = latestBlockHash.blockhash;
 
-      // const toTokenAccount = await getOrCreateAssociatedTokenAccount(
-      //   connection,
-      //   fromPublicKey,
-      //   tokenPublicKey,
-      //   toPublicKey,
-      //   signTransaction
-      // );
+      transaction.feePayer = fromPublicKey;
 
-      // const transaction = new Transaction().add(
-      //   createTransferInstruction(
-      //     // imported from '@solana/spl-token'
-      //     fromTokenAccount.address,
-      //     toTokenAccount.address,
-      //     fromPublicKey,
-      //     amount, // tokens have 6 decimals of precision so your amount needs to have the same
-      //     [],
-      //     TOKEN_PROGRAM_ID // imported from '@solana/spl-token'
-      //   )
-      // );
+      const signed = await signTransaction(transaction);
 
-      // const latestBlockHash = await connection.getLatestBlockhash();
-      // transaction.recentBlockhash = latestBlockHash.blockhash;
-
-      // set who is the fee payer for that transaction
-      // transaction.feePayer = fromPublicKey;
-
-      // const { signatures } = await signTransaction(transaction);
-      // const signed = await signTransaction(transaction);
-
-      // debugger;
-      // console.log("info", "Transaction sent:", signed);
-      // const signature = await connection.sendRawTransaction(signed.serialize());
-      // toast.custom(
-      //   <div className="flex bg-white rounded-xl shadow-lg p-3 border-slate-400">
-      //     <div>Transaction sent...</div>
-      //   </div>
-      // );
-      // await connection.confirmTransaction({
-      //   signature,
-      //   lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-      //   blockhash: latestBlockHash.blockhash,
-      // });
-      // console.log("success", "Transaction successful!", signature);
-
-      signature = await sendTransaction(transaction, connection);
+      const signature = await connection.sendRawTransaction(signed.serialize());
+      toast.custom(
+        <div className="flex bg-white rounded-xl shadow-lg p-3 border-slate-400">
+          <div>Transaction sent...</div>
+        </div>
+      );
+      await connection.confirmTransaction({
+        signature,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        blockhash: latestBlockHash.blockhash,
+      });
+      console.log("success", "Transaction successful!", signature);
 
       toast.custom(
         <div className="flex bg-white rounded-xl shadow-xl p-3 border-slate-400">
@@ -189,6 +200,16 @@ export const SendTransaction = ({
       });
     } catch (error: any) {
       console.log("error", `Transaction failed! ${error?.message}`, signature);
+      if (
+        error instanceof TokenAccountNotFoundError ||
+        error instanceof TokenInvalidAccountOwnerError
+      ) {
+        toast.custom(
+          <div className="flex bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+            Transaction failed. You must have $GOODS to buy a ticket.
+          </div>
+        );
+      }
       return;
     } finally {
       setNumberOfTicketsToBuy(0);
@@ -196,13 +217,15 @@ export const SendTransaction = ({
   }, [
     fromPublicKey,
     sendTransaction,
+    signTransaction,
     refetch,
     numberOfTicketsToBuy,
+    raffle.priceInGoods,
+    raffle.soldTicketCount,
+    raffle.id,
     connection,
     addRaffleEntry,
     entryCount,
-    raffle.soldTicketCount,
-    raffle.id,
     setNumberOfTicketsToBuy,
   ]);
 

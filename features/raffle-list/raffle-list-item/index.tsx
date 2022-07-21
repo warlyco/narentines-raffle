@@ -7,13 +7,13 @@ import { RequestAirdrop } from "features/solana/request-air-drop";
 import { SendTransaction } from "features/solana/send-transaction";
 import { useEffect, useState } from "react";
 import gql from "graphql-tag";
-import { useQuery } from "@apollo/client";
+import { ApolloQueryResult, useQuery } from "@apollo/client";
 
 dayjs.extend(relativeTime);
 
 type Props = {
   raffle: Raffle;
-  refetch: () => void;
+  refetch: () => Promise<ApolloQueryResult<any>>;
 };
 
 const QUERY = gql`
