@@ -15,7 +15,7 @@ const ClientSide = () => {
   }, [wallet, wallet.publicKey]);
 
   return (
-    <div className="h-full w-full pb-48">
+    <div className="h-full w-full pb-8">
       {/* top section */}
       <div className="flex w-full justify-center md:justify-between items-center">
         <div className="hidden md:block md:w-1/2">

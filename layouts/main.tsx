@@ -21,7 +21,7 @@ export default function MainLayout({ children }: Props) {
       {/* eslint-disable-next-line */}
       <MainContent children={children} />
       <Navbar />
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

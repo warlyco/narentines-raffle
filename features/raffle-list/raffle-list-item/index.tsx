@@ -73,7 +73,7 @@ export const RaffleListItem = ({ raffle, refetch }: Props) => {
 
   return (
     <div
-      className="h-fit w-full p-3 bg-amber-200 border-black border-2 space-y-2 flex-shrink-0"
+      className="h-fit w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}

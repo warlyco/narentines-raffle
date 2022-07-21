@@ -1,18 +1,74 @@
+import Image from "next/image";
+import bg from "public/images/bg-black.png";
+
 export const Footer = () => (
-  <footer className="w-full sticky bottom-0 bg-black text-amber-400 px-4">
-    <div className="flex justify-between max-w-6xl mx-auto py-4">
-      <div className="text-4xl">SWAMP LABS</div>
-      <div className="flex flex-col">
-        <div>Join us on social media</div>
+  <footer
+    className="w-full bottom-0 text-amber-400 px-4 h-28"
+    style={{ backgroundImage: `url(${bg.src})` }}
+  >
+    <div className="flex justify-between max-w-5xl mx-auto py-5 h-full">
+      {/* <div className="text-4xl">SWAMP LABS</div> */}
+      <div className="flex flex-col justify-center items-center h-full">
+        <Image
+          height={30}
+          width={180}
+          src="/images/swamp-labs.svg"
+          alt="Swamp Labs"
+        />
+        <div className="text-xs">© Swamp Labs d.o.o. / MMXXII</div>
+      </div>
+      <div className="flex flex-col justify-center h-full -mt-1">
+        <div className="mb-2">Join us on social media</div>
         <div className="flex justify-between">
-          <div>twitter</div>
-          <div>discord</div>
-          <div>medium</div>
+          <a
+            href="https://twitter.com/narentines"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Image
+              height={14}
+              width={16}
+              src="/images/twitter.svg"
+              alt="Twitter"
+              className="cursor-pointer"
+            />
+          </a>
+          <a
+            href="https://discord.gg/9Dfh3PJG8S"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Image
+              height={13}
+              width={18}
+              src="/images/discord.svg"
+              alt="Discord"
+              className="cursor-pointer"
+            />
+          </a>
+          <a
+            href="https://narentines.medium.com/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Image
+              height={13}
+              width={18}
+              src="/images/medium.svg"
+              alt="Medium"
+              className="cursor-pointer"
+            />
+          </a>
         </div>
       </div>
       <div className="flex flex-col items-end">
-        <div className="text-2xl">Narentines</div>
-        <div>Carbon Neutral Network</div>
+        <Image
+          height={60}
+          width={220}
+          src="/images/carbon-neutral.svg"
+          alt="Medium"
+          className="cursor-pointer"
+        />
       </div>
     </div>
   </footer>
