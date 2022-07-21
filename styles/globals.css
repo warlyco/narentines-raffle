@@ -1,9 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Eczar&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body, #__next {
   min-height: 100vh;
+  font-family: 'Eczar', serif;
 }
 
 .wallet-adapter-button.wallet-adapter-button-trigger {

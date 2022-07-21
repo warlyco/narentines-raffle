@@ -8,6 +8,7 @@ import { SendTransaction } from "features/solana/send-transaction";
 import { useEffect, useState } from "react";
 import gql from "graphql-tag";
 import { ApolloQueryResult, useQuery } from "@apollo/client";
+import bg from "public/images/single-item-bg.png";
 
 dayjs.extend(relativeTime);
 
@@ -71,7 +72,10 @@ export const RaffleListItem = ({ raffle, refetch }: Props) => {
   ]);
 
   return (
-    <div className="h-fit w-full p-3 bg-amber-200 border-black border-2 space-y-2 flex-shrink-0">
+    <div
+      className="h-fit w-full p-3 bg-amber-200 border-black border-2 space-y-2 flex-shrink-0"
+      style={{ backgroundImage: `url(${bg.src})` }}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         height={250}

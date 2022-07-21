@@ -3,6 +3,9 @@ module.exports = {
   content: ["./pages/**/*.{js,ts,jsx,tsx}", "./features/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      backgroundImage: {
+        "main-pattern": 'url("./images/bg-pattern.png")',
+      },
       colors: {
         amber: {
           200: "#e9cfa6",
