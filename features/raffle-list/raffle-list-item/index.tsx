@@ -73,68 +73,84 @@ export const RaffleListItem = ({ raffle, refetch }: Props) => {
 
   return (
     <div
-      className="h-fit w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg"
+      className="w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg flex flex-col justify-between"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        height={250}
-        width={250}
-        src={imgSrc}
-        alt="raffle item"
-        className="w-full"
-      />
-      <div className="text-2xl font-bold py-1">{name}</div>
       <div>
-        <div className="text-lg text-green-800 font-semibold">
-          {dayjs().isAfter(dayjs(endsAt)) ? "Ended" : "Ends in"}
-        </div>
-        <div className="text-lg font-bold">
-          {dayjs(Date.now()).to(endsAt).replace("in ", "")}
-        </div>
-      </div>
-      <div>
-        <div className="text-lg text-green-800 font-semibold">Your tickets</div>
-        <div className="text-lg font-bold"> {entryCount ? entryCount : 0}</div>
-      </div>
-      <div>
-        <div className="text-lg text-green-800 font-semibold">Tickets Sold</div>
-        <div className="text-lg font-bold">{soldTicketCount}</div>
-      </div>
-      <div>
-        <div className="text-lg text-green-800 font-semibold">
-          Total Tickets
-        </div>
-        <div className="text-lg font-bold">{totalTicketCount}</div>
-      </div>
-      <div>
-        <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
-        <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
-      </div>
-      {!raffleIsOver && !(raffle.totalTicketCount === raffle.soldTicketCount) && (
+        <img
+          height={250}
+          width={250}
+          src={imgSrc}
+          alt="raffle item"
+          className="w-full object-cover max-h-[250px]"
+        />
+        <div className="text-2xl font-bold py-1">{name}</div>
         <div>
-          <div className="text-lg text-green-800 font-semibold mb-1">
-            Number of Tickets
+          <div className="text-lg text-green-800 font-semibold">
+            {dayjs().isAfter(dayjs(endsAt)) ? "Ended" : "Ends in"}
           </div>
-          <input
-            className="w-full p-2 rounded"
-            value={numberOfTicketsToBuy}
-            max={totalTicketCount - soldTicketCount}
-            min={0}
-            type="number"
-            onChange={(event) => setNumberOfTicketsToBuy(event.target.value)}
+          <div className="text-lg font-bold">
+            {dayjs(Date.now()).to(endsAt).replace("in ", "")}
+          </div>
+        </div>
+        <div>
+          <div className="text-lg text-green-800 font-semibold">
+            Your tickets
+          </div>
+          <div className="text-lg font-bold">
+            {" "}
+            {entryCount ? entryCount : 0}
+          </div>
+        </div>
+        <div>
+          <div className="text-lg text-green-800 font-semibold">
+            Tickets Sold
+          </div>
+          <div className="text-lg font-bold">{soldTicketCount}</div>
+        </div>
+        <div>
+          <div className="text-lg text-green-800 font-semibold">
+            Total Tickets
+          </div>
+          <div className="text-lg font-bold">{totalTicketCount}</div>
+        </div>
+        <div>
+          <div className="text-lg text-green-800 font-semibold">
+            Ticket Price
+          </div>
+          <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
+        </div>
+      </div>
+      <div>
+        {!raffleIsOver &&
+          !(raffle.totalTicketCount === raffle.soldTicketCount) && (
+            <div>
+              <div className="text-lg text-green-800 font-semibold mb-1">
+                Number of Tickets
+              </div>
+              <input
+                className="w-full p-2 rounded"
+                value={numberOfTicketsToBuy}
+                max={totalTicketCount - soldTicketCount}
+                min={0}
+                type="number"
+                onChange={(event) =>
+                  setNumberOfTicketsToBuy(event.target.value)
+                }
+              />
+            </div>
+          )}
+        <div className="pt-3">
+          <SendTransaction
+            refetch={refetch}
+            raffle={raffle}
+            raffleIsOver={raffleIsOver}
+            entryCount={entryCount}
+            numberOfTicketsToBuy={numberOfTicketsToBuy}
+            setNumberOfTicketsToBuy={setNumberOfTicketsToBuy}
           />
         </div>
-      )}
-      <div className="pt-3">
-        <SendTransaction
-          refetch={refetch}
-          raffle={raffle}
-          raffleIsOver={raffleIsOver}
-          entryCount={entryCount}
-          numberOfTicketsToBuy={numberOfTicketsToBuy}
-          setNumberOfTicketsToBuy={setNumberOfTicketsToBuy}
-        />
       </div>
     </div>
   );
