@@ -21,7 +21,7 @@ const QUERY = gql`
 `;
 
 const RaffleList = () => {
-  const { data, loading, error } = useQuery(QUERY);
+  const { data, loading, error, refetch } = useQuery(QUERY);
 
   if (loading) {
     return (
@@ -42,10 +42,10 @@ const RaffleList = () => {
   const { raffles } = data;
 
   return (
-    <div className="grid grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {!!raffles &&
         raffles?.map((raffle: Raffle) => (
-          <RaffleListItem key={raffle.id} raffle={raffle} />
+          <RaffleListItem key={raffle.id} raffle={raffle} refetch={refetch} />
         ))}
     </div>
   );

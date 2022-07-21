@@ -13,6 +13,7 @@ dayjs.extend(relativeTime);
 
 type Props = {
   raffle: Raffle;
+  refetch: () => void;
 };
 
 const QUERY = gql`
@@ -28,7 +29,7 @@ const QUERY = gql`
   }
 `;
 
-export const RaffleListItem = ({ raffle }: Props) => {
+export const RaffleListItem = ({ raffle, refetch }: Props) => {
   const wallet = useWallet();
   const { publicKey } = wallet;
   const [entryCount, setEntryCount] = useState(0);
@@ -70,7 +71,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
   ]);
 
   return (
-    <div className="flex flex-col w-full p-3 bg-amber-200 border-black border-2 space-y-2">
+    <div className="h-fit w-full p-3 bg-amber-200 border-black border-2 space-y-2 flex-shrink-0">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         height={250}
@@ -106,7 +107,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
         <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
       </div>
-      {!raffleIsOver && (
+      {!raffleIsOver && !(raffle.totalTicketCount === raffle.soldTicketCount) && (
         <div>
           <div className="text-lg text-green-800 font-semibold mb-1">
             Number of Tickets
@@ -114,6 +115,8 @@ export const RaffleListItem = ({ raffle }: Props) => {
           <input
             className="w-full p-2 rounded"
             value={numberOfTicketsToBuy}
+            max={totalTicketCount - soldTicketCount}
+            min={0}
             type="number"
             onChange={(event) => setNumberOfTicketsToBuy(event.target.value)}
           />
@@ -121,6 +124,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
       )}
       <div className="pt-3">
         <SendTransaction
+          refetch={refetch}
           raffle={raffle}
           raffleIsOver={raffleIsOver}
           entryCount={entryCount}

@@ -31,6 +31,7 @@ type Props = {
   numberOfTicketsToBuy: string;
   setNumberOfTicketsToBuy: any;
   raffleIsOver: boolean;
+  refetch: () => void;
 };
 
 export const SendTransaction = ({
@@ -39,6 +40,7 @@ export const SendTransaction = ({
   numberOfTicketsToBuy,
   setNumberOfTicketsToBuy,
   raffleIsOver,
+  refetch,
 }: Props) => {
   const { connection } = useConnection();
   const { publicKey: fromPublicKey, sendTransaction } = useWallet();
@@ -75,6 +77,16 @@ export const SendTransaction = ({
 
     let signature: TransactionSignature = "";
     try {
+      const { data } = await refetch();
+      const updatedRaffle = data?.raffles?.find(
+        (r: Raffle) => r.id === raffle.id
+      );
+      const { totalTicketCount, soldTicketCount } = updatedRaffle;
+      if (totalTicketCount - soldTicketCount <= 0) {
+        toast("Raffle is sold out!");
+        throw new Error("Raffle is sold out!");
+        return;
+      }
       // SOL
       const solInLamports =
         (LAMPORTS_PER_SOL / 100) * Number(numberOfTicketsToBuy);
@@ -184,6 +196,7 @@ export const SendTransaction = ({
   }, [
     fromPublicKey,
     sendTransaction,
+    refetch,
     numberOfTicketsToBuy,
     connection,
     addRaffleEntry,
@@ -198,7 +211,7 @@ export const SendTransaction = ({
     if (loading) return "Submitting...";
     if (raffle.totalTicketCount <= raffle.soldTicketCount) return "Sold Out";
     if (
-      Number(numberOfTicketsToBuy) >=
+      Number(numberOfTicketsToBuy) >
       raffle.totalTicketCount - raffle.soldTicketCount
     )
       return "Not enough tickets";
