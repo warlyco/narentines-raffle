@@ -17,7 +17,7 @@ const ClientSide = () => {
   return (
     <div className="h-full w-full pb-48">
       {/* top section */}
-      <div className="flex w-full justify-between items-center">
+      <div className="flex w-full justify-center md:justify-between items-center">
         <div className="hidden md:block md:w-1/2">
           <Image
             height={880}
@@ -26,7 +26,7 @@ const ClientSide = () => {
             alt="Frog Image"
           />
         </div>
-        <div className="flex flex-col space-y-4 w-full md:w-1/2 max-w-sm pt-18">
+        <div className="flex flex-col space-y-4 w-full md:w-1/2 max-w-sm pt-32 pb-16 md:py-0">
           <Image
             src="/images/raffle-title.svg"
             width={417}
@@ -45,6 +45,7 @@ const ClientSide = () => {
             </button>
           </div> */}
         </div>
+        <div className="pr-0 md:pr-4"></div>
       </div>
       <ClientOnly>
         {publicKey ? (
