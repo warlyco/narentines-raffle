@@ -23,10 +23,10 @@ export const Navbar = ({ toggleSidebar }: Props) => {
         </Link>
 
         <button onClick={toggleSidebar}>
-          <div className="h-8 w-8 bg-black rounded-md"></div>
+          <div className="h-8 w-8 bg-black rounded-md lg:hidden"></div>
         </button>
 
-        <div className="items-center hidden md:flex">
+        <div className="items-center hidden lg:flex">
           {/* NAV ITEMS */}
           <WalletMultiButton />
         </div>
