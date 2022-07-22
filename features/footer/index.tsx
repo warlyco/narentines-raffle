@@ -3,12 +3,11 @@ import bg from "public/images/bg-black.png";
 
 export const Footer = () => (
   <footer
-    className="w-full bottom-0 text-amber-400 px-4 h-28"
+    className="w-full bottom-0 text-amber-400 lg:h-28"
     style={{ backgroundImage: `url(${bg.src})` }}
   >
-    <div className="flex justify-between max-w-5xl mx-auto py-5 h-full">
-      {/* <div className="text-4xl">SWAMP LABS</div> */}
-      <div className="flex flex-col justify-center items-center h-full">
+    <div className="flex flex-wrap justify-between max-w-5xl px-4 mx-auto py-5 h-full space-y-8 md:space-y-0">
+      <div className="flex flex-col justify-center items-center h-full w-full lg:w-auto">
         <Image
           height={30}
           width={180}
@@ -17,9 +16,9 @@ export const Footer = () => (
         />
         <div className="text-xs">© Swamp Labs d.o.o. / MMXXII</div>
       </div>
-      <div className="flex flex-col justify-center h-full -mt-1">
+      <div className="flex flex-col justify-center items-center h-full -mt-1 w-full lg:w-auto">
         <div className="mb-2">Join us on social media</div>
-        <div className="flex justify-between">
+        <div className="flex justify-between space-x-4">
           <a href="//twitter.com/narentines" target="_blank" rel="noreferrer">
             <Image
               height={14}
@@ -49,7 +48,7 @@ export const Footer = () => (
           </a>
         </div>
       </div>
-      <div className="flex flex-col items-end">
+      <div className="flex flex-col lgitems-end w-full lg:w-auto">
         <Image
           height={60}
           width={220}
