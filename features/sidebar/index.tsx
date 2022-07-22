@@ -14,16 +14,11 @@ type Props = {
 };
 
 export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
-  const { publicKey } = useWallet();
   const handleCloseSidebar = () => {
     if (isOpenSidebar) {
       toggleSidebar();
     }
   };
-
-  useEffect(() => {
-    handleCloseSidebar();
-  }, [publicKey]);
 
   return (
     <ClientOnly>
@@ -53,7 +48,13 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
               className="text-amber-400 self-end text-4xl mb-8"
               onClick={handleCloseSidebar}
             >
-              x
+              <Image
+                height={37}
+                width={36}
+                src="/images/close-menu.svg"
+                alt="Medium"
+                className="cursor-pointer"
+              />
             </button>
             <div className="flex flex-col space-y-8 flex-grow">
               <div>
