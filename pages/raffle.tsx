@@ -18,16 +18,17 @@ const ClientSide = () => {
   return (
     <div className="h-full w-full pb-8">
       {/* top section */}
-      <div className="flex w-full justify-center md:justify-between items-center">
-        <div className="hidden md:block md:w-1/2">
+      <div className="flex flex-wrap w-full justify-center md:justify-between items-center">
+        <div className="w-full md:w-1/2">
           <Image
             height={880}
             width={625}
             src="/images/jester-img.png"
             alt="Frog Image"
+            className="image-gradient"
           />
         </div>
-        <div className="flex flex-col space-y-4 w-full md:w-1/2 max-w-sm pt-32 pb-16 md:py-0">
+        <div className="flex flex-col space-y-4 w-full md:w-1/2 max-w-sm -mt-40 lg:pt-32 pb-16 md:py-0">
           <Image
             src="/images/raffle-title.svg"
             width={417}
@@ -58,6 +59,17 @@ const ClientSide = () => {
           <div className="text-center py-16 text-6xl">connect your wallet</div>
         )}
       </ClientOnly>
+      <style>
+        {`
+        @media only screen and (max-width: 767px) {
+          .image-gradient {
+            -webkit-mask-image:-webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
+            // mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
+          }
+        }
+          
+      `}
+      </style>
     </div>
   );
 };

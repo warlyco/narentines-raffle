@@ -85,16 +85,17 @@ export const Navbar = ({ toggleSidebar }: Props) => {
             />
           </a>
         </div>
-        <button onClick={toggleSidebar}>
-          <div className="flex items-center rounded-md lg:hidden">
-            <Image
-              height={34}
-              width={37}
-              src="/images/hamburger.svg"
-              alt="Medium"
-              className="cursor-pointer"
-            />
-          </div>
+        <button
+          onClick={toggleSidebar}
+          className="flex items-center rounded-md lg:hidden"
+        >
+          <Image
+            height={34}
+            width={37}
+            src="/images/hamburger.svg"
+            alt="Medium"
+            className="cursor-pointer"
+          />
         </button>
       </div>
     </div>
