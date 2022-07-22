@@ -2,12 +2,16 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import Image from "next/image";
 import Link from "next/link";
 
-export const Navbar = () => {
+type Props = {
+  toggleSidebar: () => void;
+};
+
+export const Navbar = ({ toggleSidebar }: Props) => {
   return (
     <div className="w-full fixed top-0">
       <div className="flex justify-between items-center max-w-5xl m-auto p-4">
         <Link href="/">
-          <a>
+          <a className="flex items-center">
             <Image
               src="/images/logo.svg"
               width="236"
@@ -17,7 +21,15 @@ export const Navbar = () => {
             />
           </a>
         </Link>
-        <WalletMultiButton />
+
+        <button onClick={toggleSidebar}>
+          <div className="h-8 w-8 bg-black rounded-md"></div>
+        </button>
+
+        <div className="items-center hidden md:flex">
+          {/* NAV ITEMS */}
+          <WalletMultiButton />
+        </div>
       </div>
     </div>
   );

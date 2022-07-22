@@ -83,7 +83,7 @@ export const RaffleListItem = ({ raffle, refetch }: Props) => {
           width={250}
           src={imgSrc}
           alt="raffle item"
-          className="w-full object-cover max-h-[250px]"
+          className="w-full object-cover lg:max-h-[280px] mb-2"
         />
         <div className="text-2xl font-bold py-1">{name}</div>
         <div>
