@@ -1,9 +1,11 @@
+import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import classNames from "classnames";
 import ClientOnly from "features/client-only";
 import Image from "next/image";
 import Link from "next/link";
 import bg from "public/images/bg-black.png";
+import { useEffect } from "react";
 import ScrollLock from "react-scrolllock";
 
 type Props = {
@@ -12,11 +14,16 @@ type Props = {
 };
 
 export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
+  const { publicKey } = useWallet();
   const handleCloseSidebar = () => {
     if (isOpenSidebar) {
       toggleSidebar();
     }
   };
+
+  useEffect(() => {
+    handleCloseSidebar();
+  }, [publicKey]);
 
   return (
     <ClientOnly>
@@ -24,7 +31,7 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
         <div
           onClick={handleCloseSidebar}
           className={classNames({
-            "absolute top-0 right-0 bottom-0 left-0 transition-opacity duration-300 ease-in-out opacity-40 bg-slate-800 overflow-hidden":
+            "absolute top-0 right-0 bottom-0 left-0 transition-opacity duration-300 ease-in-out opacity-40 bg-slate-800":
               isOpenSidebar,
             "opacity-0 pointer-events-none": !isOpenSidebar,
           })}
@@ -48,9 +55,6 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
             >
               x
             </button>
-            <div className="mb-16">
-              <WalletMultiButton />
-            </div>
             <div className="flex flex-col space-y-8 flex-grow">
               <div>
                 <a
@@ -80,23 +84,27 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                 </a>
               </div>
               <div>
-                <a
-                  className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
-                  onClick={handleCloseSidebar}
-                >
-                  <Link href="/raffle">Raffle</Link>
-                </a>
+                <div className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold py-[4px] inline-block -mt-1">
+                  <Link
+                    href="//raffle.narentines.com"
+                    onClick={handleCloseSidebar}
+                  >
+                    <a className="inline-block" href="">
+                      Raffle
+                    </a>
+                  </Link>
+                </div>
               </div>
-              <div className="pb-8">
+              {/* <div>
                 <a
                   className="bg-red-700 hover:bg-red-900 text-amber-200 text-2xl px-3 uppercase rounded-lg font-bold"
                   href=""
                 >
                   Litepaper
                 </a>
-              </div>
+              </div> */}
             </div>
-            <div className="flex bottom-0 space-x-2">
+            <div className="flex bottom-0 space-x-2 pt-8">
               <a
                 className="flex justify-center items-center h-12 w-12 bg-amber-200 hover:bg-amber-400 rounded-lg text-black"
                 href="//twitter.com/narentines"

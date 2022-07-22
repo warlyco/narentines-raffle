@@ -3,6 +3,7 @@ import Image from "next/image";
 import RaffleList from "features/raffle-list";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const ClientSide = () => {
   const [publicKey, setPublicKey] = useState<string | null>(null);
@@ -35,6 +36,9 @@ const ClientSide = () => {
           />
           <div className="text-4xl w-full md:max-w-sm">
             Aye, Aye. Roll the dice ya amphibian coward!
+          </div>
+          <div>
+            <WalletMultiButton />
           </div>
           {/* <div className="flex py-8 justify-between w-full">
             <button className="w-[47%] bg-amber-200 rounded-lg py-2 text-lg uppercase font-medium">
