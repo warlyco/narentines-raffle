@@ -20,11 +20,7 @@ export const Footer = () => (
       <div className="flex flex-col justify-center h-full -mt-1">
         <div className="mb-2">Join us on social media</div>
         <div className="flex justify-between">
-          <a
-            href="https://twitter.com/narentines"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href="//twitter.com/narentines" target="_blank" rel="noreferrer">
             <Image
               height={14}
               width={16}
@@ -33,11 +29,7 @@ export const Footer = () => (
               className="cursor-pointer"
             />
           </a>
-          <a
-            href="https://discord.gg/9Dfh3PJG8S"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href="//discord.gg/9Dfh3PJG8S" target="_blank" rel="noreferrer">
             <Image
               height={13}
               width={18}
@@ -46,11 +38,7 @@ export const Footer = () => (
               className="cursor-pointer"
             />
           </a>
-          <a
-            href="https://narentines.medium.com/"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href="//narentines.medium.com/" target="_blank" rel="noreferrer">
             <Image
               height={13}
               width={18}

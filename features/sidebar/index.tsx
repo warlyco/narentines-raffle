@@ -1,5 +1,8 @@
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import classNames from "classnames";
+import ClientOnly from "features/client-only";
+import Image from "next/image";
+import Link from "next/link";
 import bg from "public/images/bg-black.png";
 import ScrollLock from "react-scrolllock";
 
@@ -16,7 +19,7 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
   };
 
   return (
-    <>
+    <ClientOnly>
       <ScrollLock isActive={isOpenSidebar}>
         <div
           onClick={handleCloseSidebar}
@@ -48,52 +51,96 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
             <div className="mb-16">
               <WalletMultiButton />
             </div>
-            <div className="flex flex-col space-y-8">
+            <div className="flex flex-col space-y-8 flex-grow">
               <div>
                 <a
-                  className="bg-amber-200 text-2xl px-3 uppercase rounded-lg font-bold"
+                  className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
                   href="//www.narentines.com"
+                  onClick={handleCloseSidebar}
                 >
                   Home
                 </a>
               </div>
               <div>
                 <a
-                  className="bg-amber-200 text-2xl mb-8 px-3 uppercase rounded-lg font-bold"
+                  className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
                   href="//explore.narentines.com"
+                  onClick={handleCloseSidebar}
                 >
                   Explore the Valley
                 </a>
               </div>
               <div>
                 <a
-                  className="bg-amber-200 text-2xl mb-8 px-3 uppercase rounded-lg font-bold"
+                  className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
                   href="//stake.narentines.com"
+                  onClick={handleCloseSidebar}
                 >
                   Staking
                 </a>
               </div>
               <div>
                 <a
-                  className="bg-amber-200 text-2xl mb-8 px-3 uppercase rounded-lg font-bold"
-                  href=""
+                  className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
+                  onClick={handleCloseSidebar}
                 >
-                  Raffle
+                  <Link href="/raffle">Raffle</Link>
                 </a>
               </div>
-              <div>
+              <div className="pb-8">
                 <a
-                  className="bg-red-700 text-amber-200 text-2xl mb-8 px-3 uppercase rounded-lg font-bold"
+                  className="bg-red-700 hover:bg-red-900 text-amber-200 text-2xl px-3 uppercase rounded-lg font-bold"
                   href=""
                 >
                   Litepaper
                 </a>
               </div>
             </div>
+            <div className="flex bottom-0 space-x-2">
+              <a
+                className="flex justify-center items-center h-12 w-12 bg-amber-200 hover:bg-amber-400 rounded-lg text-black"
+                href="//twitter.com/narentines"
+                onClick={handleCloseSidebar}
+              >
+                <Image
+                  height={18}
+                  width={20}
+                  src="/images/twitter-black.svg"
+                  alt="Twitter"
+                  className="cursor-pointer"
+                />
+              </a>
+              <a
+                className="flex justify-center items-center h-12 w-12 bg-amber-200 hover:bg-amber-400 rounded-lg text-black"
+                href="//discord.gg/9Dfh3PJG8S"
+                onClick={handleCloseSidebar}
+              >
+                <Image
+                  height={22}
+                  width={25}
+                  src="/images/discord-black.svg"
+                  alt="Discord"
+                  className="cursor-pointer"
+                />
+              </a>
+              <a
+                className="flex justify-center items-center h-12 w-12 bg-amber-200 hover:bg-amber-400 rounded-lg text-black"
+                href="//narentines.medium.com/"
+                onClick={handleCloseSidebar}
+              >
+                <Image
+                  height={22}
+                  width={25}
+                  src="/images/medium-black.svg"
+                  alt="Medium"
+                  className="cursor-pointer"
+                />
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </ClientOnly>
   );
 };
 
