@@ -4,6 +4,7 @@ import RaffleList from "features/raffle-list";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import classNames from "classnames";
 
 const ClientSide = () => {
   const [publicKey, setPublicKey] = useState<string | null>(null);
@@ -16,10 +17,15 @@ const ClientSide = () => {
   }, [wallet, wallet.publicKey]);
 
   return (
-    <div className="h-full w-full pb-8">
+    <div className="h-full w-full">
       {/* top section */}
       <div className="flex flex-wrap w-full justify-center md:justify-between items-center">
-        <div className="w-full md:w-1/2">
+        <div
+          className={classNames({
+            "w-full md:w-1/2": true,
+            "-mb-2": !publicKey,
+          })}
+        >
           <Image
             height={880}
             width={625}
@@ -52,13 +58,7 @@ const ClientSide = () => {
         </div>
         <div className="pr-0 md:pr-4"></div>
       </div>
-      <ClientOnly>
-        {publicKey ? (
-          <RaffleList />
-        ) : (
-          <div className="text-center py-16 text-6xl">connect your wallet</div>
-        )}
-      </ClientOnly>
+      <ClientOnly>{publicKey && <RaffleList />}</ClientOnly>
       <style>
         {`
         @media only screen and (max-width: 767px) {
