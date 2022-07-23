@@ -26,7 +26,7 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
         <div
           onClick={handleCloseSidebar}
           className={classNames({
-            "absolute top-0 right-0 bottom-0 left-0 transition-opacity duration-300 ease-in-out opacity-40 bg-slate-800":
+            "absolute top-0 right-0 bottom-0 left-0 transition-opacity duration-500 ease-in-out opacity-40 bg-slate-800":
               isOpenSidebar,
             "opacity-0 pointer-events-none": !isOpenSidebar,
           })}
@@ -34,9 +34,9 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
       </ScrollLock>
       <div
         className={classNames({
-          "fixed top-0 right-0 bottom-0 w-full sm:w-[380px] h-screen transition-position duration-300 ease-in-out":
+          "fixed top-0 right-0 bottom-0 w-full sm:w-[380px] h-screen transition-position duration-500 ease-in-out":
             true,
-          "-mr-96": !isOpenSidebar,
+          "-mr-[1000px]": !isOpenSidebar,
         })}
       >
         <div className="p-2 h-full">
