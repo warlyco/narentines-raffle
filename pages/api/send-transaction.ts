@@ -25,7 +25,17 @@ const sendTransaction = async (req: Request, res: Response) => {
     from,
     LAMPORTS_PER_SOL
   );
-  await connection.confirmTransaction(airdropSignature);
+
+  const latestBlockHash = await connection.getLatestBlockhash();
+
+  await connection.confirmTransaction(
+    {
+      blockhash: latestBlockHash.blockhash,
+      lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+      signature: airdropSignature,
+    },
+    "finalized"
+  );
 
   const to = new PublicKey(NEXT_PUBLIC_COLLECTION_WALLET);
 
