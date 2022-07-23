@@ -24,12 +24,12 @@ import {
   TorusWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
 import store from "store/store";
-import { RPC_ENDPOINT_DEVNET } from "constants/constants";
+import { RPC_ENDPOINT, SOLANA_CLUSTER } from "constants/constants";
 import { SnackbarProvider, useSnackbar } from "notistack";
 import { FC, ReactNode, useCallback, useMemo } from "react";
 import {
   AutoConnectProvider,
-  useAutoConnect,
+  // useAutoConnect,
 } from "providers/auto-connect-provider";
 import { Provider } from "react-redux";
 import { ApolloProvider } from "@apollo/client";
@@ -70,14 +70,19 @@ const theme = createTheme({
   },
 });
 
+// Can be set to 'devnet', 'testnet', or 'mainnet-beta'
+const network = SOLANA_CLUSTER as WalletAdapterNetwork;
+
+const solanaNetworks = Object.keys(WalletAdapterNetwork);
+if (!solanaNetworks.includes(network)) {
+  throw new Error("SOLANA_CLUSTER env variable is malformed: " + network);
+}
+
+// You can also provide a custom RPC endpoint
+const endpoint = RPC_ENDPOINT;
+
 const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { autoConnect } = useAutoConnect();
-
-  // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
-  const network = WalletAdapterNetwork.Devnet;
-
-  // You can also provide a custom RPC endpoint
-  const endpoint = useMemo(() => RPC_ENDPOINT_DEVNET, []);
+  // const { autoConnect } = useAutoConnect();
 
   // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking and lazy loading --
   // Only the wallets you configure here will be compiled into your application, and only the dependencies
@@ -94,7 +99,7 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       new SolflareWalletAdapter({ network }),
       new TorusWalletAdapter(),
     ],
-    [network]
+    []
   );
 
   const { enqueueSnackbar } = useSnackbar();

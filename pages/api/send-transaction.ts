@@ -9,23 +9,30 @@ import {
 import { Request, Response } from "express-serve-static-core";
 
 const sendTransaction = async (req: Request, res: Response) => {
-  const { NEXT_PUBLIC_RPC_ENDPOINT_DEVNET, NEXT_PUBLIC_COLLECTION_WALLET } =
+  const { NEXT_PUBLIC_RPC_ENDPOINT, NEXT_PUBLIC_COLLECTION_WALLET } =
     process.env;
-  if (!NEXT_PUBLIC_RPC_ENDPOINT_DEVNET || !NEXT_PUBLIC_COLLECTION_WALLET) {
+  if (!NEXT_PUBLIC_RPC_ENDPOINT || !NEXT_PUBLIC_COLLECTION_WALLET) {
     return res.status(500).send("Config missing setting");
   }
 
-  const connection = new Connection(
-    NEXT_PUBLIC_RPC_ENDPOINT_DEVNET,
-    "confirmed"
-  );
+  const connection = new Connection(NEXT_PUBLIC_RPC_ENDPOINT, "confirmed");
 
   const from = new PublicKey(req.body.fromAddress);
   const airdropSignature = await connection.requestAirdrop(
     from,
     LAMPORTS_PER_SOL
   );
-  await connection.confirmTransaction(airdropSignature);
+
+  const latestBlockHash = await connection.getLatestBlockhash();
+
+  await connection.confirmTransaction(
+    {
+      blockhash: latestBlockHash.blockhash,
+      lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+      signature: airdropSignature,
+    },
+    "finalized"
+  );
 
   const to = new PublicKey(NEXT_PUBLIC_COLLECTION_WALLET);
 
@@ -52,7 +59,7 @@ export default async function handler(req: Request, res: Response) {
     return;
   }
 
-  const singature = sendTransaction(req, res);
+  const signature = sendTransaction(req, res);
 
-  res.status(200).json({ singature });
+  res.status(200).json({ signature });
 }
