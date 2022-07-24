@@ -73,7 +73,7 @@ const theme = createTheme({
 // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
 const network = SOLANA_CLUSTER as WalletAdapterNetwork;
 
-const solanaNetworks = Object.keys(WalletAdapterNetwork);
+const solanaNetworks = Object.values(WalletAdapterNetwork);
 if (!solanaNetworks.includes(network)) {
   throw new Error("SOLANA_CLUSTER env variable is malformed: " + network);
 }

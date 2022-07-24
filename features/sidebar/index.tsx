@@ -1,11 +1,8 @@
-import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import classNames from "classnames";
 import ClientOnly from "features/client-only";
 import Image from "next/image";
 import Link from "next/link";
 import bg from "public/images/bg-black.png";
-import { useEffect } from "react";
 import ScrollLock from "react-scrolllock";
 
 type Props = {
@@ -60,8 +57,7 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
               <div>
                 <a
                   className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
-                  href="//www.narentines.com"
-                  onClick={handleCloseSidebar}
+                  href="//narentines.com"
                 >
                   Home
                 </a>
@@ -70,7 +66,6 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                 <a
                   className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
                   href="//explore.narentines.com"
-                  onClick={handleCloseSidebar}
                 >
                   Explore the Valley
                 </a>
@@ -79,21 +74,19 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                 <a
                   className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
                   href="//stake.narentines.com"
-                  onClick={handleCloseSidebar}
                 >
                   Staking
                 </a>
               </div>
               <div>
                 <div className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold py-[4px] inline-block -mt-1">
-                  <Link
-                    href="//raffle.narentines.com"
+                  <a
+                    href="#"
                     onClick={handleCloseSidebar}
+                    className="inline-block"
                   >
-                    <a className="inline-block" href="">
-                      Raffle
-                    </a>
-                  </Link>
+                    Raffle
+                  </a>
                 </div>
               </div>
               {/* <div>

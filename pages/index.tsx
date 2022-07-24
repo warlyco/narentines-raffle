@@ -6,7 +6,7 @@ const Home: NextPage = () => {
   const router = useRouter();
   useEffect(() => {
     router.push("/raffle");
-  }, []);
+  }, [router]);
 
   return (
     <div className="">
