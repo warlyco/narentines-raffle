@@ -42,7 +42,7 @@ export const Navbar = ({ toggleSidebar }: Props) => {
           </a>
           <a
             className="bg-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold opacity-70"
-            href="//stake.narentines.com"
+            href="#"
             aria-disabled="true"
           >
             Raffle
