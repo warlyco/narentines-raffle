@@ -21,10 +21,8 @@ export default function MainLayout({ children }: Props) {
       className="h-full w-full relative min-h-screen overflow-hidden"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
-      {/* eslint-disable-next-line react/no-children-prop */}
       <Toaster />
-      {/* eslint-disable-next-line */}
-      <MainContent children={children} />
+      <MainContent>{children}</MainContent>
       <Navbar toggleSidebar={toggleSidebar} />
       <Sidebar isOpenSidebar={isOpenSidebar} toggleSidebar={toggleSidebar} />
     </div>
