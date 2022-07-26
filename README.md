@@ -1,3 +1,3 @@
-# narentine raffle site
+# narentines raffle site
 
 frogs bruh
