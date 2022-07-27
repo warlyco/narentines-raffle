@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-export const GET_ENTRIES_COUNT = gql`
+const GET_ENTRIES_BY_WALLET = gql`
   query Entries($walletAddress: String, $raffleId: uuid) {
     entries(
       where: {
@@ -12,3 +12,5 @@ export const GET_ENTRIES_COUNT = gql`
     }
   }
 `;
+
+export default GET_ENTRIES_BY_WALLET;

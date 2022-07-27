@@ -5,29 +5,18 @@ import { Raffle } from "types/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { RequestAirdrop } from "features/solana/request-air-drop";
 import { SendTransaction } from "features/solana/send-transaction";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import gql from "graphql-tag";
 import { ApolloQueryResult, useQuery } from "@apollo/client";
 import bg from "public/images/single-item-bg.png";
+import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
+import axios from "axios";
 
 dayjs.extend(relativeTime);
 
 type Props = {
   raffle: Raffle;
 };
-
-const QUERY = gql`
-  query Entries($walletAddress: String, $raffleId: uuid) {
-    entries(
-      where: {
-        walletAddress: { _eq: $walletAddress }
-        raffleId: { _eq: $raffleId }
-      }
-    ) {
-      count
-    }
-  }
-`;
 
 export const RaffleListItem = ({ raffle }: Props) => {
   const wallet = useWallet();
@@ -36,16 +25,29 @@ export const RaffleListItem = ({ raffle }: Props) => {
   const [raffleIsOver, setRaffleIsOver] = useState(false);
   const [numberOfTicketsToBuy, setNumberOfTicketsToBuy] = useState("0");
 
-  const {
-    data,
-    loading: countLoading,
-    error,
-  } = useQuery(QUERY, {
-    variables: {
-      walletAddress: publicKey?.toString(),
-      raffleId: raffle.id,
-    },
-  });
+  type CountResponse = {
+    count: number;
+  };
+
+  const fetchData = useCallback(async () => {
+    if (!raffle?.id) return;
+
+    try {
+      const res = await axios.post<CountResponse>(
+        "/api/get-raffle-entries-by-wallet",
+        {
+          raffleId: raffle.id,
+          walletAddress: publicKey?.toString(),
+        }
+      );
+      console.log(res);
+      console.log(res.data.count);
+
+      setEntryCount(res.data.count);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [publicKey, raffle.id]);
 
   const {
     id,
@@ -58,17 +60,21 @@ export const RaffleListItem = ({ raffle }: Props) => {
   } = raffle;
 
   useEffect(() => {
-    setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
-    if (data?.entries?.[0]?.count) {
-      setEntryCount(data.entries[0].count);
-    }
-  }, [
-    data?.entries,
-    endsAt,
-    entryCount,
-    raffle.endsAt,
-    raffle.totalTicketCount,
-  ]);
+    fetchData();
+  }, [fetchData]);
+
+  // useEffect(() => {
+  //   setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
+  //   if (data?.entries?.[0]?.count) {
+  //     setEntryCount(data.entries[0].count);
+  //   }
+  // }, [
+  //   data?.entries,
+  //   endsAt,
+  //   entryCount,
+  //   raffle.endsAt,
+  //   raffle.totalTicketCount,
+  // ]);
 
   return (
     <div

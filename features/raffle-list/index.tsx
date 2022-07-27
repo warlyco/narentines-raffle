@@ -19,12 +19,12 @@ const RaffleList = () => {
     if (raffles?.length) return;
     try {
       const { data } = await axios.get<RaffleResponse>(getAll);
-      debugger;
+
       setRaffles(data.raffles);
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [raffles?.length]);
 
   useEffect(() => {
     setLoading(true);

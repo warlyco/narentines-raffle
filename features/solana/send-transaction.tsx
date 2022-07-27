@@ -8,7 +8,7 @@ import {
   Transaction,
   TransactionSignature,
 } from "@solana/web3.js";
-import { GET_ENTRIES_COUNT } from "graphql/queries/get-entries-count";
+import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
 import { ADD_RAFFLE_ENTRY } from "graphql/mutations/add-raffle-entry";
 import { useCallback } from "react";
 import toast from "react-hot-toast";
@@ -48,7 +48,7 @@ export const SendTransaction = ({
     {
       refetchQueries: [
         {
-          query: GET_ENTRIES_COUNT,
+          query: GET_ENTRIES_BY_WALLET,
           variables: {
             raffleId: raffle.id,
             walletAddress: fromPublicKey?.toString(),
