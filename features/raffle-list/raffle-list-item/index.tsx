@@ -61,28 +61,16 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
-
-  // useEffect(() => {
-  //   setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
-  //   if (data?.entries?.[0]?.count) {
-  //     setEntryCount(data.entries[0].count);
-  //   }
-  // }, [
-  //   data?.entries,
-  //   endsAt,
-  //   entryCount,
-  //   raffle.endsAt,
-  //   raffle.totalTicketCount,
-  // ]);
+    setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
+  }, [fetchData, endsAt]);
 
   return (
     <div
       className="w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg flex flex-col justify-between"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           height={250}
           width={250}
