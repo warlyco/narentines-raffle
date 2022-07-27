@@ -14,7 +14,6 @@ dayjs.extend(relativeTime);
 
 type Props = {
   raffle: Raffle;
-  refetch: () => Promise<ApolloQueryResult<any>>;
 };
 
 const QUERY = gql`
@@ -30,7 +29,7 @@ const QUERY = gql`
   }
 `;
 
-export const RaffleListItem = ({ raffle, refetch }: Props) => {
+export const RaffleListItem = ({ raffle }: Props) => {
   const wallet = useWallet();
   const { publicKey } = wallet;
   const [entryCount, setEntryCount] = useState(0);
@@ -143,7 +142,6 @@ export const RaffleListItem = ({ raffle, refetch }: Props) => {
           )}
         <div className="pt-3">
           <SendTransaction
-            refetch={refetch}
             raffle={raffle}
             raffleIsOver={raffleIsOver}
             entryCount={entryCount}

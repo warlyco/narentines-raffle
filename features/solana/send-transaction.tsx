@@ -28,7 +28,6 @@ type Props = {
   numberOfTicketsToBuy: string;
   setNumberOfTicketsToBuy: any;
   raffleIsOver: boolean;
-  refetch: () => Promise<ApolloQueryResult<any>>;
 };
 
 export const SendTransaction = ({
@@ -37,7 +36,6 @@ export const SendTransaction = ({
   numberOfTicketsToBuy,
   setNumberOfTicketsToBuy,
   raffleIsOver,
-  refetch,
 }: Props) => {
   const { connection } = useConnection();
   const {
@@ -147,7 +145,7 @@ export const SendTransaction = ({
 
       const signed = await signTransaction(transaction);
 
-      const { data } = await refetch();
+      // const { data } = await refetch();
       const updatedRaffle = data?.raffles?.find(
         (r: Raffle) => r.id === raffle.id
       );
@@ -219,7 +217,6 @@ export const SendTransaction = ({
     fromPublicKey,
     sendTransaction,
     signTransaction,
-    refetch,
     numberOfTicketsToBuy,
     raffle.priceInGoods,
     raffle.soldTicketCount,
