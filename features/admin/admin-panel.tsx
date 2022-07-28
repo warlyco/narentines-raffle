@@ -1,8 +1,10 @@
 import { useMutation } from "@apollo/client";
 import classNames from "classnames";
-import { MouseEvent, useState } from "react";
-import { ADD_RAFFLE } from "graphql/mutations/add-raffle";
+import { MouseEvent, useCallback, useState } from "react";
 import toast from "react-hot-toast";
+import axios from "axios";
+import { ADD_RAFFLE } from "api/raffles/endpoints";
+import { Raffle, RaffleResponse } from "types/types";
 
 const AdminPanel = () => {
   const [walletAddressInputValue, setWalletAddressInputValue] =
@@ -16,8 +18,29 @@ const AdminPanel = () => {
   const [pricePerTicketInGoods, setPricePerTicketInGoods] =
     useState<string>("3");
   const [totalTicketCount, setTotalTicketCount] = useState<string>("500");
+  const [addedRaffle, setAddedRaffle] = useState<Raffle>({} as Raffle);
 
-  const [addRaffle, { data, loading, error }] = useMutation(ADD_RAFFLE);
+  const handleAddRaffle = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await axios.post<RaffleResponse>(ADD_RAFFLE, {
+        endsAt: endDateTime,
+        startsAt: String(Date.now()),
+        imgSrc: imgUrl,
+        mintAddress: nftMintAddress,
+        name: nftName,
+        priceInGoods: parseInt(pricePerTicketInGoods),
+        totalTicketCount: parseInt(totalTicketCount),
+      });
+      setAddedRaffle(data.raffle);
+      clearForm();
+      toast("Raffle added successfully!");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const clearForm = () => {
     setWalletAddressInputValue("");
@@ -28,32 +51,6 @@ const AdminPanel = () => {
     setImgUrl("");
     setPricePerTicketInGoods("3");
     setTotalTicketCount("500");
-  };
-
-  const handleAddRaffle = async (e: MouseEvent) => {
-    e.preventDefault();
-
-    setIsLoading(true);
-    try {
-      await addRaffle({
-        variables: {
-          endsAt: endDateTime,
-          startsAt: String(Date.now()),
-          imgSrc: imgUrl,
-          mintAddress: nftMintAddress,
-          name: nftName,
-          priceInGoods: parseInt(pricePerTicketInGoods),
-          totalTicketCount: parseInt(totalTicketCount),
-        },
-      });
-      console.log(data);
-      toast("Raffle added successfully!");
-      clearForm();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   return (

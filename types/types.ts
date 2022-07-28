@@ -18,3 +18,11 @@ export type Raffle = {
   priceInGoods: number;
   imgSrc: string;
 };
+
+export type RaffleResponse = {
+  raffle: Raffle;
+};
+
+export type RafflesResponse = {
+  raffles: Raffle[];
+};

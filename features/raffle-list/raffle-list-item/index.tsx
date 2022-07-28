@@ -6,11 +6,10 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { RequestAirdrop } from "features/solana/request-air-drop";
 import { SendTransaction } from "features/solana/send-transaction";
 import { useCallback, useEffect, useState } from "react";
-import gql from "graphql-tag";
-import { ApolloQueryResult, useQuery } from "@apollo/client";
 import bg from "public/images/single-item-bg.png";
-import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
+
 import axios from "axios";
+import { GET_ENTRIES_BY_WALLET } from "api/raffles/endpoints";
 
 dayjs.extend(relativeTime);
 
@@ -33,15 +32,10 @@ export const RaffleListItem = ({ raffle }: Props) => {
     if (!raffle?.id) return;
 
     try {
-      const res = await axios.post<CountResponse>(
-        "/api/get-raffle-entries-by-wallet",
-        {
-          raffleId: raffle.id,
-          walletAddress: publicKey?.toString(),
-        }
-      );
-      console.log(res);
-      console.log(res.data.count);
+      const res = await axios.post<CountResponse>(GET_ENTRIES_BY_WALLET, {
+        raffleId: raffle.id,
+        walletAddress: publicKey?.toString(),
+      });
 
       setEntryCount(res.data.count);
     } catch (error) {
@@ -50,7 +44,6 @@ export const RaffleListItem = ({ raffle }: Props) => {
   }, [publicKey, raffle.id]);
 
   const {
-    id,
     name,
     endsAt,
     totalTicketCount,

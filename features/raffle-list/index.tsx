@@ -1,15 +1,8 @@
-import { useQuery, gql } from "@apollo/client";
 import RaffleListItem from "features/raffle-list/raffle-list-item";
-import { getAll } from "api/raffles/endpoints";
+import { GET_ALL } from "api/raffles/endpoints";
 import { useCallback, useEffect, useState } from "react";
-import { Raffle } from "types/types";
-import toast from "react-hot-toast";
-import ky from "ky";
+import { Raffle, RafflesResponse } from "types/types";
 import axios from "axios";
-
-type RaffleResponse = {
-  raffles: Raffle[];
-};
 
 const RaffleList = () => {
   const [raffles, setRaffles] = useState<Raffle[] | null>(null);
@@ -18,7 +11,7 @@ const RaffleList = () => {
   const fetchData = useCallback(async () => {
     if (raffles?.length) return;
     try {
-      const { data } = await axios.get<RaffleResponse>(getAll);
+      const { data } = await axios.get<RafflesResponse>(GET_ALL);
 
       setRaffles(data.raffles);
     } catch (error) {
