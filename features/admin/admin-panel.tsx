@@ -1,6 +1,5 @@
-import { useMutation } from "@apollo/client";
 import classNames from "classnames";
-import { MouseEvent, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { ADD_RAFFLE } from "api/raffles/endpoints";
@@ -40,7 +39,14 @@ const AdminPanel = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [
+    endDateTime,
+    imgUrl,
+    nftMintAddress,
+    nftName,
+    pricePerTicketInGoods,
+    totalTicketCount,
+  ]);
 
   const clearForm = () => {
     setWalletAddressInputValue("");
@@ -129,7 +135,7 @@ const AdminPanel = () => {
             />
           </label>
           <button
-            onClick={(e) => handleAddRaffle(e)}
+            onClick={handleAddRaffle}
             className={classNames({
               "p-4 py-2 rounded border shadow": true,
               "bg-slate-400 animate-pulse": isLoading,

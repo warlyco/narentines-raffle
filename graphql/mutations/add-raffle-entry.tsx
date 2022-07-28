@@ -32,6 +32,7 @@ export const ADD_RAFFLE_ENTRY = gql`
       returning {
         id
         soldTicketCount
+        totalTicketCount
       }
     }
   }

@@ -9,11 +9,15 @@ import {
   TransactionSignature,
 } from "@solana/web3.js";
 import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
-import { ADD_RAFFLE_ENTRY } from "graphql/mutations/add-raffle-entry";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import classNames from "classnames";
-import { Raffle } from "types/types";
+import {
+  Raffle,
+  RaffleEntryResponse,
+  RaffleResponse,
+  RafflesResponse,
+} from "types/types";
 import {
   TOKEN_PROGRAM_ID,
   createTransferInstruction,
@@ -21,12 +25,15 @@ import {
   TokenAccountNotFoundError,
   TokenInvalidAccountOwnerError,
 } from "@solana/spl-token";
+import axios from "axios";
+import { GET_RAFFLES, ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
 
 type Props = {
   raffle: Raffle;
   entryCount: number;
   numberOfTicketsToBuy: string;
   setNumberOfTicketsToBuy: any;
+  handleUpdateCounts: any;
   raffleIsOver: boolean;
 };
 
@@ -36,69 +43,30 @@ export const SendTransaction = ({
   numberOfTicketsToBuy,
   setNumberOfTicketsToBuy,
   raffleIsOver,
+  handleUpdateCounts,
 }: Props) => {
   const { connection } = useConnection();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     publicKey: fromPublicKey,
     sendTransaction,
     signTransaction,
   } = useWallet();
-  const [addRaffleEntry, { data, loading, error }] = useMutation(
-    ADD_RAFFLE_ENTRY,
-    {
-      refetchQueries: [
-        {
-          query: GET_ENTRIES_BY_WALLET,
-          variables: {
-            raffleId: raffle.id,
-            walletAddress: fromPublicKey?.toString(),
-          },
-        },
-      ],
-    }
-  );
 
   const onClick = useCallback(async () => {
     if (!fromPublicKey || !sendTransaction || !signTransaction) {
       console.log("error", "Wallet not connected!");
       return;
     }
+
     if (
-      !process.env.NEXT_PUBLIC_GOODS_TOKEN_ADDRESS ||
       !process.env.NEXT_PUBLIC_COLLECTION_WALLET ||
-      !process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS ||
-      !process.env.NEXT_PUBLIC_USDC_TOKEN_ADDRESS ||
-      !process.env.NEXT_PUBLIC_COLLECTION_WALLET
+      !process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS
     ) {
-      console.log("error", "Config error");
+      console.log("error", "Missing environment variables!");
       return;
     }
 
-    let signature: TransactionSignature = "";
-    // try {
-    //   const { data } = await refetch();
-    //   const updatedRaffle = data?.raffles?.find(
-    //     (r: Raffle) => r.id === raffle.id
-    //   );
-    //   const { totalTicketCount, soldTicketCount } = updatedRaffle;
-    //   if (totalTicketCount - soldTicketCount <= 0) {
-    //     toast("Raffle is sold out!");
-    //     throw new Error("Raffle is sold out!");
-    //     return;
-    //   }
-    //   // SOL
-    //   const solInLamports =
-    //     (LAMPORTS_PER_SOL / 100) * Number(numberOfTicketsToBuy);
-
-    //   const transaction = new Transaction().add(
-    //     SystemProgram.transfer({
-    //       fromPubkey: fromPublicKey,
-    //       toPubkey: new PublicKey(process.env.NEXT_PUBLIC_COLLECTION_WALLET),
-    //       lamports: solInLamports,
-    //     })
-    //   );
-
-    // SPL TOKEN
     try {
       const toAddress = process.env.NEXT_PUBLIC_COLLECTION_WALLET;
       const toPublicKey = new PublicKey(toAddress);
@@ -128,13 +96,12 @@ export const SendTransaction = ({
 
       const transaction = new Transaction().add(
         createTransferInstruction(
-          // imported from '@solana/spl-token'
           fromTokenAccount.address,
           toTokenAccount.address,
           fromPublicKey,
           amount * 100, // tokens have 6 decimals of precision so your amount needs to have the same
           [],
-          TOKEN_PROGRAM_ID // imported from '@solana/spl-token'
+          TOKEN_PROGRAM_ID
         )
       );
 
@@ -145,34 +112,57 @@ export const SendTransaction = ({
 
       const signed = await signTransaction(transaction);
 
-      // const { data } = await refetch();
-      const updatedRaffle = data?.raffles?.find(
-        (r: Raffle) => r.id === raffle.id
+      const { data } = await axios.get<RaffleResponse>(
+        `${GET_RAFFLES}/${raffle.id}`
       );
+      if (!data.raffle) {
+        toast("Unkown raffle");
+        throw new Error("Unkown raffle");
+      }
+      const { raffle: updatedRaffle } = data;
+      debugger;
       const { totalTicketCount, soldTicketCount } = updatedRaffle;
       if (totalTicketCount - soldTicketCount <= 0) {
         toast("Raffle is sold out!");
         throw new Error("Raffle is sold out!");
-        return;
       }
       if (totalTicketCount - soldTicketCount < Number(numberOfTicketsToBuy)) {
         toast("Not enough tickets left");
         throw new Error("Not enough tickets left");
-        return;
       }
 
       const signature = await connection.sendRawTransaction(signed.serialize());
+
       toast.custom(
         <div className="flex bg-white rounded-xl shadow-lg p-3 border-slate-400">
           <div>Transaction sent...</div>
         </div>
       );
+
       await connection.confirmTransaction({
         signature,
         lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
         blockhash: latestBlockHash.blockhash,
       });
       console.log("success", "Transaction successful!", signature);
+
+      const { data: raffleEntryData } = await axios.post<RaffleEntryResponse>(
+        ADD_RAFFLE_ENTRY,
+        {
+          walletAddress: fromPublicKey.toString(),
+          count: entryCount + Number(numberOfTicketsToBuy),
+          soldTicketCount:
+            raffle.soldTicketCount + Number(numberOfTicketsToBuy),
+          raffleId: raffle.id,
+        }
+      );
+
+      const { updatedCount } = raffleEntryData;
+
+      if (!updatedCount) {
+        toast("Unkown error - Please open a support ticket in discord");
+        throw new Error("Unkown error");
+      }
 
       toast.custom(
         <div className="flex bg-white rounded-xl shadow-xl p-3 border-slate-400">
@@ -188,17 +178,9 @@ export const SendTransaction = ({
         </div>
       );
 
-      addRaffleEntry({
-        variables: {
-          walletAddress: fromPublicKey.toString(),
-          count: entryCount + Number(numberOfTicketsToBuy),
-          soldTicketCount:
-            raffle.soldTicketCount + Number(numberOfTicketsToBuy),
-          raffleId: raffle.id,
-        },
-      });
+      handleUpdateCounts(updatedCount);
     } catch (error: any) {
-      console.log("error", `Transaction failed! ${error?.message}`, signature);
+      console.log("error", `Transaction failed! ${error?.message}`);
       if (
         error instanceof TokenAccountNotFoundError ||
         error instanceof TokenInvalidAccountOwnerError
@@ -219,17 +201,17 @@ export const SendTransaction = ({
     signTransaction,
     numberOfTicketsToBuy,
     raffle.priceInGoods,
-    raffle.soldTicketCount,
     raffle.id,
+    raffle.soldTicketCount,
     connection,
-    addRaffleEntry,
     entryCount,
+    handleUpdateCounts,
     setNumberOfTicketsToBuy,
   ]);
 
   const getButtonText = () => {
     if (raffleIsOver) return "Raffle is over";
-    if (loading) return "Submitting...";
+    if (isLoading) return "Submitting...";
     if (raffle.totalTicketCount <= raffle.soldTicketCount) return "Sold Out";
     if (
       Number(numberOfTicketsToBuy) >
@@ -246,7 +228,7 @@ export const SendTransaction = ({
       disabled={
         raffleIsOver ||
         !fromPublicKey ||
-        loading ||
+        isLoading ||
         Number(numberOfTicketsToBuy) <= 0 ||
         Number(numberOfTicketsToBuy) >
           raffle.totalTicketCount - raffle.soldTicketCount
@@ -258,7 +240,7 @@ export const SendTransaction = ({
         "opacity-80 cursor-not-allowed":
           raffleIsOver ||
           !fromPublicKey ||
-          loading ||
+          isLoading ||
           Number(numberOfTicketsToBuy) <= 0 ||
           Number(numberOfTicketsToBuy) >
             raffle.totalTicketCount - raffle.soldTicketCount,

@@ -1,7 +1,7 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { Raffle } from "types/types";
+import { Raffle, RaffleEntryResponse } from "types/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { RequestAirdrop } from "features/solana/request-air-drop";
 import { SendTransaction } from "features/solana/send-transaction";
@@ -17,40 +17,51 @@ type Props = {
   raffle: Raffle;
 };
 
+type CountResponse = {
+  count: number;
+  soldTicketCount: number;
+};
+
 export const RaffleListItem = ({ raffle }: Props) => {
   const wallet = useWallet();
   const { publicKey } = wallet;
   const [entryCount, setEntryCount] = useState(0);
+  const [soldCount, setSoldCount] = useState(0);
   const [raffleIsOver, setRaffleIsOver] = useState(false);
   const [numberOfTicketsToBuy, setNumberOfTicketsToBuy] = useState("0");
-
-  type CountResponse = {
-    count: number;
-  };
-
-  const fetchData = useCallback(async () => {
-    if (!raffle?.id) return;
-
-    try {
-      const res = await axios.post<CountResponse>(GET_ENTRIES_BY_WALLET, {
-        raffleId: raffle.id,
-        walletAddress: publicKey?.toString(),
-      });
-
-      setEntryCount(res.data.count);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [publicKey, raffle.id]);
 
   const {
     name,
     endsAt,
     totalTicketCount,
-    soldTicketCount,
     priceInGoods,
     imgSrc,
+    id,
+    soldTicketCount,
   } = raffle;
+
+  const fetchData = useCallback(async () => {
+    if (!id) return;
+
+    try {
+      const res = await axios.get<CountResponse>(GET_ENTRIES_BY_WALLET, {
+        params: {
+          raffleId: id,
+          walletAddress: publicKey?.toString(),
+        },
+      });
+
+      setEntryCount(res.data.count);
+      setSoldCount(soldTicketCount);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [id, publicKey, soldTicketCount]);
+
+  const handleUpdateCounts = (updatedCount: number) => {
+    setSoldCount(soldCount + (updatedCount - entryCount));
+    setEntryCount(updatedCount);
+  };
 
   useEffect(() => {
     fetchData();
@@ -93,7 +104,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
           <div className="text-lg text-green-800 font-semibold">
             Tickets Sold
           </div>
-          <div className="text-lg font-bold">{soldTicketCount}</div>
+          <div className="text-lg font-bold">{soldCount}</div>
         </div>
         <div>
           <div className="text-lg text-green-800 font-semibold">
@@ -109,24 +120,21 @@ export const RaffleListItem = ({ raffle }: Props) => {
         </div>
       </div>
       <div>
-        {!raffleIsOver &&
-          !(raffle.totalTicketCount === raffle.soldTicketCount) && (
-            <div>
-              <div className="text-lg text-green-800 font-semibold mb-1">
-                Number of Tickets
-              </div>
-              <input
-                className="w-full p-2 rounded"
-                value={numberOfTicketsToBuy}
-                max={totalTicketCount - soldTicketCount}
-                min={0}
-                type="number"
-                onChange={(event) =>
-                  setNumberOfTicketsToBuy(event.target.value)
-                }
-              />
+        {!raffleIsOver && !(totalTicketCount === soldCount) && (
+          <div>
+            <div className="text-lg text-green-800 font-semibold mb-1">
+              Number of Tickets
             </div>
-          )}
+            <input
+              className="w-full p-2 rounded"
+              value={numberOfTicketsToBuy}
+              max={totalTicketCount - soldCount}
+              min={0}
+              type="number"
+              onChange={(event) => setNumberOfTicketsToBuy(event.target.value)}
+            />
+          </div>
+        )}
         <div className="pt-3">
           <SendTransaction
             raffle={raffle}
@@ -134,6 +142,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
             entryCount={entryCount}
             numberOfTicketsToBuy={numberOfTicketsToBuy}
             setNumberOfTicketsToBuy={setNumberOfTicketsToBuy}
+            handleUpdateCounts={handleUpdateCounts}
           />
         </div>
       </div>

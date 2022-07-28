@@ -3,8 +3,8 @@ import client from "apollo/client";
 import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
 
 const getRaffleEntriesByWallet: NextApiHandler = async (request, response) => {
-  const { raffleId, walletAddress } = request.body;
-
+  const { raffleId, walletAddress } = request.query;
+  console.log({ raffleId, walletAddress });
   const { data } = await client.query({
     query: GET_ENTRIES_BY_WALLET,
     variables: { raffleId, walletAddress },

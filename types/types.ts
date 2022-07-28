@@ -23,6 +23,10 @@ export type RaffleResponse = {
   raffle: Raffle;
 };
 
+export type RaffleEntryResponse = {
+  updatedCount: number;
+};
+
 export type RafflesResponse = {
   raffles: Raffle[];
 };

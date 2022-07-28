@@ -1,5 +1,5 @@
 import RaffleListItem from "features/raffle-list/raffle-list-item";
-import { GET_ALL } from "api/raffles/endpoints";
+import { GET_RAFFLES } from "api/raffles/endpoints";
 import { useCallback, useEffect, useState } from "react";
 import { Raffle, RafflesResponse } from "types/types";
 import axios from "axios";
@@ -11,7 +11,7 @@ const RaffleList = () => {
   const fetchData = useCallback(async () => {
     if (raffles?.length) return;
     try {
-      const { data } = await axios.get<RafflesResponse>(GET_ALL);
+      const { data } = await axios.get<RafflesResponse>(GET_RAFFLES);
 
       setRaffles(data.raffles);
     } catch (error) {
