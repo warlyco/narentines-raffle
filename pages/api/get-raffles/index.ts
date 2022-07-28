@@ -3,11 +3,15 @@ import client from "apollo/client";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
 
 const getRaffles: NextApiHandler = async (request, response) => {
-  const { data } = await client.query({
-    query: GET_RAFFLES,
-  });
+  try {
+    const { data } = await client.query({
+      query: GET_RAFFLES,
+    });
 
-  response.json({ raffles: data.raffles });
+    response.json({ raffles: data.raffles });
+  } catch (error) {
+    response.status(500).json({ error });
+  }
 };
 
 export default getRaffles;

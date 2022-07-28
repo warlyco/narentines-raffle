@@ -8,33 +8,32 @@ const addRaffleEntry: NextApiHandler = async (request, response) => {
   if (!raffleId || !walletAddress || !count || !soldTicketCount)
     throw new Error("Missing required fields");
 
-  const { data } = await client.mutate({
-    mutation: ADD_RAFFLE_ENTRY,
-    variables: {
-      raffleId,
-      walletAddress,
-      count,
-      soldTicketCount,
-    },
-  });
+  try {
+    const { data } = await client.mutate({
+      mutation: ADD_RAFFLE_ENTRY,
+      variables: {
+        raffleId,
+        walletAddress,
+        count,
+        soldTicketCount,
+      },
+    });
 
-  console.log(
-    "raffleData",
-    data.update_raffles.returning?.[0]?.soldTicketCount
-  );
+    if (
+      !data?.update_raffles?.returning?.[0]?.soldTicketCount ||
+      !data?.update_raffles?.returning?.[0]?.totalTicketCount
+    ) {
+      response.status(500).json({ error: "Unkown error" });
+      return;
+    }
 
-  if (
-    !data?.update_raffles?.returning?.[0]?.soldTicketCount ||
-    !data?.update_raffles?.returning?.[0]?.totalTicketCount
-  ) {
-    response.status(500).json({ error: "Unkown error" });
-    return;
+    response.json({
+      updatedCount: data.update_raffles.returning?.[0]?.soldTicketCount,
+      updatedTotalCoint: data.update_raffles.returning?.[0]?.totalTicketCount,
+    });
+  } catch (error) {
+    response.status(500).json({ error });
   }
-
-  response.json({
-    updatedCount: data.update_raffles.returning?.[0]?.soldTicketCount,
-    updatedTotalCoint: data.update_raffles.returning?.[0]?.totalTicketCount,
-  });
 };
 
 export default addRaffleEntry;

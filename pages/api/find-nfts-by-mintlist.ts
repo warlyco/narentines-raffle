@@ -39,8 +39,6 @@ export default async function handler(req: Request, res: Response) {
   const rawMintList = fs.readFileSync(mintListFile);
   const mintList = JSON.parse(rawMintList);
 
-  console.log(mintList);
-
   const keysList = mintList.map((mint: string) => new PublicKey(mint));
 
   const nfts = await metaplex.nfts().findAllByMintList(keysList);
