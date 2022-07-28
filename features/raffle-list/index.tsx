@@ -11,24 +11,24 @@ const RaffleList = () => {
   const fetchData = useCallback(async () => {
     if (raffles?.length) return;
     try {
+      setLoading(true);
       const { data } = await axios.get<RafflesResponse>(GET_RAFFLES);
 
       setRaffles(data.raffles);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   }, [raffles?.length]);
 
   useEffect(() => {
-    setLoading(true);
     try {
-      fetchData();
+      if (!raffles?.length) fetchData();
     } catch (error: any) {
       console.error(error);
-    } finally {
-      setLoading(false);
     }
-  }, [fetchData]);
+  }, [fetchData, raffles?.length]);
 
   if (isLoading)
     return (
