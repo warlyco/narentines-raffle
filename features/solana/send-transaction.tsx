@@ -1,4 +1,5 @@
 import { ApolloQueryResult, useMutation } from "@apollo/client";
+import { RPC_ENDPOINT, SOLANA_CLUSTER } from "constants/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
   Keypair,
@@ -168,7 +169,7 @@ export const SendTransaction = ({
         <div className="flex bg-white rounded-xl shadow-xl p-3 border-slate-400">
           <div>Transaction successful!</div>
           <a
-            href={`https://explorer.solana.com/tx/${signature}?cluster=devnet`}
+            href={`https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-500 underline block ml-2"
