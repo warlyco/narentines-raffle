@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "graphql-request";
 
 export const ADD_RAFFLE_ENTRY = gql`
   mutation upsert_entries(

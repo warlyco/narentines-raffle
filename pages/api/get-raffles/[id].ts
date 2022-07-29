@@ -1,5 +1,5 @@
 import type { NextApiHandler } from "next";
-import client from "apollo/client";
+import client from "graphql/client";
 import { GET_RAFFLE_BY_ID } from "graphql/queries/get-raffle-by-id";
 
 import * as Sentry from "@sentry/node";
@@ -16,10 +16,7 @@ Sentry.init({
 const getRaffles: NextApiHandler = async (request, response) => {
   const { id } = request.query;
   try {
-    const { data } = await client.query({
-      query: GET_RAFFLE_BY_ID,
-      variables: { id },
-    });
+    const { data } = await client.request(GET_RAFFLE_BY_ID, { id });
 
     const { raffles_by_pk: raffle } = data;
     if (!raffle) {

@@ -1,5 +1,5 @@
 import type { NextApiHandler } from "next";
-import client from "apollo/client";
+import client from "graphql/client";
 import { ADD_RAFFLE } from "graphql/mutations/add-raffle";
 
 const addRaffle: NextApiHandler = async (request, response) => {
@@ -25,17 +25,14 @@ const addRaffle: NextApiHandler = async (request, response) => {
     throw new Error("Missing required fields");
 
   try {
-    const { data } = await client.mutate({
-      mutation: ADD_RAFFLE,
-      variables: {
-        endsAt,
-        startsAt,
-        imgSrc,
-        mintAddress,
-        name,
-        priceInGoods,
-        totalTicketCount,
-      },
+    const { data } = await client.request(ADD_RAFFLE, {
+      endsAt,
+      startsAt,
+      imgSrc,
+      mintAddress,
+      name,
+      priceInGoods,
+      totalTicketCount,
     });
 
     response.json({ data: data.addRaffle });

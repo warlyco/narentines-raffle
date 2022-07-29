@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import { gql } from "graphql-request";
 
 export const GET_RAFFLE_BY_ID = gql`
   query Raffles($id: uuid!) {

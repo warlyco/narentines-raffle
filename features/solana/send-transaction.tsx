@@ -1,4 +1,3 @@
-import { ApolloQueryResult, useMutation } from "@apollo/client";
 import { RPC_ENDPOINT, SOLANA_CLUSTER } from "constants/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {

@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import { gql } from "graphql-request";
 
 const GET_ENTRIES_BY_WALLET = gql`
   query Entries($walletAddress: String, $raffleId: uuid) {

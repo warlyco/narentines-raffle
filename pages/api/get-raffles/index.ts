@@ -1,5 +1,5 @@
 import type { NextApiHandler } from "next";
-import client from "apollo/client";
+import client from "graphql/client";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import * as Sentry from "@sentry/node";
 
@@ -14,11 +14,9 @@ Sentry.init({
 
 const getRaffles: NextApiHandler = async (request, response) => {
   try {
-    const { data } = await client.query({
-      query: GET_RAFFLES,
-    });
+    const { raffles } = await client.request(GET_RAFFLES);
 
-    response.json({ raffles: data.raffles });
+    response.json({ raffles });
   } catch (error) {
     Sentry.captureException(error);
     response.status(500).json({ error });
