@@ -25,7 +25,7 @@ const addRaffle: NextApiHandler = async (request, response) => {
     throw new Error("Missing required fields");
 
   try {
-    const { data } = await client.request(ADD_RAFFLE, {
+    const { addRaffle } = await client.request(ADD_RAFFLE, {
       endsAt,
       startsAt,
       imgSrc,
@@ -35,7 +35,7 @@ const addRaffle: NextApiHandler = async (request, response) => {
       totalTicketCount,
     });
 
-    response.json({ data: data.addRaffle });
+    response.json({ data: addRaffle });
   } catch (error) {
     response.status(500).json({ error });
   }

@@ -6,12 +6,12 @@ const getRaffleEntriesByWallet: NextApiHandler = async (request, response) => {
   const { raffleId, walletAddress } = request.query;
 
   try {
-    const { data } = await client.request(GET_ENTRIES_BY_WALLET, {
+    const entries = await client.request(GET_ENTRIES_BY_WALLET, {
       raffleId,
       walletAddress,
     });
 
-    response.json({ count: data?.entries?.[0]?.count || 0 });
+    response.json({ count: entries?.[0]?.count || 0 });
   } catch (error) {
     response.status(500).json({ error });
   }

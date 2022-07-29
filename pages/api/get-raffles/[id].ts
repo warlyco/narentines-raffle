@@ -16,9 +16,10 @@ Sentry.init({
 const getRaffles: NextApiHandler = async (request, response) => {
   const { id } = request.query;
   try {
-    const { data } = await client.request(GET_RAFFLE_BY_ID, { id });
+    const { raffles_by_pk: raffle } = await client.request(GET_RAFFLE_BY_ID, {
+      id,
+    });
 
-    const { raffles_by_pk: raffle } = data;
     if (!raffle) {
       response.status(404).json({ error: "Raffle not found" });
       return;

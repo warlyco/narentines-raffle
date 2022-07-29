@@ -12,7 +12,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-const getRaffles: NextApiHandler = async (request, response) => {
+const getRaffles: NextApiHandler = async (_, response) => {
   try {
     const { raffles } = await client.request(GET_RAFFLES);
 

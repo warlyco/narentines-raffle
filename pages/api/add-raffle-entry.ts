@@ -9,7 +9,7 @@ const addRaffleEntry: NextApiHandler = async (request, response) => {
     throw new Error("Missing required fields");
 
   try {
-    const { data } = await client.request(ADD_RAFFLE_ENTRY, {
+    const data = await client.request(ADD_RAFFLE_ENTRY, {
       raffleId,
       walletAddress,
       count,
