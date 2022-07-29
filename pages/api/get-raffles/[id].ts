@@ -1,7 +1,7 @@
 import type { NextApiHandler } from "next";
-import client from "graphql/client";
 import { GET_RAFFLE_BY_ID } from "graphql/queries/get-raffle-by-id";
 
+import { GraphQLClient } from "graphql-request";
 import * as Sentry from "@sentry/node";
 
 Sentry.init({
@@ -14,6 +14,15 @@ Sentry.init({
 });
 
 const getRaffles: NextApiHandler = async (request, response) => {
+  const client = new GraphQLClient(
+    process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
+    {
+      headers: {
+        "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+      },
+    }
+  );
+
   const { id } = request.query;
   try {
     const { raffles_by_pk: raffle } = await client.request(GET_RAFFLE_BY_ID, {

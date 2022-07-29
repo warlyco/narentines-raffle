@@ -1,6 +1,7 @@
 import type { NextApiHandler } from "next";
-import client from "graphql/client";
 import { ADD_RAFFLE } from "graphql/mutations/add-raffle";
+
+import { GraphQLClient } from "graphql-request";
 
 const addRaffle: NextApiHandler = async (request, response) => {
   const {
@@ -23,6 +24,15 @@ const addRaffle: NextApiHandler = async (request, response) => {
     !totalTicketCount
   )
     throw new Error("Missing required fields");
+
+  const client = new GraphQLClient(
+    process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
+    {
+      headers: {
+        "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+      },
+    }
+  );
 
   try {
     const { addRaffle } = await client.request(ADD_RAFFLE, {

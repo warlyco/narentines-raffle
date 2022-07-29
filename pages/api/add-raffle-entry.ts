@@ -1,12 +1,22 @@
 import type { NextApiHandler } from "next";
-import client from "graphql/client";
 import { ADD_RAFFLE_ENTRY } from "graphql/mutations/add-raffle-entry";
+
+import { GraphQLClient } from "graphql-request";
 
 const addRaffleEntry: NextApiHandler = async (request, response) => {
   const { raffleId, walletAddress, count, soldTicketCount } = request.body;
 
   if (!raffleId || !walletAddress || !count || !soldTicketCount)
     throw new Error("Missing required fields");
+
+  const client = new GraphQLClient(
+    process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
+    {
+      headers: {
+        "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+      },
+    }
+  );
 
   try {
     const data = await client.request(ADD_RAFFLE_ENTRY, {
