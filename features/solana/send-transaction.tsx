@@ -113,7 +113,7 @@ export const SendTransaction = ({
       const signed = await signTransaction(transaction);
 
       const { data } = await axios.get<RaffleResponse>(
-        `${GET_RAFFLES}/${raffle.id}`
+        `${GET_RAFFLES}?id=${raffle.id}`
       );
       if (!data.raffle) {
         toast("Unkown raffle");
