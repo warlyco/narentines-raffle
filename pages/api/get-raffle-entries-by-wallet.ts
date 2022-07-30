@@ -15,6 +15,8 @@ Sentry.init({
 const getRaffleEntriesByWallet: NextApiHandler = async (request, response) => {
   const { raffleId, walletAddress } = request.query;
 
+  console.log("query", { raffleId, walletAddress });
+
   const client = new GraphQLClient(
     process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
     {
@@ -25,10 +27,12 @@ const getRaffleEntriesByWallet: NextApiHandler = async (request, response) => {
   );
 
   try {
-    const entries = await client.request(GET_ENTRIES_BY_WALLET, {
+    const { entries } = await client.request(GET_ENTRIES_BY_WALLET, {
       raffleId,
       walletAddress,
     });
+
+    console.log({ entries });
 
     response.json({ count: entries?.[0]?.count || 0 });
   } catch (error) {

@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import Image from "next/image";
 import { Raffle, RaffleEntryResponse } from "types/types";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { RequestAirdrop } from "features/solana/request-air-drop";
 import { SendTransaction } from "features/solana/send-transaction";
 import { useCallback, useEffect, useState } from "react";
 import bg from "public/images/single-item-bg.png";
@@ -50,6 +49,11 @@ export const RaffleListItem = ({ raffle }: Props) => {
           walletAddress: publicKey?.toString(),
         },
       });
+      console.log("req", {
+        raffleId: id,
+        walletAddress: publicKey?.toString(),
+      });
+      console.log("res", res.data.count);
 
       setEntryCount(res.data.count);
       setSoldCount(soldTicketCount);

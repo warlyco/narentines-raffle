@@ -112,14 +112,14 @@ export const SendTransaction = ({
 
       const signed = await signTransaction(transaction);
 
-      const { data } = await axios.get<RaffleResponse>(
-        `${GET_RAFFLES}?id=${raffle.id}`
-      );
-      if (!data.raffle) {
+      const { data } = await axios.get<RafflesResponse>(GET_RAFFLES);
+      console.log(data);
+      const updatedRaffle = data.raffles.find(({ id }) => id === raffle.id);
+
+      if (!updatedRaffle) {
         toast("Unkown raffle");
         throw new Error("Unkown raffle");
       }
-      const { raffle: updatedRaffle } = data;
 
       const { totalTicketCount, soldTicketCount } = updatedRaffle;
       if (totalTicketCount - soldTicketCount <= 0) {
