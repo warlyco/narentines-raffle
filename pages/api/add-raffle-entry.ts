@@ -2,6 +2,10 @@ import type { NextApiHandler } from "next";
 import { ADD_RAFFLE_ENTRY } from "graphql/mutations/add-raffle-entry";
 import { GraphQLClient } from "graphql-request";
 import * as Sentry from "@sentry/node";
+import axios from "axios";
+import { Raffle, RafflesResponse } from "types/types";
+import { request } from "graphql-request";
+import { GET_RAFFLES } from "graphql/queries/get-raffles";
 
 Sentry.init({
   dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
@@ -12,11 +16,22 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-const addRaffleEntry: NextApiHandler = async (request, response) => {
-  const { raffleId, walletAddress, count, soldTicketCount } = request.body;
+const addRaffleEntry: NextApiHandler = async (req, response) => {
+  const { raffleId, walletAddress, count } = req.body;
 
-  if (!raffleId || !walletAddress || !count || !soldTicketCount)
+  if (!raffleId || !walletAddress || !count)
     throw new Error("Missing required fields");
+
+  const { raffles } = await request({
+    url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
+    document: GET_RAFFLES,
+    requestHeaders: {
+      "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+    },
+  });
+  console.log("``````````", { raffles });
+  const { soldTicketCount } = raffles.find(({ id }: Raffle) => id === raffleId);
+  console.log({ soldTicketCount });
 
   const client = new GraphQLClient(
     process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
@@ -32,7 +47,7 @@ const addRaffleEntry: NextApiHandler = async (request, response) => {
       raffleId,
       walletAddress,
       count,
-      soldTicketCount,
+      soldTicketCount: soldTicketCount + count,
     });
 
     if (
