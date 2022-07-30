@@ -156,7 +156,7 @@ export const SendTransaction = ({
         }
       );
 
-      const { updatedCount } = raffleEntryData;
+      const { updatedCount, updatedSoldCount } = raffleEntryData;
 
       if (!updatedCount) {
         toast("Unkown error - Please open a support ticket in discord");
@@ -177,7 +177,7 @@ export const SendTransaction = ({
         </div>
       );
       debugger;
-      handleUpdateCounts(updatedCount);
+      handleUpdateCounts(updatedCount, updatedSoldCount);
     } catch (error: any) {
       console.log("error", `Transaction failed! ${error?.message}`);
       if (
@@ -201,7 +201,6 @@ export const SendTransaction = ({
     numberOfTicketsToBuy,
     raffle.priceInGoods,
     raffle.id,
-    raffle.soldTicketCount,
     connection,
     entryCount,
     handleUpdateCounts,

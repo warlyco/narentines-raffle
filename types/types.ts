@@ -25,6 +25,7 @@ export type RaffleResponse = {
 
 export type RaffleEntryResponse = {
   updatedCount: number;
+  updatedSoldCount: number;
 };
 
 export type RafflesResponse = {
