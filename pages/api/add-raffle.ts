@@ -53,7 +53,6 @@ const addRaffle: NextApiHandler = async (request, response) => {
       priceInGoods,
       totalTicketCount,
     });
-    Sentry.captureMessage(JSON.stringify(res));
 
     response.json({ data: res.addRaffle });
   } catch (error) {
