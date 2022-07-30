@@ -1,7 +1,16 @@
 import type { NextApiHandler } from "next";
 import { ADD_RAFFLE_ENTRY } from "graphql/mutations/add-raffle-entry";
-
 import { GraphQLClient } from "graphql-request";
+import * as Sentry from "@sentry/node";
+
+Sentry.init({
+  dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
 
 const addRaffleEntry: NextApiHandler = async (request, response) => {
   const { raffleId, walletAddress, count, soldTicketCount } = request.body;
@@ -39,6 +48,7 @@ const addRaffleEntry: NextApiHandler = async (request, response) => {
       updatedTotalCoint: data.update_raffles.returning?.[0]?.totalTicketCount,
     });
   } catch (error) {
+    Sentry.captureException(error);
     response.status(500).json({ error });
   }
 };

@@ -120,7 +120,7 @@ export const SendTransaction = ({
         throw new Error("Unkown raffle");
       }
       const { raffle: updatedRaffle } = data;
-      debugger;
+
       const { totalTicketCount, soldTicketCount } = updatedRaffle;
       if (totalTicketCount - soldTicketCount <= 0) {
         toast("Raffle is sold out!");
