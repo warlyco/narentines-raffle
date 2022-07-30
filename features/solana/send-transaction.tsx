@@ -35,6 +35,7 @@ type Props = {
   setNumberOfTicketsToBuy: any;
   handleUpdateCounts: any;
   raffleIsOver: boolean;
+  winner?: string;
 };
 
 export const SendTransaction = ({
@@ -44,6 +45,7 @@ export const SendTransaction = ({
   setNumberOfTicketsToBuy,
   raffleIsOver,
   handleUpdateCounts,
+  winner,
 }: Props) => {
   const { connection } = useConnection();
   const [isLoading, setIsLoading] = useState(false);
@@ -176,7 +178,6 @@ export const SendTransaction = ({
           </a>
         </div>
       );
-      debugger;
       handleUpdateCounts(updatedCount, updatedSoldCount);
     } catch (error: any) {
       console.log("error", `Transaction failed! ${error?.message}`);
@@ -208,6 +209,7 @@ export const SendTransaction = ({
   ]);
 
   const getButtonText = () => {
+    if (winner) return `Winner: ${winner}`;
     if (raffleIsOver) return "Raffle is over";
     if (isLoading) return "Submitting...";
     if (raffle.totalTicketCount <= raffle.soldTicketCount) return "Sold Out";
@@ -232,9 +234,9 @@ export const SendTransaction = ({
           raffle.totalTicketCount - raffle.soldTicketCount
       }
       className={classNames({
-        "w-full py-3 uppercase rounded-lg": true,
+        "truncate w-full py-3 uppercase rounded-lg px-2": true,
         "bg-red-600 text-amber-200": !raffleIsOver,
-        "border border-green-800 text-green-800": raffleIsOver,
+        "border border-green-800 text-green-800": raffleIsOver || winner,
         "opacity-80 cursor-not-allowed":
           raffleIsOver ||
           !fromPublicKey ||

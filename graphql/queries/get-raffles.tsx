@@ -14,6 +14,7 @@ export const GET_RAFFLES = gql`
       soldTicketCount
       priceInGoods
       imgSrc
+      winner
     }
   }
 `;

@@ -17,10 +17,16 @@ export type Raffle = {
   soldTicketCount: number;
   priceInGoods: number;
   imgSrc: string;
+  winner?: string;
 };
 
 export type RaffleResponse = {
   raffle: Raffle;
+};
+
+export type RaffleWinnerResponse = {
+  id: Raffle;
+  winner: string;
 };
 
 export type RaffleEntryResponse = {

@@ -1,16 +1,25 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
-import Image from "next/image";
-import { Raffle, RaffleEntryResponse } from "types/types";
+import { Raffle, RaffleWinnerResponse } from "types/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { SendTransaction } from "features/solana/send-transaction";
 import { useCallback, useEffect, useState } from "react";
 import bg from "public/images/single-item-bg.png";
 
 import axios from "axios";
-import { GET_ENTRIES_BY_WALLET } from "api/raffles/endpoints";
+import {
+  ADD_RAFFLE_WINNER,
+  GET_ENTRIES_BY_RAFFLE_ID,
+  GET_ENTRIES_BY_WALLET,
+} from "api/raffles/endpoints";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime);
+
+type RaffleEntry = {
+  walletAddress: string;
+  count: number;
+};
 
 type Props = {
   raffle: Raffle;
@@ -24,6 +33,8 @@ type CountResponse = {
 export const RaffleListItem = ({ raffle }: Props) => {
   const wallet = useWallet();
   const { publicKey } = wallet;
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [pickingWinner, setPickingWinner] = useState(false);
   const [entryCount, setEntryCount] = useState(0);
   const [soldCount, setSoldCount] = useState(0);
   const [raffleIsOver, setRaffleIsOver] = useState(false);
@@ -37,6 +48,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
     imgSrc,
     id,
     soldTicketCount,
+    winner,
   } = raffle;
 
   const fetchData = useCallback(async () => {
@@ -66,15 +78,59 @@ export const RaffleListItem = ({ raffle }: Props) => {
     updatedCount: number,
     updatedSoldCount: number
   ) => {
-    debugger;
     setSoldCount(updatedSoldCount);
     setEntryCount(updatedCount);
+  };
+
+  const handleSelectWinner = async () => {
+    setPickingWinner(true);
+    const res = await axios.get(GET_ENTRIES_BY_RAFFLE_ID, {
+      params: {
+        id,
+      },
+    });
+    const { entries } = res.data;
+    let contestants = [];
+    for (const entry of entries) {
+      for (let i = 0; i < entry.count; i++) {
+        contestants.push(entry.walletAddress);
+      }
+    }
+    console.log(entries, contestants);
+    const randomContenstantIndex = Math.floor(
+      Math.random() * contestants.length
+    );
+    const winnerWalletAddress = contestants[randomContenstantIndex];
+    try {
+      const { data } = await axios.post<RaffleWinnerResponse>(
+        ADD_RAFFLE_WINNER,
+        {
+          id,
+          winnerWalletAddress,
+        }
+      );
+      const { winner } = data;
+
+      toast.custom(
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+          <div className="font-bold">Winner selected!</div>
+          <div>{winner}</div>
+        </div>
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setPickingWinner(false);
+    }
   };
 
   useEffect(() => {
     fetchData();
     setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
-  }, [fetchData, endsAt]);
+    setIsAdmin(
+      process.env.NEXT_PUBLIC_ADMIN_WALLETS!.indexOf(publicKey!.toString()) > -1
+    );
+  }, [fetchData, endsAt, publicKey]);
 
   return (
     <div
@@ -128,7 +184,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         </div>
       </div>
       <div>
-        {!raffleIsOver && !(totalTicketCount === soldCount) && (
+        {!raffleIsOver && !(totalTicketCount <= soldCount) && (
           <div>
             <div className="text-lg text-green-800 font-semibold mb-1">
               Number of Tickets
@@ -151,8 +207,20 @@ export const RaffleListItem = ({ raffle }: Props) => {
             numberOfTicketsToBuy={numberOfTicketsToBuy}
             setNumberOfTicketsToBuy={setNumberOfTicketsToBuy}
             handleUpdateCounts={handleUpdateCounts}
+            winner={winner}
           />
         </div>
+        {isAdmin && (raffleIsOver || totalTicketCount <= soldCount) && !winner && (
+          <div className="pt-3">
+            <button
+              className="w-full p-2 rounded bg-green-500 text-white uppercase"
+              onClick={handleSelectWinner}
+              disabled={pickingWinner}
+            >
+              {pickingWinner ? "..." : "Select Winner"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
