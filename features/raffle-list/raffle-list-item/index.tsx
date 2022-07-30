@@ -63,6 +63,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
   }, [id, publicKey, soldTicketCount]);
 
   const handleUpdateCounts = (updatedCount: number) => {
+    debugger;
     setSoldCount(soldCount + (updatedCount - entryCount));
     setEntryCount(updatedCount);
   };

@@ -20,6 +20,7 @@ export const ADD_RAFFLE_ENTRY = gql`
         constraint: entries_walletAddress_raffleId_key
       }
     ) {
+      affected_rows
       returning {
         id
         count
@@ -29,6 +30,7 @@ export const ADD_RAFFLE_ENTRY = gql`
       where: { id: { _eq: $raffleId } }
       _set: { soldTicketCount: $soldTicketCount }
     ) {
+      affected_rows
       returning {
         id
         soldTicketCount

@@ -17,9 +17,11 @@ Sentry.init({
 });
 
 const addRaffleEntry: NextApiHandler = async (req, response) => {
-  const { raffleId, walletAddress, count } = req.body;
+  const { raffleId, walletAddress, oldCount, newCount } = req.body;
 
-  if (!raffleId || !walletAddress || !count)
+  console.log("req.body", req.body);
+
+  if (!raffleId || !walletAddress || oldCount === undefined || !newCount)
     throw new Error("Missing required fields");
 
   const { raffles } = await request({
@@ -29,9 +31,8 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
       "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
     },
   });
-  console.log("``````````", { raffles });
   const { soldTicketCount } = raffles.find(({ id }: Raffle) => id === raffleId);
-  console.log({ soldTicketCount });
+  console.log({ soldTicketCount, newCount });
 
   const client = new GraphQLClient(
     process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
@@ -46,9 +47,11 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
     const data = await client.request(ADD_RAFFLE_ENTRY, {
       raffleId,
       walletAddress,
-      count,
-      soldTicketCount: soldTicketCount + count,
+      count: oldCount + newCount,
+      soldTicketCount: soldTicketCount + newCount,
     });
+
+    console.log("affected rows", data.update_raffles.affected_rows);
 
     if (
       !data?.update_raffles?.returning?.[0]?.soldTicketCount ||
@@ -59,8 +62,8 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
     }
 
     response.json({
-      updatedCount: data.update_raffles.returning?.[0]?.soldTicketCount,
-      updatedTotalCoint: data.update_raffles.returning?.[0]?.totalTicketCount,
+      updatedCount: oldCount + newCount,
+      updatedSoldCount: data.update_raffles.returning?.[0]?.soldTicketCount,
     });
   } catch (error) {
     Sentry.captureException(error);

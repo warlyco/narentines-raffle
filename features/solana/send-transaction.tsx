@@ -150,9 +150,8 @@ export const SendTransaction = ({
         ADD_RAFFLE_ENTRY,
         {
           walletAddress: fromPublicKey.toString(),
-          count: entryCount + Number(numberOfTicketsToBuy),
-          soldTicketCount:
-            raffle.soldTicketCount + Number(numberOfTicketsToBuy),
+          oldCount: entryCount,
+          newCount: Number(numberOfTicketsToBuy),
           raffleId: raffle.id,
         }
       );
@@ -177,7 +176,7 @@ export const SendTransaction = ({
           </a>
         </div>
       );
-
+      debugger;
       handleUpdateCounts(updatedCount);
     } catch (error: any) {
       console.log("error", `Transaction failed! ${error?.message}`);
