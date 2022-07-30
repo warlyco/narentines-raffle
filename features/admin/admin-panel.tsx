@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { ADD_RAFFLE } from "api/raffles/endpoints";
 import { Raffle, RaffleResponse } from "types/types";
+import dayjs from "dayjs";
 
 const AdminPanel = () => {
   const [walletAddressInputValue, setWalletAddressInputValue] =
@@ -24,7 +25,7 @@ const AdminPanel = () => {
       setIsLoading(true);
       const { data } = await axios.post<RaffleResponse>(ADD_RAFFLE, {
         endsAt: endDateTime,
-        startsAt: String(Date.now()),
+        startsAt: dayjs().toISOString(),
         imgSrc: imgUrl,
         mintAddress: nftMintAddress,
         name: nftName,

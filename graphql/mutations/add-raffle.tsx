@@ -2,8 +2,8 @@ import { gql } from "graphql-request";
 
 export const ADD_RAFFLE = gql`
   mutation AddRaffle(
-    $endsAt: timestamptz
     $startsAt: timestamptz
+    $endsAt: timestamptz
     $imgSrc: String
     $mintAddress: String
     $name: String
@@ -12,7 +12,7 @@ export const ADD_RAFFLE = gql`
   ) {
     insert_raffles_one(
       object: {
-        startsAt: "now()"
+        startsAt: $startsAt
         endsAt: $endsAt
         imgSrc: $imgSrc
         mintAddress: $mintAddress
