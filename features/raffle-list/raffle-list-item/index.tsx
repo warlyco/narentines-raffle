@@ -39,6 +39,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
   const [soldCount, setSoldCount] = useState(0);
   const [raffleIsOver, setRaffleIsOver] = useState(false);
   const [numberOfTicketsToBuy, setNumberOfTicketsToBuy] = useState("0");
+  const [winner, setWinner] = useState("");
 
   const {
     name,
@@ -48,7 +49,6 @@ export const RaffleListItem = ({ raffle }: Props) => {
     imgSrc,
     id,
     soldTicketCount,
-    winner,
   } = raffle;
 
   const fetchData = useCallback(async () => {
@@ -117,6 +117,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
           <div>{winner}</div>
         </div>
       );
+      setWinner(winner);
     } catch (error) {
       console.error(error);
     } finally {
@@ -126,11 +127,12 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
   useEffect(() => {
     fetchData();
+    if (raffle.winner) setWinner(raffle.winner);
     setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
     setIsAdmin(
       process.env.NEXT_PUBLIC_ADMIN_WALLETS!.indexOf(publicKey!.toString()) > -1
     );
-  }, [fetchData, endsAt, publicKey]);
+  }, [fetchData, endsAt, publicKey, raffle.winner]);
 
   return (
     <div
