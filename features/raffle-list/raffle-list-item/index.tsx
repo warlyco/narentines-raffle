@@ -13,6 +13,7 @@ import {
   GET_ENTRIES_BY_WALLET,
 } from "api/raffles/endpoints";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 dayjs.extend(relativeTime);
 
@@ -136,7 +137,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
   return (
     <div
-      className="w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg flex flex-col justify-between"
+      className="w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg flex flex-col justify-between relative"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
       <div>
@@ -201,6 +202,16 @@ export const RaffleListItem = ({ raffle }: Props) => {
             />
           </div>
         )}
+        {winner && (
+          <div className="absolute -right-8 bottom-12 -rotate-[21.03deg]">
+            <Image
+              src="/images/loot-icon.png"
+              width="164.84px"
+              height="131.88px"
+              alt="loot icon"
+            />
+          </div>
+        )}
         <div className="pt-3">
           <SendTransaction
             raffle={raffle}
@@ -215,7 +226,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         {isAdmin && (raffleIsOver || totalTicketCount <= soldCount) && !winner && (
           <div className="pt-3">
             <button
-              className="w-full p-2 rounded bg-green-500 text-white uppercase"
+              className="w-full p-2 rounded bg-green-800 text-white uppercase"
               onClick={handleSelectWinner}
               disabled={pickingWinner}
             >
