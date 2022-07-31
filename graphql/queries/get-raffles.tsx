@@ -15,6 +15,8 @@ export const GET_RAFFLES = gql`
       priceInGoods
       imgSrc
       winner
+      winners
+      totalWinnerCount
     }
   }
 `;

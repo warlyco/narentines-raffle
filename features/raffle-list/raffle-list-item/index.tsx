@@ -50,6 +50,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
     imgSrc,
     id,
     soldTicketCount,
+    totalWinnerCount,
   } = raffle;
 
   const fetchData = useCallback(async () => {
@@ -62,11 +63,6 @@ export const RaffleListItem = ({ raffle }: Props) => {
           walletAddress: publicKey?.toString(),
         },
       });
-      console.log("req", {
-        raffleId: id,
-        walletAddress: publicKey?.toString(),
-      });
-      console.log("res", res.data.count);
 
       setEntryCount(res.data.count);
       setSoldCount(soldTicketCount);
@@ -97,7 +93,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         contestants.push(entry.walletAddress);
       }
     }
-    console.log(entries, contestants);
+
     const randomContenstantIndex = Math.floor(
       Math.random() * contestants.length
     );
@@ -184,6 +180,12 @@ export const RaffleListItem = ({ raffle }: Props) => {
             Ticket Price
           </div>
           <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
+        </div>
+        <div>
+          <div className="text-lg text-green-800 font-semibold">
+            Amount of Winners
+          </div>
+          <div className="text-lg font-bold">{totalWinnerCount}</div>
         </div>
       </div>
       <div>

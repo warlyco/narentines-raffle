@@ -21,6 +21,7 @@ const addRaffle: NextApiHandler = async (request, response) => {
     name,
     priceInGoods,
     totalTicketCount,
+    totalWinnerCount,
   } = request.body;
 
   if (
@@ -30,7 +31,8 @@ const addRaffle: NextApiHandler = async (request, response) => {
     !mintAddress ||
     !name ||
     !priceInGoods ||
-    !totalTicketCount
+    !totalTicketCount ||
+    !totalWinnerCount
   )
     throw new Error("Missing required fields");
 
@@ -52,7 +54,10 @@ const addRaffle: NextApiHandler = async (request, response) => {
       name,
       priceInGoods,
       totalTicketCount,
+      totalWinnerCount,
     });
+
+    console.log("```res", res);
 
     response.json({ data: res.addRaffle });
   } catch (error) {

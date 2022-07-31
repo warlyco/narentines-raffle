@@ -9,6 +9,7 @@ export const ADD_RAFFLE = gql`
     $name: String
     $priceInGoods: Int
     $totalTicketCount: Int
+    $totalWinnerCount: Int
   ) {
     insert_raffles_one(
       object: {
@@ -19,6 +20,7 @@ export const ADD_RAFFLE = gql`
         name: $name
         priceInGoods: $priceInGoods
         totalTicketCount: $totalTicketCount
+        totalWinnerCount: $totalWinnerCount
       }
     ) {
       id

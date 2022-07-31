@@ -18,6 +18,8 @@ export type Raffle = {
   priceInGoods: number;
   imgSrc: string;
   winner?: string;
+  winners: JSON;
+  totalWinnerCount: number;
 };
 
 export type RaffleResponse = {

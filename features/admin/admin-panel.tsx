@@ -18,6 +18,7 @@ const AdminPanel = () => {
   const [pricePerTicketInGoods, setPricePerTicketInGoods] =
     useState<string>("3");
   const [totalTicketCount, setTotalTicketCount] = useState<string>("500");
+  const [totalWinnerCount, setTotalWinnerCount] = useState<string>("1");
   const [addedRaffle, setAddedRaffle] = useState<Raffle>({} as Raffle);
 
   const handleAddRaffle = useCallback(async () => {
@@ -31,6 +32,7 @@ const AdminPanel = () => {
         name: nftName,
         priceInGoods: parseInt(pricePerTicketInGoods),
         totalTicketCount: parseInt(totalTicketCount),
+        totalWinnerCount: parseInt(totalWinnerCount),
       });
       setAddedRaffle(data.raffle);
       clearForm();
@@ -47,6 +49,7 @@ const AdminPanel = () => {
     nftName,
     pricePerTicketInGoods,
     totalTicketCount,
+    totalWinnerCount,
   ]);
 
   const clearForm = () => {
@@ -133,6 +136,19 @@ const AdminPanel = () => {
               className="border p-1 w-full"
               value={totalTicketCount}
               onChange={(e) => setTotalTicketCount(e.target.value)}
+            />
+          </label>
+          <label
+            htmlFor="total-tickets"
+            className="flex space-x-4 items-center"
+          >
+            <div className="whitespace-nowrap">Amount of winners</div>
+            <input
+              type="number"
+              disabled={false}
+              className="border p-1 w-full"
+              value={totalWinnerCount}
+              onChange={(e) => setTotalWinnerCount(e.target.value)}
             />
           </label>
           <button
