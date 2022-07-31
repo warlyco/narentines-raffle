@@ -235,7 +235,7 @@ export const SendTransaction = ({
           raffle.totalTicketCount - raffle.soldTicketCount
       }
       className={classNames({
-        "truncate w-full py-3 uppercase rounded-lg px-2 font-bold text-xl":
+        "truncate w-full py-3 uppercase rounded-lg px-2 font-bold text-xl pt-4":
           true,
         "bg-red-600 text-amber-200": !raffleIsOver && !winner,
         "border-2 border-green-800 text-green-800": raffleIsOver || winner,

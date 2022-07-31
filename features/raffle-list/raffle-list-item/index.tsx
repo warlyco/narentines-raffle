@@ -167,7 +167,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
           <div className="text-lg text-green-800 font-semibold">
             Tickets Sold
           </div>
-          <div className="text-lg font-bold">{soldCount}</div>
+          <div className="text-lg font-bold">
+            {soldCount > totalTicketCount ? totalTicketCount : soldCount}
+          </div>
         </div>
         <div>
           <div className="text-lg text-green-800 font-semibold">
@@ -228,7 +230,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         {isAdmin && (raffleIsOver || totalTicketCount <= soldCount) && !winner && (
           <div className="pt-3">
             <button
-              className="w-full p-2 rounded bg-green-800 text-white uppercase"
+              className="w-full p-2 rounded bg-green-800 text-white uppercase text-xl pt-2.5"
               onClick={handleSelectWinner}
               disabled={pickingWinner}
             >
