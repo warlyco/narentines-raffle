@@ -1,6 +1,10 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
-import { Raffle, RaffleWinnerResponse } from "types/types";
+import {
+  Raffle,
+  RaffleWinnerResponse,
+  RaffleWinnersResponse,
+} from "types/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { SendTransaction } from "features/solana/send-transaction";
 import { useCallback, useEffect, useState } from "react";
@@ -9,6 +13,7 @@ import bg from "public/images/single-item-bg.png";
 import axios from "axios";
 import {
   ADD_RAFFLE_WINNER,
+  ADD_RAFFLE_WINNERS,
   GET_ENTRIES_BY_RAFFLE_ID,
   GET_ENTRIES_BY_WALLET,
 } from "api/raffles/endpoints";
@@ -51,6 +56,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
     id,
     soldTicketCount,
     totalWinnerCount,
+    winners,
   } = raffle;
 
   const fetchData = useCallback(async () => {
@@ -79,25 +85,26 @@ export const RaffleListItem = ({ raffle }: Props) => {
     setEntryCount(updatedCount);
   };
 
-  const handleSelectWinner = async () => {
-    setPickingWinner(true);
-    const res = await axios.get(GET_ENTRIES_BY_RAFFLE_ID, {
-      params: {
-        id,
-      },
-    });
-    const { entries } = res.data;
+  const selectContestants = (entries: RaffleEntry[]) => {
     let contestants = [];
     for (const entry of entries) {
       for (let i = 0; i < entry.count; i++) {
         contestants.push(entry.walletAddress);
       }
     }
+    return contestants;
+  };
 
+  const selectWinningWalletAddress = (contestants: string[]) => {
     const randomContenstantIndex = Math.floor(
       Math.random() * contestants.length
     );
-    const winnerWalletAddress = contestants[randomContenstantIndex];
+    return contestants[randomContenstantIndex];
+  };
+
+  const selectSingleWinner = async (contestants: string[]) => {
+    const winnerWalletAddress = selectWinningWalletAddress(contestants);
+
     try {
       const { data } = await axios.post<RaffleWinnerResponse>(
         ADD_RAFFLE_WINNER,
@@ -119,6 +126,59 @@ export const RaffleListItem = ({ raffle }: Props) => {
       console.error(error);
     } finally {
       setPickingWinner(false);
+    }
+  };
+
+  const selectMultipleWinners = async (contestants: string[]) => {
+    const winnerWalletAddresses = [];
+    for (let i = 0; i < totalWinnerCount; i++) {
+      winnerWalletAddresses.push(selectWinningWalletAddress(contestants));
+    }
+    try {
+      const { data } = await axios.post<RaffleWinnersResponse>(
+        ADD_RAFFLE_WINNERS,
+        {
+          id,
+          winnerWalletAddresses,
+        }
+      );
+      const { winners } = data;
+      debugger;
+
+      toast.custom(
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+          <div className="font-bold">Winner selected!</div>
+          <div>{winners}</div>
+        </div>
+      );
+      setWinner("Multiple Winners!");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setPickingWinner(false);
+    }
+  };
+
+  const fetchRaffleEntries = async () => {
+    const res = await axios.get(GET_ENTRIES_BY_RAFFLE_ID, {
+      params: {
+        id,
+      },
+    });
+    const { entries } = res.data;
+    return entries;
+  };
+
+  const handleSelectWinner = async () => {
+    // if (winner || winners.length) return;
+    setPickingWinner(true);
+    const entries = await fetchRaffleEntries();
+    const contestants = selectContestants(entries);
+    debugger;
+    if (totalWinnerCount > 1) {
+      selectMultipleWinners(contestants);
+    } else {
+      selectSingleWinner(contestants);
     }
   };
 
@@ -218,13 +278,16 @@ export const RaffleListItem = ({ raffle }: Props) => {
         )}
         <div className="pt-3">
           <SendTransaction
+            key={soldCount}
             raffle={raffle}
             raffleIsOver={raffleIsOver}
+            raffleIsSoldOut={totalTicketCount <= soldCount}
             entryCount={entryCount}
             numberOfTicketsToBuy={numberOfTicketsToBuy}
             setNumberOfTicketsToBuy={setNumberOfTicketsToBuy}
             handleUpdateCounts={handleUpdateCounts}
             winner={winner}
+            winners={winners}
           />
         </div>
         {isAdmin && (raffleIsOver || totalTicketCount <= soldCount) && !winner && (
@@ -234,7 +297,11 @@ export const RaffleListItem = ({ raffle }: Props) => {
               onClick={handleSelectWinner}
               disabled={pickingWinner}
             >
-              {pickingWinner ? "..." : "Select Winner"}
+              {pickingWinner
+                ? "..."
+                : totalWinnerCount > 1
+                ? "Select Winners"
+                : "Select Winner"}
             </button>
           </div>
         )}

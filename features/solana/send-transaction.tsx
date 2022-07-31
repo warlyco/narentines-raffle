@@ -1,5 +1,7 @@
 import { RPC_ENDPOINT, SOLANA_CLUSTER } from "constants/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import {
   Keypair,
   LAMPORTS_PER_SOL,
@@ -28,6 +30,8 @@ import {
 import axios from "axios";
 import { GET_RAFFLES, ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
 
+const SwalReact = withReactContent(Swal);
+
 type Props = {
   raffle: Raffle;
   entryCount: number;
@@ -35,7 +39,9 @@ type Props = {
   setNumberOfTicketsToBuy: any;
   handleUpdateCounts: any;
   raffleIsOver: boolean;
+  raffleIsSoldOut: boolean;
   winner?: string;
+  winners: string[];
 };
 
 export const SendTransaction = ({
@@ -44,8 +50,10 @@ export const SendTransaction = ({
   numberOfTicketsToBuy,
   setNumberOfTicketsToBuy,
   raffleIsOver,
+  raffleIsSoldOut,
   handleUpdateCounts,
   winner,
+  winners,
 }: Props) => {
   const { connection } = useConnection();
   const [isLoading, setIsLoading] = useState(false);
@@ -209,11 +217,26 @@ export const SendTransaction = ({
     setNumberOfTicketsToBuy,
   ]);
 
+  const displayWinners = () => {
+    SwalReact.fire({
+      title: `${raffle.name} Winners!`,
+      html: (
+        <div>
+          {winners.map((winner, i) => {
+            console.log(typeof winner);
+            return <div key={i}>{winner}</div>;
+          })}
+        </div>
+      ),
+      confirmButtonText: "Close",
+    });
+  };
+
   const getButtonText = () => {
     if (winner) return `Winner: ${winner}`;
     if (raffleIsOver) return "Raffle is over";
     if (isLoading) return "Submitting...";
-    if (raffle.totalTicketCount <= raffle.soldTicketCount) return "Sold Out";
+    if (raffleIsSoldOut) return "Sold Out";
     if (
       Number(numberOfTicketsToBuy) >
       raffle.totalTicketCount - raffle.soldTicketCount
@@ -224,31 +247,44 @@ export const SendTransaction = ({
   };
 
   return (
-    <button
-      onClick={onClick}
-      disabled={
-        raffleIsOver ||
-        !fromPublicKey ||
-        isLoading ||
-        Number(numberOfTicketsToBuy) <= 0 ||
-        Number(numberOfTicketsToBuy) >
-          raffle.totalTicketCount - raffle.soldTicketCount
-      }
-      className={classNames({
-        "truncate w-full py-3 uppercase rounded-lg px-2 font-bold text-xl pt-4":
-          true,
-        "bg-red-600 text-amber-200": !raffleIsOver && !winner,
-        "border-2 border-green-800 text-green-800": raffleIsOver || winner,
-        "opacity-80 cursor-not-allowed":
-          raffleIsOver ||
-          !fromPublicKey ||
-          isLoading ||
-          Number(numberOfTicketsToBuy) <= 0 ||
-          Number(numberOfTicketsToBuy) >
-            raffle.totalTicketCount - raffle.soldTicketCount,
-      })}
-    >
-      {getButtonText()}
-    </button>
+    <>
+      {winners?.length ? (
+        <button
+          className="border-2 border-green-800 text-green-800 truncate w-full py-3 uppercase rounded-lg px-2 font-bold text-xl pt-4"
+          onClick={displayWinners}
+        >
+          See All Winners
+        </button>
+      ) : (
+        <button
+          onClick={onClick}
+          disabled={
+            raffleIsOver ||
+            !fromPublicKey ||
+            isLoading ||
+            Number(numberOfTicketsToBuy) <= 0 ||
+            Number(numberOfTicketsToBuy) >
+              raffle.totalTicketCount - raffle.soldTicketCount
+          }
+          className={classNames({
+            "truncate w-full py-3 uppercase rounded-lg px-2 font-bold text-xl pt-4":
+              true,
+            "bg-red-600 text-amber-200":
+              !raffleIsOver && !winner && !winners?.length,
+            "border-2 border-green-800 text-green-800":
+              raffleIsOver || winner || winners?.length,
+            "opacity-80 cursor-not-allowed":
+              raffleIsOver ||
+              !fromPublicKey ||
+              isLoading ||
+              Number(numberOfTicketsToBuy) <= 0 ||
+              Number(numberOfTicketsToBuy) >
+                raffle.totalTicketCount - raffle.soldTicketCount,
+          })}
+        >
+          {getButtonText()}
+        </button>
+      )}
+    </>
   );
 };
