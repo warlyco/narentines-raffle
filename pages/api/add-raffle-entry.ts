@@ -17,7 +17,7 @@ Sentry.init({
 });
 
 const addRaffleEntry: NextApiHandler = async (req, response) => {
-  const { raffleId, walletAddress, oldCount, newCount, signatureTx } = req.body;
+  const { raffleId, walletAddress, oldCount, newCount, txSignature } = req.body;
 
   console.log("req.body", req.body);
 
@@ -26,7 +26,7 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
     !walletAddress ||
     oldCount === undefined ||
     !newCount ||
-    !signatureTx
+    !txSignature
   )
     throw new Error("Missing required fields");
 
@@ -51,7 +51,7 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
 
   try {
     const data = await client.request(ADD_RAFFLE_ENTRY, {
-      signatureTx,
+      txSignature,
       raffleId,
       walletAddress,
       count: oldCount + newCount,

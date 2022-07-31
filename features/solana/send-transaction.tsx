@@ -151,7 +151,7 @@ export const SendTransaction = ({
       const { data: raffleEntryData } = await axios.post<RaffleEntryResponse>(
         ADD_RAFFLE_ENTRY,
         {
-          signatureTx: signature,
+          txSignature: signature,
           walletAddress: fromPublicKey.toString(),
           oldCount: entryCount,
           newCount: Number(numberOfTicketsToBuy),

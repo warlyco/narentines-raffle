@@ -2,7 +2,7 @@ import { gql } from "graphql-request";
 
 export const ADD_RAFFLE_ENTRY = gql`
   mutation upsert_entries(
-    $signatureTx: String
+    $txSignature: String
     $walletAddress: String
     $raffleId: uuid
     $count: Int
@@ -14,7 +14,7 @@ export const ADD_RAFFLE_ENTRY = gql`
           walletAddress: $walletAddress
           raffleId: $raffleId
           count: $count
-          signatureTx: $signatureTx
+          txSignature: $txSignature
         }
       ]
       on_conflict: {
