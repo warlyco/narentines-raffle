@@ -3,6 +3,7 @@ import { GET_RAFFLES } from "api/raffles/endpoints";
 import { useCallback, useEffect, useState } from "react";
 import { Raffle, RafflesResponse } from "types/types";
 import axios from "axios";
+import LoadingRaffleCard from "./loading-raffle-card";
 
 const RaffleList = () => {
   const [raffles, setRaffles] = useState<Raffle[] | null>(null);
@@ -32,8 +33,10 @@ const RaffleList = () => {
 
   if (isLoading)
     return (
-      <div className="text-4xl font-bold animate-pulse text-center w-full py-8">
-        LOADING
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 -mt-2 mb-8">
+        <LoadingRaffleCard />
+        <LoadingRaffleCard />
+        <LoadingRaffleCard />
       </div>
     );
 

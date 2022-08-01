@@ -24,7 +24,7 @@ const getEntriesById: NextApiHandler = async (request, response) => {
   );
 
   const { id } = request.query;
-  console.log(request.query);
+
   try {
     const { entries } = await client.request(GET_ENTRIES_BY_RAFFLE_ID, {
       id,

@@ -63,7 +63,9 @@ const ClientSide = () => {
           </div>
           <div className="pr-0 md:pr-4"></div>
         </div>
-        <ClientOnly>{publicKey && <RaffleList />}</ClientOnly>
+        <ClientOnly>
+          <RaffleList />
+        </ClientOnly>
         <style>
           {`
         @media only screen and (max-width: 767px) {

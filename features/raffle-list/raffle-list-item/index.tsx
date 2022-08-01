@@ -24,6 +24,7 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import LoadingRaffleCard from "../loading-raffle-card";
 
 const SwalReact = withReactContent(Swal);
 
@@ -53,6 +54,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
   const [raffleIsOver, setRaffleIsOver] = useState(false);
   const [numberOfTicketsToBuy, setNumberOfTicketsToBuy] = useState("0");
   const [winner, setWinner] = useState("");
+  const [isLoading, setLoading] = useState(false);
 
   const {
     name,
@@ -68,7 +70,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
   const fetchData = useCallback(async () => {
     if (!id) return;
-
+    setLoading(true);
     try {
       const res = await axios.get<CountResponse>(GET_ENTRIES_BY_WALLET, {
         params: {
@@ -81,6 +83,8 @@ export const RaffleListItem = ({ raffle }: Props) => {
       setSoldCount(soldTicketCount);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   }, [id, publicKey, soldTicketCount]);
 
@@ -142,7 +146,6 @@ export const RaffleListItem = ({ raffle }: Props) => {
       html: (
         <div>
           {winners.map((winner, i) => {
-            console.log(typeof winner);
             return (
               <div className="truncate" key={i}>
                 {winner}
@@ -194,7 +197,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
     setPickingWinner(true);
     const entries = await fetchRaffleEntries();
     const contestants = selectContestants(entries);
-    debugger;
+
     if (totalWinnerCount > 1) {
       selectMultipleWinners(contestants);
     } else {
@@ -208,7 +211,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         id,
       });
       const { name } = data;
-      debugger;
+
       toast.custom(
         <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
           <div className="font-bold">Raffle Archived!</div>
@@ -224,10 +227,19 @@ export const RaffleListItem = ({ raffle }: Props) => {
     fetchData();
     if (raffle.winner) setWinner(raffle.winner);
     setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
-    setIsAdmin(
-      process.env.NEXT_PUBLIC_ADMIN_WALLETS!.indexOf(publicKey!.toString()) > -1
-    );
+    if (publicKey) {
+      setIsAdmin(
+        process.env.NEXT_PUBLIC_ADMIN_WALLETS!.indexOf(publicKey.toString()) >
+          -1
+      );
+    } else {
+      setIsAdmin(false);
+    }
   }, [fetchData, endsAt, publicKey, raffle.winner]);
+
+  if (isLoading) {
+    return <LoadingRaffleCard />;
+  }
 
   return (
     <div
@@ -289,7 +301,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         </div>
       </div>
       <div>
-        {!raffleIsOver && !(totalTicketCount <= soldCount) && (
+        {!raffleIsOver && !(totalTicketCount <= soldCount) && publicKey && (
           <div>
             <div className="text-lg text-green-800 font-semibold mb-1">
               Number of Tickets
@@ -304,7 +316,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
             />
           </div>
         )}
-        {winner && (
+        {(winner || winners?.length) && (
           <div className="absolute -right-8 bottom-12 -rotate-[21.03deg]">
             <Image
               src="/images/loot-icon.png"

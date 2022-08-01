@@ -57,8 +57,6 @@ const addRaffle: NextApiHandler = async (request, response) => {
       totalWinnerCount,
     });
 
-    console.log("```res", res);
-
     response.json({ data: res.addRaffle });
   } catch (error) {
     console.error(error);

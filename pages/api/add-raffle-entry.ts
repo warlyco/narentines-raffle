@@ -19,8 +19,6 @@ Sentry.init({
 const addRaffleEntry: NextApiHandler = async (req, response) => {
   const { raffleId, walletAddress, oldCount, newCount, txSignature } = req.body;
 
-  console.log("req.body", req.body);
-
   if (
     !raffleId ||
     !walletAddress ||
@@ -38,7 +36,6 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
     },
   });
   const { soldTicketCount } = raffles.find(({ id }: Raffle) => id === raffleId);
-  console.log({ soldTicketCount, newCount });
 
   const client = new GraphQLClient(
     process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
@@ -57,8 +54,6 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
       count: oldCount + newCount,
       soldTicketCount: soldTicketCount + newCount,
     });
-
-    console.log("affected rows", data.update_raffles.affected_rows);
 
     if (
       !data?.update_raffles?.returning?.[0]?.soldTicketCount ||

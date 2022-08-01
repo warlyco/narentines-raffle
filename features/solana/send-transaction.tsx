@@ -123,7 +123,7 @@ export const SendTransaction = ({
       const signed = await signTransaction(transaction);
 
       const { data } = await axios.get<RafflesResponse>(GET_RAFFLES);
-      console.log(data);
+
       const updatedRaffle = data.raffles.find(({ id }) => id === raffle.id);
 
       if (!updatedRaffle) {
@@ -223,7 +223,6 @@ export const SendTransaction = ({
       html: (
         <div>
           {winners.map((winner, i) => {
-            console.log(typeof winner);
             return (
               <div className="truncate" key={i}>
                 {winner}
@@ -239,6 +238,7 @@ export const SendTransaction = ({
   const getButtonText = () => {
     if (winner) return `Winner: ${winner}`;
     if (raffleIsOver) return "Raffle is over";
+    if (!fromPublicKey) return "Connect wallet to buy";
     if (isLoading) return "Submitting...";
     if (raffleIsSoldOut) return "Sold Out";
     if (

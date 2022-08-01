@@ -26,8 +26,6 @@ const archiveRaffle: NextApiHandler = async (req, response) => {
       variables: { id },
     });
 
-    console.log(res, res?.update_raffles_by_pk);
-
     if (!res?.update_raffles_by_pk) {
       throw new Error("Raffle not found");
     }
