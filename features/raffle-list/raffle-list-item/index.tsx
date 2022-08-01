@@ -69,7 +69,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
   } = raffle;
 
   const fetchData = useCallback(async () => {
-    if (!id) return;
+    if (!id || !publicKey) return;
     setLoading(true);
     try {
       const res = await axios.get<CountResponse>(GET_ENTRIES_BY_WALLET, {
@@ -235,7 +235,8 @@ export const RaffleListItem = ({ raffle }: Props) => {
     } else {
       setIsAdmin(false);
     }
-  }, [fetchData, endsAt, publicKey, raffle.winner]);
+    setSoldCount(raffle.soldTicketCount);
+  }, [fetchData, endsAt, publicKey, raffle.winner, raffle.soldTicketCount]);
 
   if (isLoading) {
     return <LoadingRaffleCard />;
@@ -264,15 +265,17 @@ export const RaffleListItem = ({ raffle }: Props) => {
             {dayjs(Date.now()).to(endsAt).replace("in ", "")}
           </div>
         </div>
-        <div>
-          <div className="text-lg text-green-800 font-semibold">
-            Your tickets
+        {publicKey && (
+          <div>
+            <div className="text-lg text-green-800 font-semibold">
+              Your tickets
+            </div>
+            <div className="text-lg font-bold">
+              {" "}
+              {entryCount ? entryCount : 0}
+            </div>
           </div>
-          <div className="text-lg font-bold">
-            {" "}
-            {entryCount ? entryCount : 0}
-          </div>
-        </div>
+        )}
         <div>
           <div className="text-lg text-green-800 font-semibold">
             Tickets Sold
