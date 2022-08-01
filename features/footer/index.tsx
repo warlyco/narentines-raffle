@@ -52,9 +52,8 @@ export const Footer = () => (
         <Image
           height={60}
           width={220}
-          src="/images/carbon-neutral.svg"
-          alt="Medium"
-          className="cursor-pointer"
+          src="/images/carbon-neutral.png"
+          alt="carbon neutral"
         />
       </div>
     </div>
