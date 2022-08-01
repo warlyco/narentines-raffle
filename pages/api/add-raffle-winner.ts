@@ -30,6 +30,7 @@ const addRaffle: NextApiHandler = async (request, response) => {
     const res = await client.request(ADD_RAFFLE_WINNER, {
       id,
       winnerWalletAddress,
+      now: new Date().toISOString(),
     });
 
     console.log(res.update_raffles_by_pk.winner);

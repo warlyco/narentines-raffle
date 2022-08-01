@@ -5,3 +5,4 @@ export const GET_ENTRIES_BY_WALLET = "/api/get-raffle-entries-by-wallet";
 export const GET_ENTRIES_BY_RAFFLE_ID = "/api/get-entries-by-raffle-id";
 export const ADD_RAFFLE_WINNER = "/api/add-raffle-winner";
 export const ADD_RAFFLE_WINNERS = "/api/add-raffle-winners";
+export const ARCHIVE_RAFFLE = "/api/archive-raffle";

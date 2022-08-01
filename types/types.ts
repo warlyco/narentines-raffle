@@ -20,19 +20,26 @@ export type Raffle = {
   winner?: string;
   winners: string[];
   totalWinnerCount: number;
+  isArchived: boolean;
 };
 
 export type RaffleResponse = {
   raffle: Raffle;
 };
 
+export type ArchiveRaffleResponse = {
+  id: string;
+  isArchived: boolean;
+  name: string;
+};
+
 export type RaffleWinnerResponse = {
-  id: Raffle;
+  id: string;
   winner: string;
 };
 
 export type RaffleWinnersResponse = {
-  id: Raffle;
+  id: string;
   winners: string[];
 };
 

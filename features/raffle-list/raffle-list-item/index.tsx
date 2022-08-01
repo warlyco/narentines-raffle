@@ -1,7 +1,9 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import {
+  ArchiveRaffleResponse,
   Raffle,
+  RaffleResponse,
   RaffleWinnerResponse,
   RaffleWinnersResponse,
 } from "types/types";
@@ -14,11 +16,16 @@ import axios from "axios";
 import {
   ADD_RAFFLE_WINNER,
   ADD_RAFFLE_WINNERS,
+  ARCHIVE_RAFFLE,
   GET_ENTRIES_BY_RAFFLE_ID,
   GET_ENTRIES_BY_WALLET,
 } from "api/raffles/endpoints";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const SwalReact = withReactContent(Swal);
 
 dayjs.extend(relativeTime);
 
@@ -129,6 +136,25 @@ export const RaffleListItem = ({ raffle }: Props) => {
     }
   };
 
+  const displayWinners = (winners: string[]) => {
+    SwalReact.fire({
+      title: `${raffle.name} Winners!`,
+      html: (
+        <div>
+          {winners.map((winner, i) => {
+            console.log(typeof winner);
+            return (
+              <div className="truncate" key={i}>
+                {winner}
+              </div>
+            );
+          })}
+        </div>
+      ),
+      confirmButtonText: "Close",
+    });
+  };
+
   const selectMultipleWinners = async (contestants: string[]) => {
     const winnerWalletAddresses = [];
     for (let i = 0; i < totalWinnerCount; i++) {
@@ -143,14 +169,8 @@ export const RaffleListItem = ({ raffle }: Props) => {
         }
       );
       const { winners } = data;
-      debugger;
+      displayWinners(winners);
 
-      toast.custom(
-        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
-          <div className="font-bold">Winner selected!</div>
-          <div>{winners}</div>
-        </div>
-      );
       setWinner("Multiple Winners!");
     } catch (error) {
       console.error(error);
@@ -179,6 +199,24 @@ export const RaffleListItem = ({ raffle }: Props) => {
       selectMultipleWinners(contestants);
     } else {
       selectSingleWinner(contestants);
+    }
+  };
+
+  const handleArchiveRaffle = async () => {
+    try {
+      const { data } = await axios.post<ArchiveRaffleResponse>(ARCHIVE_RAFFLE, {
+        id,
+      });
+      const { name } = data;
+      debugger;
+      toast.custom(
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+          <div className="font-bold">Raffle Archived!</div>
+          <div>{name}</div>
+        </div>
+      );
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -290,18 +328,32 @@ export const RaffleListItem = ({ raffle }: Props) => {
             winners={winners}
           />
         </div>
-        {isAdmin && (raffleIsOver || totalTicketCount <= soldCount) && !winner && (
+        {isAdmin &&
+          (raffleIsOver || totalTicketCount <= soldCount) &&
+          !winner &&
+          !winners?.length && (
+            <div className="pt-3">
+              <button
+                className="w-full p-2 rounded bg-green-800 text-white uppercase text-xl pt-2.5"
+                onClick={handleSelectWinner}
+                disabled={pickingWinner}
+              >
+                {pickingWinner
+                  ? "..."
+                  : totalWinnerCount > 1
+                  ? "Select Winners"
+                  : "Select Winner"}
+              </button>
+            </div>
+          )}
+        {isAdmin && (raffleIsOver || totalTicketCount <= soldCount) && (
           <div className="pt-3">
             <button
               className="w-full p-2 rounded bg-green-800 text-white uppercase text-xl pt-2.5"
-              onClick={handleSelectWinner}
+              onClick={handleArchiveRaffle}
               disabled={pickingWinner}
             >
-              {pickingWinner
-                ? "..."
-                : totalWinnerCount > 1
-                ? "Select Winners"
-                : "Select Winner"}
+              Archive
             </button>
           </div>
         )}

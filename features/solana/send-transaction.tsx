@@ -224,7 +224,11 @@ export const SendTransaction = ({
         <div>
           {winners.map((winner, i) => {
             console.log(typeof winner);
-            return <div key={i}>{winner}</div>;
+            return (
+              <div className="truncate" key={i}>
+                {winner}
+              </div>
+            );
           })}
         </div>
       ),
