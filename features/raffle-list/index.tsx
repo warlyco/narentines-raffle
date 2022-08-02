@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Raffle, RafflesResponse } from "types/types";
 import axios from "axios";
 import LoadingRaffleCard from "./loading-raffle-card";
+import toast from "react-hot-toast";
 
 const RaffleList = () => {
   const [raffles, setRaffles] = useState<Raffle[] | null>(null);
@@ -18,17 +19,19 @@ const RaffleList = () => {
       setRaffles(data.raffles);
     } catch (error) {
       console.error(error);
+      toast.custom(
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+          <div className="font-bold">There was an error loading data.</div>
+          <div>Please refresh and try again.</div>
+        </div>
+      );
     } finally {
       setLoading(false);
     }
   }, [raffles?.length]);
 
   useEffect(() => {
-    try {
-      if (!raffles?.length) fetchData();
-    } catch (error: any) {
-      console.error(error);
-    }
+    if (!raffles?.length) fetchData();
   }, [fetchData, raffles?.length]);
 
   if (isLoading)

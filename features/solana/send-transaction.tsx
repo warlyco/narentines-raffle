@@ -189,7 +189,6 @@ export const SendTransaction = ({
       );
       handleUpdateCounts(updatedCount, updatedSoldCount);
     } catch (error: any) {
-      console.log("error", `Transaction failed! ${error?.message}`);
       if (
         error instanceof TokenAccountNotFoundError ||
         error instanceof TokenInvalidAccountOwnerError
@@ -197,6 +196,13 @@ export const SendTransaction = ({
         toast.custom(
           <div className="flex bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
             Transaction failed. You must have $GOODS to buy a ticket.
+          </div>
+        );
+      } else {
+        toast.custom(
+          <div className="flex bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+            Transaction failed. Make sure you have enough SOL for for the
+            transaction.
           </div>
         );
       }
