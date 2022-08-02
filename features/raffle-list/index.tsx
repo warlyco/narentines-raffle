@@ -19,12 +19,6 @@ const RaffleList = () => {
       setRaffles(data.raffles);
     } catch (error) {
       console.error(error);
-      toast.custom(
-        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
-          <div className="font-bold">There was an error loading data.</div>
-          <div>Please refresh and try again.</div>
-        </div>
-      );
     } finally {
       setLoading(false);
     }
