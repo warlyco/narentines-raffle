@@ -3,6 +3,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import {
+  Connection,
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
@@ -56,6 +57,7 @@ export const SendTransaction = ({
   winners,
 }: Props) => {
   const { connection } = useConnection();
+
   const [isLoading, setIsLoading] = useState(false);
   const {
     publicKey: fromPublicKey,
@@ -64,6 +66,11 @@ export const SendTransaction = ({
   } = useWallet();
 
   const onClick = useCallback(async () => {
+    // const connection = new Connection(
+    //   process.env.NEXT_PUBLIC_RPC_ENDPOINT || "",
+    //   "confirmed"
+    // );
+
     if (!fromPublicKey || !sendTransaction || !signTransaction) {
       console.log("error", "Wallet not connected!");
       return;
@@ -146,6 +153,14 @@ export const SendTransaction = ({
       toast.custom(
         <div className="flex bg-white rounded-xl shadow-lg p-3 border-slate-400">
           <div>Transaction sent...</div>
+          <a
+            href={`https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 underline block ml-2"
+          >
+            View
+          </a>
         </div>
       );
 
@@ -183,7 +198,7 @@ export const SendTransaction = ({
             rel="noopener noreferrer"
             className="text-blue-500 underline block ml-2"
           >
-            Inspect
+            View
           </a>
         </div>
       );
