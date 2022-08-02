@@ -25,6 +25,7 @@ import Image from "next/image";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import LoadingRaffleCard from "../loading-raffle-card";
+import classNames from "classnames";
 
 const SwalReact = withReactContent(Swal);
 
@@ -82,6 +83,12 @@ export const RaffleListItem = ({ raffle }: Props) => {
       setEntryCount(res.data.count);
       setSoldCount(soldTicketCount);
     } catch (error) {
+      toast.custom(
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+          <div className="font-bold">There was an error loading data.</div>
+          <div>Please refresh and try again.</div>
+        </div>
+      );
       console.error(error);
     } finally {
       setLoading(false);
@@ -134,6 +141,12 @@ export const RaffleListItem = ({ raffle }: Props) => {
       );
       setWinner(winner);
     } catch (error) {
+      toast.custom(
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+          <div className="font-bold">There was an error selecting winner.</div>
+          <div>Please refresh and try again.</div>
+        </div>
+      );
       console.error(error);
     } finally {
       setPickingWinner(false);
@@ -159,9 +172,13 @@ export const RaffleListItem = ({ raffle }: Props) => {
   };
 
   const selectMultipleWinners = async (contestants: string[]) => {
-    const winnerWalletAddresses = [];
+    const winnerWalletAddresses: string[] = [];
     for (let i = 0; i < totalWinnerCount; i++) {
-      winnerWalletAddresses.push(selectWinningWalletAddress(contestants));
+      // winnerWalletAddresses.push(selectWinningWalletAddress(contestants));
+      const newWinner = selectWinningWalletAddress(contestants);
+      if (!winnerWalletAddresses.includes(newWinner)) {
+        winnerWalletAddresses.push(newWinner);
+      }
     }
     try {
       const { data } = await axios.post<RaffleWinnersResponse>(
@@ -176,6 +193,12 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
       setWinner("Multiple Winners!");
     } catch (error) {
+      toast.custom(
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+          <div className="font-bold">There was an error selecting winners.</div>
+          <div>Please refresh and try again.</div>
+        </div>
+      );
       console.error(error);
     } finally {
       setPickingWinner(false);
@@ -219,7 +242,12 @@ export const RaffleListItem = ({ raffle }: Props) => {
         </div>
       );
     } catch (error) {
-      console.error(error);
+      toast.custom(
+        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+          <div className="font-bold">There was a problem archiving.</div>
+          <div>Please refresh and try again.</div>
+        </div>
+      );
     }
   };
 
@@ -254,7 +282,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
           width={250}
           src={imgSrc}
           alt="raffle item"
-          className="w-full object-cover lg:max-h-[280px] mb-2"
+          className={classNames({
+            "w-full object-cover lg:max-h-[280px] mb-2 bg-gray-400": true,
+          })}
         />
         <div className="text-2xl font-bold py-1">{name}</div>
         <div>
