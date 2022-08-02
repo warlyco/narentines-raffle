@@ -48,7 +48,7 @@ export const Footer = () => (
           </a>
         </div>
       </div>
-      <div className="flex flex-col lgitems-end w-full lg:w-auto">
+      <div className="flex flex-col justify-center items-center h-full w-full lg:w-auto">
         <Image
           height={60}
           width={220}
