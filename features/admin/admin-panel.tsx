@@ -33,9 +33,15 @@ const AdminPanel = () => {
         mintAddress: nftMintAddress,
         endsAt: endDateTime,
         startsAt: dayjs().toISOString(),
-        projectWebsiteUrl,
-        projectTwitterUrl,
-        projectDiscordUrl,
+        projectWebsiteUrl: projectWebsiteUrl
+          .replace("https://", "")
+          .replace("http://", ""),
+        projectTwitterUrl: projectTwitterUrl
+          .replace("https://", "")
+          .replace("http://", ""),
+        projectDiscordUrl: projectDiscordUrl
+          .replace("https://", "")
+          .replace("http://", ""),
         priceInGoods: parseInt(pricePerTicketInGoods),
         totalTicketCount: parseInt(totalTicketCount),
         totalWinnerCount: parseInt(totalWinnerCount),
