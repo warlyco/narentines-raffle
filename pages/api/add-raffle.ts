@@ -1,7 +1,7 @@
 import type { NextApiHandler } from "next";
 import { ADD_RAFFLE } from "graphql/mutations/add-raffle";
 import * as Sentry from "@sentry/node";
-import { GraphQLClient } from "graphql-request";
+import request from "graphql-request";
 
 Sentry.init({
   dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
@@ -12,7 +12,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-const addRaffle: NextApiHandler = async (request, response) => {
+const addRaffle: NextApiHandler = async (req, response) => {
   const {
     endsAt,
     startsAt,
@@ -22,13 +22,15 @@ const addRaffle: NextApiHandler = async (request, response) => {
     priceInGoods,
     totalTicketCount,
     totalWinnerCount,
-  } = request.body;
+    projectWebsiteUrl,
+    projectTwitterUrl,
+    projectDiscordUrl,
+  } = req.body;
 
   if (
     !endsAt ||
     !startsAt ||
     !imgSrc ||
-    !mintAddress ||
     !name ||
     !priceInGoods ||
     !totalTicketCount ||
@@ -36,25 +38,26 @@ const addRaffle: NextApiHandler = async (request, response) => {
   )
     throw new Error("Missing required fields");
 
-  const client = new GraphQLClient(
-    process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
-    {
-      headers: {
+  try {
+    const res = await request({
+      url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
+      document: ADD_RAFFLE,
+      variables: {
+        endsAt,
+        startsAt,
+        imgSrc,
+        mintAddress,
+        projectWebsiteUrl,
+        projectTwitterUrl,
+        projectDiscordUrl,
+        name,
+        priceInGoods,
+        totalTicketCount,
+        totalWinnerCount,
+      },
+      requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
       },
-    }
-  );
-
-  try {
-    const res = await client.request(ADD_RAFFLE, {
-      endsAt,
-      startsAt,
-      imgSrc,
-      mintAddress,
-      name,
-      priceInGoods,
-      totalTicketCount,
-      totalWinnerCount,
     });
 
     response.json({ data: res.addRaffle });

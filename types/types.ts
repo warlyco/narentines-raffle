@@ -21,6 +21,9 @@ export type Raffle = {
   winners: string[];
   totalWinnerCount: number;
   isArchived: boolean;
+  projectWebsiteUrl: string;
+  projectTwitterUrl: string;
+  projectDiscordUrl: string;
 };
 
 export type RaffleResponse = {
