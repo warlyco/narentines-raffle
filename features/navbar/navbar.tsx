@@ -23,32 +23,32 @@ export const Navbar = ({ toggleSidebar }: Props) => {
 
         <div className="hidden lg:flex items-center space-x-2">
           <a
-            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold"
+            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-lg"
             href="//www.narentines.com"
           >
             Home
           </a>
           <a
-            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold"
+            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-lg"
             href="//explore.narentines.com"
           >
             Explore the Valley
           </a>
           <a
-            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold"
+            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-lg"
             href="//stake.narentines.com"
           >
             Staking
           </a>
           <a
-            className="bg-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold opacity-70"
+            className="bg-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-lg opacity-70"
             href="#"
             aria-disabled="true"
           >
             Raffle
           </a>
           <a
-            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black"
+            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black shadow-lg"
             href="//twitter.com/narentines"
           >
             <Image
@@ -60,7 +60,7 @@ export const Navbar = ({ toggleSidebar }: Props) => {
             />
           </a>
           <a
-            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black"
+            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black shadow-lg"
             href="//discord.gg/9Dfh3PJG8S"
           >
             <Image
@@ -72,7 +72,7 @@ export const Navbar = ({ toggleSidebar }: Props) => {
             />
           </a>
           <a
-            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black"
+            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black shadow-lg"
             href="//narentines.medium.com/"
           >
             <Image

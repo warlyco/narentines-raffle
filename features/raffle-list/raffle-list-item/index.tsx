@@ -275,7 +275,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
   return (
     <div
-      className="w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg flex flex-col justify-between relative"
+      className="w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg flex flex-col justify-between relative shadow-xl"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
       <div>
@@ -291,15 +291,10 @@ export const RaffleListItem = ({ raffle }: Props) => {
         />
         <div className="text-2xl font-bold py-1">{name}</div>
         <div className="flex w-full py-1 space-x-3">
-          {projectWebsiteUrl?.length && (
+          {!!projectWebsiteUrl?.length && (
             <a
               className="block"
-              href={
-                projectWebsiteUrl.startsWith("http://") ||
-                projectWebsiteUrl.startsWith("https://")
-                  ? projectWebsiteUrl
-                  : `//${projectWebsiteUrl}`
-              }
+              href={`//${projectWebsiteUrl}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -312,9 +307,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
               />
             </a>
           )}
-          {projectTwitterUrl?.length && (
+          {!!projectTwitterUrl?.length && (
             <a
-              href={projectTwitterUrl}
+              href={`//${projectTwitterUrl}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -327,9 +322,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
               />
             </a>
           )}
-          {projectDiscordUrl?.length && (
+          {!!projectDiscordUrl?.length && (
             <a
-              href={projectDiscordUrl}
+              href={`//${projectDiscordUrl}`}
               target="_blank"
               rel="noopener noreferrer"
             >
