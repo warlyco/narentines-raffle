@@ -18,6 +18,9 @@ export const GET_RAFFLES = gql`
       winners
       totalWinnerCount
       isArchived
+      projectWebsiteUrl
+      projectTwitterUrl
+      projectDiscordUrl
     }
   }
 `;

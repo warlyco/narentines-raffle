@@ -67,6 +67,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
     soldTicketCount,
     totalWinnerCount,
     winners,
+    projectWebsiteUrl,
+    projectTwitterUrl,
+    projectDiscordUrl,
   } = raffle;
 
   const fetchData = useCallback(async () => {
@@ -287,6 +290,59 @@ export const RaffleListItem = ({ raffle }: Props) => {
           })}
         />
         <div className="text-2xl font-bold py-1">{name}</div>
+        <div className="flex w-full py-1 space-x-3">
+          {projectWebsiteUrl?.length && (
+            <a
+              className="block"
+              href={
+                projectWebsiteUrl.startsWith("http://") ||
+                projectWebsiteUrl.startsWith("https://")
+                  ? projectWebsiteUrl
+                  : `//${projectWebsiteUrl}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                height={18}
+                width={20}
+                src="/images/globe.svg"
+                alt="Twitter"
+                className="cursor-pointer"
+              />
+            </a>
+          )}
+          {projectTwitterUrl?.length && (
+            <a
+              href={projectTwitterUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                height={18}
+                width={20}
+                src="/images/twitter-black.svg"
+                alt="Twitter"
+                className="cursor-pointer"
+              />
+            </a>
+          )}
+          {projectDiscordUrl?.length && (
+            <a
+              href={projectDiscordUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                height={18}
+                width={20}
+                src="/images/discord-black.svg"
+                alt="Twitter"
+                className="cursor-pointer"
+              />
+            </a>
+          )}
+        </div>
         <div>
           <div className="text-lg text-green-800 font-semibold">
             {dayjs().isAfter(dayjs(endsAt)) ? "Ended" : "Ends in"}

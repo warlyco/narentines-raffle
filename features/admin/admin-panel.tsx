@@ -10,7 +10,7 @@ const AdminPanel = () => {
   const [walletAddressInputValue, setWalletAddressInputValue] =
     useState<string>("");
   const [nftMintAddress, setNftMintAddress] = useState<string>("");
-  const [nftName, setNftName] = useState<string>("");
+  const [name, setName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [endDateTime, setEndDateTime] = useState<string>("");
   const [startDateTime, setStartDateTime] = useState<string>("");
@@ -19,17 +19,23 @@ const AdminPanel = () => {
     useState<string>("3");
   const [totalTicketCount, setTotalTicketCount] = useState<string>("500");
   const [totalWinnerCount, setTotalWinnerCount] = useState<string>("1");
+  const [projectWebsiteUrl, setProjectWebsiteUrl] = useState<string>("");
+  const [projectTwitterUrl, setProjectTwitterUrl] = useState<string>("");
+  const [projectDiscordUrl, setProjectDiscordUrl] = useState<string>("");
   const [addedRaffle, setAddedRaffle] = useState<Raffle>({} as Raffle);
 
   const handleAddRaffle = useCallback(async () => {
     try {
       setIsLoading(true);
       const { data } = await axios.post<RaffleResponse>(ADD_RAFFLE, {
-        endsAt: endDateTime,
-        startsAt: dayjs().toISOString(),
+        name,
         imgSrc: imgUrl,
         mintAddress: nftMintAddress,
-        name: nftName,
+        endsAt: endDateTime,
+        startsAt: dayjs().toISOString(),
+        projectWebsiteUrl,
+        projectTwitterUrl,
+        projectDiscordUrl,
         priceInGoods: parseInt(pricePerTicketInGoods),
         totalTicketCount: parseInt(totalTicketCount),
         totalWinnerCount: parseInt(totalWinnerCount),
@@ -45,17 +51,21 @@ const AdminPanel = () => {
   }, [
     endDateTime,
     imgUrl,
+    name,
     nftMintAddress,
-    nftName,
     pricePerTicketInGoods,
+    projectDiscordUrl,
+    projectTwitterUrl,
+    projectWebsiteUrl,
     totalTicketCount,
     totalWinnerCount,
   ]);
 
   const clearForm = () => {
+    setProjectWebsiteUrl("");
     setWalletAddressInputValue("");
     setNftMintAddress("");
-    setNftName("");
+    setName("");
     setEndDateTime("");
     setStartDateTime("");
     setImgUrl("");
@@ -82,8 +92,8 @@ const AdminPanel = () => {
             <input
               disabled={false}
               className="border p-1 w-full"
-              value={nftName}
-              onChange={(e) => setNftName(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </label>
           <label htmlFor="nft-image" className="flex space-x-4 items-center">
@@ -139,7 +149,7 @@ const AdminPanel = () => {
             />
           </label>
           <label
-            htmlFor="total-tickets"
+            htmlFor="total-winners"
             className="flex space-x-4 items-center"
           >
             <div className="whitespace-nowrap">Amount of winners</div>
@@ -149,6 +159,45 @@ const AdminPanel = () => {
               className="border p-1 w-full"
               value={totalWinnerCount}
               onChange={(e) => setTotalWinnerCount(e.target.value)}
+            />
+          </label>
+          <label
+            htmlFor="project-website-url"
+            className="flex space-x-4 items-center"
+          >
+            <div className="whitespace-nowrap">Porject website url</div>
+            <input
+              type="text"
+              disabled={false}
+              className="border p-1 w-full"
+              value={projectWebsiteUrl}
+              onChange={(e) => setProjectWebsiteUrl(e.target.value)}
+            />
+          </label>
+          <label
+            htmlFor="project-twitter-url"
+            className="flex space-x-4 items-center"
+          >
+            <div className="whitespace-nowrap">Porject twitter url</div>
+            <input
+              type="text"
+              disabled={false}
+              className="border p-1 w-full"
+              value={projectTwitterUrl}
+              onChange={(e) => setProjectTwitterUrl(e.target.value)}
+            />
+          </label>
+          <label
+            htmlFor="project-discord-url"
+            className="flex space-x-4 items-center"
+          >
+            <div className="whitespace-nowrap">Porject discord url</div>
+            <input
+              type="text"
+              disabled={false}
+              className="border p-1 w-full"
+              value={projectDiscordUrl}
+              onChange={(e) => setProjectDiscordUrl(e.target.value)}
             />
           </label>
           <button

@@ -10,6 +10,9 @@ export const ADD_RAFFLE = gql`
     $priceInGoods: Int
     $totalTicketCount: Int
     $totalWinnerCount: Int
+    $projectWebsiteUrl: String
+    $projectTwitterUrl: String
+    $projectDiscordUrl: String
   ) {
     insert_raffles_one(
       object: {
@@ -21,6 +24,9 @@ export const ADD_RAFFLE = gql`
         priceInGoods: $priceInGoods
         totalTicketCount: $totalTicketCount
         totalWinnerCount: $totalWinnerCount
+        projectWebsiteUrl: $projectWebsiteUrl
+        projectTwitterUrl: $projectTwitterUrl
+        projectDiscordUrl: $projectDiscordUrl
       }
     ) {
       id
