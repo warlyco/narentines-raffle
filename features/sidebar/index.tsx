@@ -23,7 +23,7 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
         <div
           onClick={handleCloseSidebar}
           className={classNames({
-            "absolute top-0 right-0 bottom-0 left-0 transition-opacity duration-500 ease-in-out opacity-40 bg-slate-800":
+            "absolute top-0 right-0 bottom-0 left-0 transition-opacity duration-500 ease-in-out opacity-40 bg-slate-800 py-6":
               isOpenSidebar,
             "opacity-0 pointer-events-none": !isOpenSidebar,
           })}
@@ -31,7 +31,7 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
       </ScrollLock>
       <div
         className={classNames({
-          "fixed top-0 right-0 bottom-0 w-full sm:w-[380px] h-screen transition-position duration-500 ease-in-out":
+          "fixed top-0 right-0 bottom-0 w-full sm:w-[380px] h-screen transition-position duration-500 ease-in-out py-4":
             true,
           "-mr-[1000px]": !isOpenSidebar,
         })}
@@ -98,7 +98,7 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                 </a>
               </div> */}
             </div>
-            <div className="flex bottom-0 space-x-2 pt-8">
+            <div className="flex bottom-0 space-x-2 pt-8 pb-8">
               <a
                 className="flex justify-center items-center h-12 w-12 bg-amber-200 hover:bg-amber-400 rounded-lg text-black"
                 href="//twitter.com/narentines"
