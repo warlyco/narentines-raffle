@@ -26,7 +26,6 @@ const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
         <title>Narentines - Raffle</title>
       </Head>
       <div className="h-full w-full">
-        {/* top section */}
         <div className="flex flex-wrap w-full justify-center md:justify-between items-center">
           <div
             className={classNames({
