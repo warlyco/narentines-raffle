@@ -219,15 +219,13 @@ export const RaffleListItem = ({ raffle }: Props) => {
     }
   };
 
-  const [handleFetchEntries, { loading, data: entryRes }] = useLazyQuery(
-    GET_ENTRIES_BY_WALLET,
-    {
+  const [handleFetchEntries, { loading, data: entryRes, refetch }] =
+    useLazyQuery(GET_ENTRIES_BY_WALLET, {
       variables: {
         walletAddress: publicKey?.toString(),
         raffleId: raffle.id,
       },
-    }
-  );
+    });
 
   const fetchEntries = useCallback(async () => {
     await handleFetchEntries();
@@ -345,7 +343,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
               Your tickets
             </div>
             <div className="text-lg font-bold">
-              {loading ? (
+              {loading || entryCount === undefined ? (
                 <Image
                   className="animate-spin"
                   src="/images/loader.svg"
@@ -425,6 +423,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
             setNumberOfTicketsToBuy={setNumberOfTicketsToBuy}
             winner={winner}
             winners={winners}
+            refetch={refetch}
           />
         </div>
         {isAdmin &&

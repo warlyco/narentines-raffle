@@ -30,6 +30,7 @@ import {
 } from "@solana/spl-token";
 import axios from "axios";
 import { GET_RAFFLES, ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
+import { ApolloQueryResult } from "@apollo/client";
 
 const SwalReact = withReactContent(Swal);
 
@@ -42,6 +43,7 @@ type Props = {
   raffleIsSoldOut: boolean;
   winner?: string;
   winners: string[];
+  refetch: () => Promise<ApolloQueryResult<any>>;
 };
 
 export const SendTransaction = ({
@@ -53,6 +55,7 @@ export const SendTransaction = ({
   raffleIsSoldOut,
   winner,
   winners,
+  refetch,
 }: Props) => {
   const { connection } = useConnection();
 
@@ -68,6 +71,8 @@ export const SendTransaction = ({
     //   process.env.NEXT_PUBLIC_RPC_ENDPOINT || "",
     //   "confirmed"
     // );
+
+    setIsLoading(true);
 
     if (!fromPublicKey || !sendTransaction || !signTransaction) {
       console.log("error", "Wallet not connected!");
@@ -221,6 +226,8 @@ export const SendTransaction = ({
       return;
     } finally {
       setNumberOfTicketsToBuy(0);
+      refetch();
+      setIsLoading(false);
     }
   }, [
     fromPublicKey,
@@ -232,6 +239,7 @@ export const SendTransaction = ({
     connection,
     entryCount,
     setNumberOfTicketsToBuy,
+    refetch,
   ]);
 
   const displayWinners = () => {
