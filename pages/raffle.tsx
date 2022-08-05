@@ -52,6 +52,14 @@ const ClientSide = () => {
             <div>
               <WalletMultiButton />
             </div>
+            <div className="text-sm italic">
+              Have an issue or bug to report? <br /> Open a support ticket on
+              our &nbsp;
+              <a href="//discord.gg/9Dfh3PJG8S" className="underline">
+                discord
+              </a>
+              &nbsp; and we will get it sorted!
+            </div>
             {/* <div className="flex py-8 justify-between w-full">
             <button className="w-[47%] bg-amber-200 rounded-lg py-2 text-lg uppercase font-medium">
               Your Loot
