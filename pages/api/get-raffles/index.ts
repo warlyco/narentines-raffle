@@ -18,7 +18,8 @@ const getRaffles: NextApiHandler = async (_, response) => {
       url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
       document: GET_RAFFLES,
       requestHeaders: {
-        "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+        // "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+        "X-Hasura-Role": "public",
       },
     });
 

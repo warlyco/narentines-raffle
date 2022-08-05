@@ -1,4 +1,4 @@
-import { gql } from "graphql-request";
+import { gql } from "@apollo/client";
 
 const GET_ENTRIES_BY_WALLET = gql`
   query Entries($walletAddress: String, $raffleId: uuid) {

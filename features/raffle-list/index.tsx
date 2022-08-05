@@ -1,41 +1,20 @@
 import RaffleListItem from "features/raffle-list/raffle-list-item";
-import { GET_RAFFLES } from "api/raffles/endpoints";
-import { useCallback, useEffect, useState } from "react";
-import { Raffle, RafflesResponse } from "types/types";
-import axios from "axios";
+import { Raffle } from "types/types";
 import LoadingRaffleCard from "./loading-raffle-card";
-import toast from "react-hot-toast";
+import { useQuery } from "@apollo/client";
+import { GET_RAFFLES } from "graphql/queries/get-raffles";
 
-const RaffleList = () => {
-  const [raffles, setRaffles] = useState<Raffle[] | null>(null);
-  const [isLoading, setLoading] = useState(false);
+const RaffleList = ({ raffles }: { raffles: Raffle[] }) => {
+  const { data, loading, error } = useQuery(GET_RAFFLES);
 
-  const fetchData = useCallback(async () => {
-    if (raffles?.length) return;
-    try {
-      setLoading(true);
-      const { data } = await axios.get<RafflesResponse>(GET_RAFFLES);
-
-      setRaffles(data.raffles);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [raffles?.length]);
-
-  useEffect(() => {
-    if (!raffles?.length) fetchData();
-  }, [fetchData, raffles?.length]);
-
-  if (isLoading)
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 -mt-2 mb-8">
-        <LoadingRaffleCard />
-        <LoadingRaffleCard />
-        <LoadingRaffleCard />
-      </div>
-    );
+  // if (loading)
+  //   return (
+  //     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 -mt-2 mb-8">
+  //       <LoadingRaffleCard />
+  //       <LoadingRaffleCard />
+  //       <LoadingRaffleCard />
+  //     </div>
+  //   );
 
   // if (error) {
   //   return (

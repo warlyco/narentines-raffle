@@ -1,4 +1,5 @@
-import { gql } from "graphql-request";
+// import { gql } from "graphql-request";
+import { gql } from "@apollo/client";
 
 export const GET_RAFFLES = gql`
   query Raffles {

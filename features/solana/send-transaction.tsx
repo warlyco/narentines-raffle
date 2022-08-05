@@ -38,7 +38,6 @@ type Props = {
   entryCount: number;
   numberOfTicketsToBuy: string;
   setNumberOfTicketsToBuy: any;
-  handleUpdateCounts: any;
   raffleIsOver: boolean;
   raffleIsSoldOut: boolean;
   winner?: string;
@@ -52,7 +51,6 @@ export const SendTransaction = ({
   setNumberOfTicketsToBuy,
   raffleIsOver,
   raffleIsSoldOut,
-  handleUpdateCounts,
   winner,
   winners,
 }: Props) => {
@@ -202,7 +200,6 @@ export const SendTransaction = ({
           </a>
         </div>
       );
-      handleUpdateCounts(updatedCount, updatedSoldCount);
     } catch (error: any) {
       if (
         error instanceof TokenAccountNotFoundError ||
@@ -234,7 +231,6 @@ export const SendTransaction = ({
     raffle.id,
     connection,
     entryCount,
-    handleUpdateCounts,
     setNumberOfTicketsToBuy,
   ]);
 
