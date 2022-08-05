@@ -6,8 +6,11 @@ import { useEffect, useState } from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import classNames from "classnames";
 import Head from "next/head";
+import { Raffle } from "types/types";
+import client from "graphql/apollo-client";
+import { GET_RAFFLES } from "graphql/queries/get-raffles";
 
-const ClientSide = () => {
+const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
   const [publicKey, setPublicKey] = useState<string | null>(null);
 
   const wallet = useWallet();
@@ -71,9 +74,7 @@ const ClientSide = () => {
           </div>
           <div className="pr-0 md:pr-4"></div>
         </div>
-        <ClientOnly>
-          <RaffleList />
-        </ClientOnly>
+        <RaffleList raffles={raffles} />
         <style>
           {`
         @media only screen and (max-width: 767px) {
@@ -90,4 +91,16 @@ const ClientSide = () => {
   );
 };
 
-export default ClientSide;
+export async function getServerSideProps() {
+  const { data } = await client.query({
+    query: GET_RAFFLES,
+  });
+
+  return {
+    props: {
+      raffles: data.raffles,
+    },
+  };
+}
+
+export default RafflePage;
