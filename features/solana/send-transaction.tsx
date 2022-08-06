@@ -30,7 +30,6 @@ import {
 } from "@solana/spl-token";
 import axios from "axios";
 import { GET_RAFFLES, ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
-import { ApolloQueryResult } from "@apollo/client";
 
 const SwalReact = withReactContent(Swal);
 
@@ -38,24 +37,22 @@ type Props = {
   raffle: Raffle;
   entryCount: number;
   numberOfTicketsToBuy: string;
-  setNumberOfTicketsToBuy: any;
   raffleIsOver: boolean;
   raffleIsSoldOut: boolean;
   winner?: string;
   winners: string[];
-  refetch: () => Promise<ApolloQueryResult<any>>;
+  handleUpdateCounts: () => void;
 };
 
 export const SendTransaction = ({
   raffle,
   entryCount,
   numberOfTicketsToBuy,
-  setNumberOfTicketsToBuy,
   raffleIsOver,
   raffleIsSoldOut,
   winner,
   winners,
-  refetch,
+  handleUpdateCounts,
 }: Props) => {
   const { connection } = useConnection();
 
@@ -225,8 +222,7 @@ export const SendTransaction = ({
       }
       return;
     } finally {
-      setNumberOfTicketsToBuy(0);
-      refetch();
+      handleUpdateCounts();
       setIsLoading(false);
     }
   }, [
@@ -238,8 +234,7 @@ export const SendTransaction = ({
     raffle.id,
     connection,
     entryCount,
-    setNumberOfTicketsToBuy,
-    refetch,
+    handleUpdateCounts,
   ]);
 
   const displayWinners = () => {
