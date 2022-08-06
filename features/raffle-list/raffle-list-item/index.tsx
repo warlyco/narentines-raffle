@@ -101,7 +101,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
       const { winner } = data;
 
       toast.custom(
-        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+        <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
           <div className="font-bold">Winner selected!</div>
           <div>{winner}</div>
         </div>
@@ -109,7 +109,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
       setWinner(winner);
     } catch (error) {
       toast.custom(
-        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+        <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
           <div className="font-bold">There was an error selecting winner.</div>
           <div>Please refresh and try again.</div>
         </div>
@@ -161,7 +161,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
       setWinner("Multiple Winners!");
     } catch (error) {
       toast.custom(
-        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+        <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
           <div className="font-bold">There was an error selecting winners.</div>
           <div>Please refresh and try again.</div>
         </div>
@@ -203,14 +203,14 @@ export const RaffleListItem = ({ raffle }: Props) => {
       const { name } = data;
 
       toast.custom(
-        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+        <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
           <div className="font-bold">Raffle Archived!</div>
           <div>{name}</div>
         </div>
       );
     } catch (error) {
       toast.custom(
-        <div className="flex flex-col bg-white rounded-xl shadow-lg p-3 border-slate-400 text-center">
+        <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
           <div className="font-bold">There was a problem archiving.</div>
           <div>Please refresh and try again.</div>
         </div>
