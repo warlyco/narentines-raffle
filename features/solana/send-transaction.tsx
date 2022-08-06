@@ -10,7 +10,12 @@ import {
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import classNames from "classnames";
-import { Raffle, RaffleEntryResponse, RafflesResponse } from "types/types";
+import {
+  Raffle,
+  RaffleEntryResponse,
+  RafflesResponse,
+  SplTokens,
+} from "types/types";
 import {
   TOKEN_PROGRAM_ID,
   createTransferInstruction,
@@ -20,7 +25,10 @@ import {
 } from "@solana/spl-token";
 import axios from "axios";
 import { GET_RAFFLES, ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
-import { createSolanaTransaction } from "./helpers";
+import {
+  createSolanaTransaction,
+  getTokenMintAddress,
+} from "features/solana/helpers";
 
 const SwalReact = withReactContent(Swal);
 
@@ -188,103 +196,106 @@ export const SendTransaction = ({
     signTransaction,
   ]);
 
-  const handleGoodsPayment = useCallback(async () => {
-    setIsLoading(true);
+  const handleSplPayment = useCallback(
+    async ({ token }: { token: SplTokens }) => {
+      setIsLoading(true);
 
-    if (!fromPublicKey || !sendTransaction || !signTransaction) {
-      console.log("error", "Wallet not connected!");
-      return;
-    }
-
-    if (
-      !process.env.NEXT_PUBLIC_COLLECTION_WALLET ||
-      !process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS
-    ) {
-      console.log("error", "Missing environment variables!");
-      return;
-    }
-
-    try {
-      const toAddress = process.env.NEXT_PUBLIC_COLLECTION_WALLET;
-      const toPublicKey = new PublicKey(toAddress);
-      const amount = Number(numberOfTicketsToBuy) * raffle.priceInGoods;
-
-      const tokenPublicKey = new PublicKey(
-        process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS
-      );
-
-      const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
-        connection,
-        // @ts-ignore
-        fromPublicKey,
-        tokenPublicKey,
-        fromPublicKey,
-        signTransaction
-      );
-
-      const toTokenAccount = await getOrCreateAssociatedTokenAccount(
-        connection,
-        // @ts-ignore
-        fromPublicKey,
-        tokenPublicKey,
-        toPublicKey,
-        signTransaction
-      );
-
-      const transaction = new Transaction().add(
-        createTransferInstruction(
-          fromTokenAccount.address,
-          toTokenAccount.address,
-          fromPublicKey,
-          amount * 100, // tokens have 6 decimals of precision so your amount needs to have the same
-          [],
-          TOKEN_PROGRAM_ID
-        )
-      );
-
-      const latestBlockHash = await connection.getLatestBlockhash();
-      transaction.recentBlockhash = latestBlockHash.blockhash;
-
-      transaction.feePayer = fromPublicKey;
-      handleSendTransaction({ transaction, latestBlockHash });
-    } catch (error: any) {
-      if (
-        error instanceof TokenAccountNotFoundError ||
-        error instanceof TokenInvalidAccountOwnerError
-      ) {
-        toast.custom(
-          <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-            Transaction failed. You must have $GOODS to buy a ticket.
-          </div>
-        );
-      } else {
-        toast.custom(
-          <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-            Transaction failed. Make sure you have enough SOL for for the
-            transaction.
-          </div>
-        );
-        console.error(error);
+      if (!fromPublicKey || !sendTransaction || !signTransaction) {
+        console.log("error", "Wallet not connected!");
+        return;
       }
-      return;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    fromPublicKey,
-    sendTransaction,
-    signTransaction,
-    numberOfTicketsToBuy,
-    raffle.priceInGoods,
-    connection,
-    handleSendTransaction,
-  ]);
+
+      if (
+        !process.env.NEXT_PUBLIC_COLLECTION_WALLET ||
+        !process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS
+      ) {
+        console.log("error", "Missing environment variables!");
+        return;
+      }
+
+      try {
+        const toAddress = process.env.NEXT_PUBLIC_COLLECTION_WALLET;
+        const toPublicKey = new PublicKey(toAddress);
+        const amount = Number(numberOfTicketsToBuy) * raffle.priceInGoods;
+
+        const mintAddress = getTokenMintAddress(token);
+
+        const tokenPublicKey = new PublicKey(mintAddress);
+
+        const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
+          connection,
+          // @ts-ignore
+          fromPublicKey,
+          tokenPublicKey,
+          fromPublicKey,
+          signTransaction
+        );
+
+        const toTokenAccount = await getOrCreateAssociatedTokenAccount(
+          connection,
+          // @ts-ignore
+          fromPublicKey,
+          tokenPublicKey,
+          toPublicKey,
+          signTransaction
+        );
+
+        const transaction = new Transaction().add(
+          createTransferInstruction(
+            fromTokenAccount.address,
+            toTokenAccount.address,
+            fromPublicKey,
+            amount * 100, // tokens have 6 decimals of precision so your amount needs to have the same
+            [],
+            TOKEN_PROGRAM_ID
+          )
+        );
+
+        const latestBlockHash = await connection.getLatestBlockhash();
+        transaction.recentBlockhash = latestBlockHash.blockhash;
+
+        transaction.feePayer = fromPublicKey;
+        handleSendTransaction({ transaction, latestBlockHash });
+      } catch (error: any) {
+        if (
+          error instanceof TokenAccountNotFoundError ||
+          error instanceof TokenInvalidAccountOwnerError
+        ) {
+          toast.custom(
+            <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
+              Transaction failed. You must have $GOODS to buy a ticket.
+            </div>
+          );
+        } else {
+          toast.custom(
+            <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
+              Transaction failed. Make sure you have enough SOL for for the
+              transaction.
+            </div>
+          );
+          console.error(error);
+        }
+        return;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [
+      fromPublicKey,
+      sendTransaction,
+      signTransaction,
+      numberOfTicketsToBuy,
+      raffle.priceInGoods,
+      connection,
+      handleSendTransaction,
+    ]
+  );
 
   const handlePayment = () => {
     if (raffle.priceInSol > 0) {
       handleSolPayment();
     } else {
-      handleGoodsPayment();
+      handleSplPayment({ token: SplTokens.GOODS });
     }
   };
 

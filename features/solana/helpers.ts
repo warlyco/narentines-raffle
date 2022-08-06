@@ -4,6 +4,7 @@ import {
   SystemProgram,
   Transaction,
 } from "@solana/web3.js";
+import { SplTokens } from "types/types";
 
 export const createSolanaTransaction = ({
   numberOfTicketsToBuy,
@@ -23,4 +24,17 @@ export const createSolanaTransaction = ({
       lamports: solInLamports,
     })
   );
+};
+
+export const getTokenMintAddress = (token: SplTokens) => {
+  if (!process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS) {
+    console.log("error", "Missing environment variables!");
+    return;
+  }
+
+  switch (token) {
+    case SplTokens.GOODS:
+    default:
+      return process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS;
+  }
 };

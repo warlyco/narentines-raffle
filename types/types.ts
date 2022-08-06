@@ -55,3 +55,7 @@ export type RaffleEntryResponse = {
 export type RafflesResponse = {
   raffles: Raffle[];
 };
+
+export enum SplTokens {
+  GOODS = "GOODS",
+}
