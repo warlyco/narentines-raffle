@@ -322,9 +322,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
     } else {
       setIsAdmin(false);
     }
-    if (!soldCount) {
-      setSoldCount(raffle.soldTicketCount);
-    }
+    setSoldCount(raffle.soldTicketCount);
   }, [
     endsAt,
     publicKey,
