@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import {
   ArchiveRaffleResponse,
   Raffle,
-  RaffleResponse,
   RaffleWinnerResponse,
   RaffleWinnersResponse,
 } from "types/types";
@@ -23,11 +22,9 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import LoadingRaffleCard from "../loading-raffle-card";
 import classNames from "classnames";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
-import { GET_SOLD_COUNT } from "graphql/queries/get-sold-count";
 
 const SwalReact = withReactContent(Swal);
 
