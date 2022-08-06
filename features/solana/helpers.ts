@@ -32,14 +32,18 @@ export const createSolanaTransaction = ({
 };
 
 export const getTokenMintAddress = (token: SplTokens) => {
-  if (!process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS) {
+  if (
+    !process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS ||
+    !process.env.NEXT_PUBLIC_DUST_TOKEN_MINT_ADDRESS
+  ) {
     console.log("error", "Missing environment variables!");
     return;
   }
 
   switch (token) {
     case SplTokens.GOODS:
-    default:
       return process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS;
+    case SplTokens.DUST:
+      return process.env.NEXT_PUBLIC_DUST_TOKEN_MINT_ADDRESS;
   }
 };

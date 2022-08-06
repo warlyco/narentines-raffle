@@ -13,6 +13,8 @@ export const GET_RAFFLES = gql`
       totalTicketCount
       soldTicketCount
       priceInGoods
+      priceInSol
+      priceInDust
       imgSrc
       winner
       winners

@@ -200,6 +200,17 @@ export const SendTransaction = ({
     signTransaction,
   ]);
 
+  const getAmount = (token: SplTokens) => {
+    switch (token) {
+      case SplTokens.GOODS:
+        return Number(numberOfTicketsToBuy) * raffle.priceInGoods;
+      case SplTokens.SOL:
+        return Number(numberOfTicketsToBuy) * raffle.priceInSol;
+      case SplTokens.DUST:
+        return Number(numberOfTicketsToBuy) * raffle.priceInDust;
+    }
+  };
+
   const handleSplPayment = useCallback(
     async ({ token }: { token: SplTokens }) => {
       setIsLoading(true);
@@ -220,8 +231,7 @@ export const SendTransaction = ({
       try {
         const toAddress = process.env.NEXT_PUBLIC_COLLECTION_WALLET;
         const toPublicKey = new PublicKey(toAddress);
-        const amount = Number(numberOfTicketsToBuy) * raffle.priceInGoods;
-
+        const amount = getAmount(token);
         const mintAddress = getTokenMintAddress(token);
         const tokenPublicKey = new PublicKey(mintAddress!);
 
@@ -266,7 +276,8 @@ export const SendTransaction = ({
         ) {
           toast.custom(
             <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-              Transaction failed. You must have $GOODS to buy a ticket.
+              Transaction failed. You must have the selected currency to buy a
+              ticket.
             </div>
           );
         } else {
@@ -287,8 +298,7 @@ export const SendTransaction = ({
       fromPublicKey,
       sendTransaction,
       signTransaction,
-      numberOfTicketsToBuy,
-      raffle.priceInGoods,
+      getAmount,
       connection,
       handleSendTransaction,
     ]

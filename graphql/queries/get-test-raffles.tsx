@@ -18,6 +18,7 @@ export const GET_TEST_RAFFLES = gql`
       soldTicketCount
       priceInGoods
       priceInSol
+      priceInDust
       imgSrc
       winner
       winners

@@ -453,7 +453,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
           <div>
             <label>
               <div className="text-lg text-green-800 font-semibold">
-                Ticket Price
+                Ticket Price {paymentMethod}
               </div>
               {paymentMethods?.length === 1 ? (
                 getPriceDisplay()
@@ -488,7 +488,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
               Number of Tickets
             </div>
             <input
-              className="w-full p-2 rounded bg-transparent funt-bold text-2xl border border-green-600 bg-slate-50 shadow-sm"
+              className="w-full p-2 rounded funt-bold text-2xl border border-green-600 bg-slate-50 shadow-sm"
               value={numberOfTicketsToBuy}
               max={totalTicketCount - soldCount}
               min={0}

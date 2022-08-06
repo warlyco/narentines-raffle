@@ -9,6 +9,7 @@ export const ADD_RAFFLE = gql`
     $name: String
     $priceInGoods: Int
     $priceInSol: Int
+    $priceInDust: Int
     $totalTicketCount: Int
     $totalWinnerCount: Int
     $projectWebsiteUrl: String
@@ -25,6 +26,7 @@ export const ADD_RAFFLE = gql`
         name: $name
         priceInGoods: $priceInGoods
         priceInSol: $priceInSol
+        priceInDust: $priceInDust
         totalTicketCount: $totalTicketCount
         totalWinnerCount: $totalWinnerCount
         projectWebsiteUrl: $projectWebsiteUrl
