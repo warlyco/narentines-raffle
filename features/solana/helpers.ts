@@ -10,12 +10,17 @@ export const createSolanaTransaction = ({
   numberOfTicketsToBuy,
   fromPublicKey,
   toPublicKey,
+  pricePerTicket,
 }: {
   numberOfTicketsToBuy: number;
+  pricePerTicket: number;
   fromPublicKey: PublicKey;
   toPublicKey: PublicKey;
 }) => {
-  const solInLamports = (LAMPORTS_PER_SOL / 100) * numberOfTicketsToBuy;
+  const amountOfSol = numberOfTicketsToBuy * pricePerTicket;
+  const solInLamports = LAMPORTS_PER_SOL * amountOfSol;
+  console.log(`amountOfSol: ${amountOfSol}`);
+  debugger;
 
   return new Transaction().add(
     SystemProgram.transfer({

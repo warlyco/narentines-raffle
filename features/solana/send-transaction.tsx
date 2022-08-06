@@ -179,6 +179,7 @@ export const SendTransaction = ({
         fromPublicKey,
         toPublicKey: new PublicKey(process.env.NEXT_PUBLIC_COLLECTION_WALLET),
         numberOfTicketsToBuy: Number(numberOfTicketsToBuy),
+        pricePerTicket: raffle.priceInSol,
       });
 
       const latestBlockHash = await connection.getLatestBlockhash();
@@ -194,6 +195,7 @@ export const SendTransaction = ({
     fromPublicKey,
     handleSendTransaction,
     numberOfTicketsToBuy,
+    raffle.priceInSol,
     sendTransaction,
     signTransaction,
   ]);

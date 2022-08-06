@@ -46,15 +46,9 @@ export const Navbar = ({ toggleSidebar }: Props) => {
           >
             Staking
           </a>
-          <a
-            className="bg-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-xl opacity-70"
-            href="//bazaar.narentines.com/raffle"
-            aria-disabled="true"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <div className="bg-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-xl opacity-70">
             Raffle
-          </a>
+          </div>
           <a
             className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black shadow-xl"
             href="//twitter.com/narentines"

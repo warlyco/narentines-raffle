@@ -271,10 +271,19 @@ export const RaffleListItem = ({ raffle }: Props) => {
     }
   }, [raffle]);
 
-  const getPriceDisplay = () => {
-    if (!paymentMethod) return;
+  const getPrice = (paymentMethod: SplTokens) => {
+    switch (paymentMethod) {
+      case SplTokens.SOL:
+        return raffle.priceInSol;
+      case SplTokens.DUST:
+        return raffle.priceInDust;
+      case SplTokens.GOODS:
+        return raffle.priceInGoods;
+    }
+  };
 
-    switch (paymentMethod as SplTokens) {
+  const getPriceDisplay = () => {
+    switch (paymentMethod) {
       case SplTokens.SOL:
         return <div className="text-lg font-bold">{priceInSol} SOL</div>;
       case SplTokens.DUST:
@@ -440,27 +449,31 @@ export const RaffleListItem = ({ raffle }: Props) => {
           </div>
           <div className="text-lg font-bold">{totalTicketCount}</div>
         </div>
-        <div>
-          <label>
-            <div className="text-lg text-green-800 font-semibold">
-              Ticket Price
-            </div>
-            {paymentMethods?.length === 1 ? (
-              getPriceDisplay()
-            ) : (
-              <select
-                value={String(paymentMethod)}
-                onChange={handleUpdatePaymentMethod}
-              >
-                {paymentMethods?.map((key) => (
-                  <option value={key} key={key}>
-                    {key}
-                  </option>
-                ))}
-              </select>
-            )}
-          </label>
-        </div>
+        {!loading && (
+          <div>
+            <label>
+              <div className="text-lg text-green-800 font-semibold">
+                Ticket Price
+              </div>
+              {paymentMethods?.length === 1 ? (
+                getPriceDisplay()
+              ) : (
+                <select
+                  className="text-lg font-bold rounded mb-2 w-full bg-slate-50 p-1"
+                  value={String(paymentMethod)}
+                  onChange={handleUpdatePaymentMethod}
+                >
+                  {paymentMethods?.map((method) => (
+                    <option value={method} key={method}>
+                      {getPrice(method)} {method !== SplTokens.SOL && "$"}
+                      {method}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </label>
+          </div>
+        )}
         <div>
           <div className="text-lg text-green-800 font-semibold">
             Amount of Winners
