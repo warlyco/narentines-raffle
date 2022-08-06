@@ -285,7 +285,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         />
         <div className="text-2xl font-bold py-1">{name}</div>
         <div className="flex w-full py-1 space-x-3">
-          {projectWebsiteUrl?.length && (
+          {!!projectWebsiteUrl?.length && (
             <a
               className="block"
               href={
@@ -306,7 +306,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
               />
             </a>
           )}
-          {projectTwitterUrl?.length && (
+          {!!projectTwitterUrl?.length && (
             <a
               href={projectTwitterUrl}
               target="_blank"
@@ -321,7 +321,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
               />
             </a>
           )}
-          {projectDiscordUrl?.length && (
+          {!!projectDiscordUrl?.length && (
             <a
               href={projectDiscordUrl}
               target="_blank"
