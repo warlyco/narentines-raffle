@@ -152,6 +152,7 @@ export const SendTransaction = ({
         setIsLoading(false);
       } catch (error) {
         console.error("error", error);
+        setIsLoading(false);
       }
     },
     [
@@ -209,7 +210,7 @@ export const SendTransaction = ({
         case SplTokens.SOL:
           return Number(numberOfTicketsToBuy) * raffle.priceInSol;
         case SplTokens.DUST:
-          return Number(numberOfTicketsToBuy) * raffle.priceInDust;
+          return Number(numberOfTicketsToBuy) * raffle.priceInDust * 10000000;
       }
     },
     [
@@ -259,7 +260,8 @@ export const SendTransaction = ({
           toPublicKey,
           signTransaction
         );
-
+        console.log(amount);
+        debugger;
         const transaction = new Transaction().add(
           createTransferInstruction(
             fromTokenAccount.address,
