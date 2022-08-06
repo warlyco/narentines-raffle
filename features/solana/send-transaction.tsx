@@ -1,4 +1,8 @@
-import { RPC_ENDPOINT, SOLANA_CLUSTER } from "constants/constants";
+import {
+  isProduction,
+  RPC_ENDPOINT,
+  SOLANA_CLUSTER,
+} from "constants/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -24,11 +28,14 @@ import {
   TokenInvalidAccountOwnerError,
 } from "@solana/spl-token";
 import axios from "axios";
-import { GET_RAFFLES, ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
+import { ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
 import {
   createSolanaTransaction,
   getTokenMintAddress,
 } from "features/solana/helpers";
+import client from "graphql/apollo-client";
+import { GET_RAFFLES } from "graphql/queries/get-raffles";
+import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 
 const SwalReact = withReactContent(Swal);
 
@@ -75,8 +82,16 @@ export const SendTransaction = ({
       if (!signTransaction || !fromPublicKey) return;
       try {
         const signed = await signTransaction(transaction);
-        const { data } = await axios.get<RafflesResponse>(GET_RAFFLES);
-        const updatedRaffle = data.raffles.find(({ id }) => id === raffle.id);
+        // const { data } = await axios.get<RafflesResponse>(GET_RAFFLES);
+        const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
+
+        const { data } = await client.query({
+          query,
+        });
+
+        const updatedRaffle = data.raffles.find(
+          ({ id }: Raffle) => id === raffle.id
+        );
 
         if (!updatedRaffle) {
           toast("Unkown raffle");
@@ -260,8 +275,7 @@ export const SendTransaction = ({
           toPublicKey,
           signTransaction
         );
-        console.log(amount);
-        debugger;
+
         const transaction = new Transaction().add(
           createTransferInstruction(
             fromTokenAccount.address,

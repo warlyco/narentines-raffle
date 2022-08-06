@@ -33,6 +33,8 @@ import withReactContent from "sweetalert2-react-content";
 import classNames from "classnames";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
+import { method } from "lodash";
+import { TicketPrice } from "./ticket-price";
 
 const SwalReact = withReactContent(Swal);
 
@@ -271,29 +273,6 @@ export const RaffleListItem = ({ raffle }: Props) => {
     }
   }, [raffle]);
 
-  const getPrice = (paymentMethod: SplTokens) => {
-    switch (paymentMethod) {
-      case SplTokens.SOL:
-        return raffle.priceInSol;
-      case SplTokens.DUST:
-        return raffle.priceInDust;
-      case SplTokens.GOODS:
-        return raffle.priceInGoods;
-    }
-  };
-
-  const getPriceDisplay = () => {
-    switch (paymentMethod) {
-      case SplTokens.SOL:
-        return <div className="text-lg font-bold">{priceInSol} SOL</div>;
-      case SplTokens.DUST:
-        return <div className="text-lg font-bold">{priceInDust} $DUST</div>;
-      case SplTokens.GOODS:
-      default:
-        return <div className="text-lg font-bold">{priceInGoods} $GOODS</div>;
-    }
-  };
-
   const handleSetInitialPaymentMethoods = useCallback(() => {
     let paymentMethods = [];
     if (raffle.priceInSol) {
@@ -322,7 +301,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
     } else {
       setIsAdmin(false);
     }
-    setSoldCount(raffle.soldTicketCount);
+    if (raffle.soldTicketCount > soldCount) {
+      setSoldCount(raffle.soldTicketCount);
+    }
   }, [
     endsAt,
     publicKey,
@@ -447,30 +428,15 @@ export const RaffleListItem = ({ raffle }: Props) => {
           </div>
           <div className="text-lg font-bold">{totalTicketCount}</div>
         </div>
-        {!loading && paymentMethods?.length && (
-          <div>
-            <label>
-              <div className="text-lg text-green-800 font-semibold">
-                Ticket Price
-              </div>
-              {paymentMethods?.length === 1 ? (
-                getPriceDisplay()
-              ) : (
-                <select
-                  className="text-lg font-bold rounded mb-2 w-full bg-slate-50 p-1"
-                  value={String(paymentMethod)}
-                  onChange={handleUpdatePaymentMethod}
-                >
-                  {paymentMethods?.map((method) => (
-                    <option value={method} key={method}>
-                      {getPrice(method)} {method !== SplTokens.SOL && "$"}
-                      {method}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </label>
-          </div>
+        {!loading && paymentMethods?.length && paymentMethod && (
+          <TicketPrice
+            handleUpdatePaymentMethod={handleUpdatePaymentMethod}
+            prices={{ priceInDust, priceInGoods, priceInSol }}
+            paymentMethod={paymentMethod}
+            paymentMethods={paymentMethods}
+            winner={winner}
+            winners={winners}
+          />
         )}
         <div>
           <div className="text-lg text-green-800 font-semibold">
