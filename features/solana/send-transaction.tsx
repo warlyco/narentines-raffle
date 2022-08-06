@@ -149,6 +149,7 @@ export const SendTransaction = ({
           </div>
         );
         handleUpdateCounts();
+        setIsLoading(false);
       } catch (error) {
         console.error("error", error);
       }
@@ -200,21 +201,27 @@ export const SendTransaction = ({
     signTransaction,
   ]);
 
-  const getAmount = (token: SplTokens) => {
-    switch (token) {
-      case SplTokens.GOODS:
-        return Number(numberOfTicketsToBuy) * raffle.priceInGoods;
-      case SplTokens.SOL:
-        return Number(numberOfTicketsToBuy) * raffle.priceInSol;
-      case SplTokens.DUST:
-        return Number(numberOfTicketsToBuy) * raffle.priceInDust;
-    }
-  };
+  const getAmount = useCallback(
+    (token: SplTokens) => {
+      switch (token) {
+        case SplTokens.GOODS:
+          return Number(numberOfTicketsToBuy) * raffle.priceInGoods;
+        case SplTokens.SOL:
+          return Number(numberOfTicketsToBuy) * raffle.priceInSol;
+        case SplTokens.DUST:
+          return Number(numberOfTicketsToBuy) * raffle.priceInDust;
+      }
+    },
+    [
+      numberOfTicketsToBuy,
+      raffle.priceInDust,
+      raffle.priceInGoods,
+      raffle.priceInSol,
+    ]
+  );
 
   const handleSplPayment = useCallback(
     async ({ token }: { token: SplTokens }) => {
-      setIsLoading(true);
-
       if (!fromPublicKey || !sendTransaction || !signTransaction) {
         console.log("error", "Wallet not connected!");
         return;
@@ -270,6 +277,7 @@ export const SendTransaction = ({
         transaction.feePayer = fromPublicKey;
         handleSendTransaction({ transaction, latestBlockHash });
       } catch (error: any) {
+        setIsLoading(false);
         if (
           error instanceof TokenAccountNotFoundError ||
           error instanceof TokenInvalidAccountOwnerError
@@ -290,8 +298,6 @@ export const SendTransaction = ({
           console.error(error);
         }
         return;
-      } finally {
-        setIsLoading(false);
       }
     },
     [
@@ -306,6 +312,7 @@ export const SendTransaction = ({
 
   const handlePayment = () => {
     if (!paymentMethod) return;
+    setIsLoading(true);
     if (paymentMethod === SplTokens.SOL) {
       handleSolPayment();
     } else {

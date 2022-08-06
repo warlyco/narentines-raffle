@@ -19,8 +19,6 @@ export const createSolanaTransaction = ({
 }) => {
   const amountOfSol = numberOfTicketsToBuy * pricePerTicket;
   const solInLamports = LAMPORTS_PER_SOL * amountOfSol;
-  console.log(`amountOfSol: ${amountOfSol}`);
-  debugger;
 
   return new Transaction().add(
     SystemProgram.transfer({

@@ -8,8 +8,8 @@ export const ADD_RAFFLE = gql`
     $mintAddress: String
     $name: String
     $priceInGoods: Int
-    $priceInSol: Int
-    $priceInDust: Int
+    $priceInSol: float8
+    $priceInDust: float8
     $totalTicketCount: Int
     $totalWinnerCount: Int
     $projectWebsiteUrl: String

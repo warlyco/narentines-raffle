@@ -19,6 +19,7 @@ const AdminPanel = () => {
   const [pricePerTicketInGoods, setPricePerTicketInGoods] =
     useState<string>("0");
   const [pricePerTicketInSol, setPricePerTicketInSol] = useState<string>("0");
+  const [pricePerTicketInDust, setPricePerTicketInDust] = useState<string>("0");
   const [totalTicketCount, setTotalTicketCount] = useState<string>("500");
   const [totalWinnerCount, setTotalWinnerCount] = useState<string>("1");
   const [projectWebsiteUrl, setProjectWebsiteUrl] = useState<string>("");
@@ -43,11 +44,13 @@ const AdminPanel = () => {
           projectTwitterUrl,
           projectDiscordUrl,
           priceInGoods: parseInt(pricePerTicketInGoods),
+          priceInSol: Number(pricePerTicketInSol),
+          priceInDust: Number(pricePerTicketInDust),
           totalTicketCount: parseInt(totalTicketCount),
           totalWinnerCount: parseInt(totalWinnerCount),
         });
         setAddedRaffle(data.raffle);
-        clearForm();
+        // clearForm();
         toast("Raffle added successfully!");
       } catch (error) {
         console.error(error);
@@ -61,7 +64,9 @@ const AdminPanel = () => {
       isTestRaffle,
       name,
       nftMintAddress,
+      pricePerTicketInDust,
       pricePerTicketInGoods,
+      pricePerTicketInSol,
       projectDiscordUrl,
       projectTwitterUrl,
       projectWebsiteUrl,
@@ -156,6 +161,19 @@ const AdminPanel = () => {
               className="border p-1 w-full"
               value={pricePerTicketInSol}
               onChange={(e) => setPricePerTicketInSol(e.target.value)}
+            />
+          </label>
+          <label
+            htmlFor="price-in-dust"
+            className="flex space-x-4 items-center"
+          >
+            <div className="whitespace-nowrap">Price (in $DUST)</div>
+            <input
+              type="number"
+              disabled={false}
+              className="border p-1 w-full"
+              value={pricePerTicketInDust}
+              onChange={(e) => setPricePerTicketInDust(e.target.value)}
             />
           </label>
           <label

@@ -21,6 +21,7 @@ const addRaffle: NextApiHandler = async (req, response) => {
     name,
     priceInGoods,
     priceInSol,
+    priceInDust,
     totalTicketCount,
     totalWinnerCount,
     projectWebsiteUrl,
@@ -34,7 +35,7 @@ const addRaffle: NextApiHandler = async (req, response) => {
     !startsAt ||
     !imgSrc ||
     !name ||
-    (!priceInGoods && !priceInSol) ||
+    (!priceInGoods && !priceInSol && !priceInDust) ||
     !totalTicketCount ||
     !totalWinnerCount
   )
@@ -55,6 +56,7 @@ const addRaffle: NextApiHandler = async (req, response) => {
         name,
         priceInGoods,
         priceInSol,
+        priceInDust,
         totalTicketCount,
         totalWinnerCount,
         isTestRaffle: !!isTestRaffle,

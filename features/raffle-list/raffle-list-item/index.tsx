@@ -449,11 +449,11 @@ export const RaffleListItem = ({ raffle }: Props) => {
           </div>
           <div className="text-lg font-bold">{totalTicketCount}</div>
         </div>
-        {!loading && (
+        {!loading && paymentMethods?.length && (
           <div>
             <label>
               <div className="text-lg text-green-800 font-semibold">
-                Ticket Price {paymentMethod}
+                Ticket Price
               </div>
               {paymentMethods?.length === 1 ? (
                 getPriceDisplay()
