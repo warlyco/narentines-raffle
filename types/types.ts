@@ -17,6 +17,7 @@ export type Raffle = {
   soldTicketCount: number;
   priceInGoods: number;
   priceInSol: number;
+  priceInDust: number;
   imgSrc: string;
   winner?: string;
   winners: string[];
@@ -57,5 +58,7 @@ export type RafflesResponse = {
 };
 
 export enum SplTokens {
+  SOL = "SOL",
   GOODS = "GOODS",
+  DUST = "DUST",
 }

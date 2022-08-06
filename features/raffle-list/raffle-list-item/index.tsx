@@ -5,10 +5,18 @@ import {
   Raffle,
   RaffleWinnerResponse,
   RaffleWinnersResponse,
+  SplTokens,
 } from "types/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { SendTransaction } from "features/solana/send-transaction";
-import { useCallback, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import bg from "public/images/single-item-bg.png";
 
 import axios from "axios";
@@ -52,6 +60,10 @@ export const RaffleListItem = ({ raffle }: Props) => {
   const [raffleIsOver, setRaffleIsOver] = useState(false);
   const [numberOfTicketsToBuy, setNumberOfTicketsToBuy] = useState("0");
   const [soldCount, setSoldCount] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState<SplTokens | null>(null);
+  const [paymentMethods, setPaymentMethods] = useState<SplTokens[] | null>(
+    null
+  );
   const [entryCount, setEntryCount] = useState<number | undefined>(undefined);
   const [winner, setWinner] = useState("");
 
@@ -68,6 +80,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
     projectWebsiteUrl,
     projectTwitterUrl,
     projectDiscordUrl,
+    priceInDust,
   } = raffle;
 
   const selectContestants = (entries: RaffleEntry[]) => {
@@ -218,6 +231,12 @@ export const RaffleListItem = ({ raffle }: Props) => {
     }
   };
 
+  const handleUpdatePaymentMethod = async (
+    ev: ChangeEvent<HTMLSelectElement>
+  ) => {
+    setPaymentMethod(ev.target.value as SplTokens);
+  };
+
   const [handleFetchEntries, { loading, data: entryRes, refetch }] =
     useLazyQuery(GET_ENTRIES_BY_WALLET, {
       variables: {
@@ -242,11 +261,51 @@ export const RaffleListItem = ({ raffle }: Props) => {
     }
   }, [entryRes?.entries, handleFetchEntries]);
 
+  const handleSetInitialPaymentMethood = useCallback(() => {
+    if (raffle.priceInSol) {
+      setPaymentMethod(SplTokens.SOL);
+    } else if (raffle.priceInGoods) {
+      setPaymentMethod(SplTokens.GOODS);
+    } else if (raffle.priceInDust) {
+      setPaymentMethod(SplTokens.DUST);
+    }
+  }, [raffle]);
+
+  const getPriceDisplay = () => {
+    if (!paymentMethod) return;
+
+    switch (paymentMethod as SplTokens) {
+      case SplTokens.SOL:
+        return <div className="text-lg font-bold">{priceInSol} SOL</div>;
+      case SplTokens.DUST:
+        return <div className="text-lg font-bold">{priceInDust} $DUST</div>;
+      case SplTokens.GOODS:
+      default:
+        return <div className="text-lg font-bold">{priceInGoods} $GOODS</div>;
+    }
+  };
+
+  const handleSetInitialPaymentMethoods = useCallback(() => {
+    let paymentMethods = [];
+    if (raffle.priceInSol) {
+      paymentMethods.push(SplTokens.SOL);
+    }
+    if (raffle.priceInGoods) {
+      paymentMethods.push(SplTokens.GOODS);
+    }
+    if (raffle.priceInDust) {
+      paymentMethods.push(SplTokens.DUST);
+    }
+    setPaymentMethods(paymentMethods);
+  }, [raffle]);
+
   useEffect(() => {
     if (raffle.winner) setWinner(raffle.winner);
     setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
     if (publicKey) {
       fetchEntries();
+      handleSetInitialPaymentMethood();
+      handleSetInitialPaymentMethoods();
       setIsAdmin(
         process.env.NEXT_PUBLIC_ADMIN_WALLETS!.indexOf(publicKey.toString()) >
           -1
@@ -265,6 +324,8 @@ export const RaffleListItem = ({ raffle }: Props) => {
     handleFetchEntries,
     fetchEntries,
     soldCount,
+    handleSetInitialPaymentMethood,
+    handleSetInitialPaymentMethoods,
   ]);
 
   return (
@@ -380,14 +441,25 @@ export const RaffleListItem = ({ raffle }: Props) => {
           <div className="text-lg font-bold">{totalTicketCount}</div>
         </div>
         <div>
-          <div className="text-lg text-green-800 font-semibold">
-            Ticket Price
-          </div>
-          {!!priceInSol ? (
-            <div className="text-lg font-bold">{priceInSol} SOL</div>
-          ) : (
-            <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
-          )}
+          <label>
+            <div className="text-lg text-green-800 font-semibold">
+              Ticket Price
+            </div>
+            {paymentMethods?.length === 1 ? (
+              getPriceDisplay()
+            ) : (
+              <select
+                value={String(paymentMethod)}
+                onChange={handleUpdatePaymentMethod}
+              >
+                {paymentMethods?.map((key) => (
+                  <option value={key} key={key}>
+                    {key}
+                  </option>
+                ))}
+              </select>
+            )}
+          </label>
         </div>
         <div>
           <div className="text-lg text-green-800 font-semibold">
@@ -433,6 +505,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
             winner={winner}
             winners={winners}
             handleUpdateCounts={handleUpdateCounts}
+            paymentMethod={paymentMethod}
           />
         </div>
         {isAdmin &&

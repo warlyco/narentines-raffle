@@ -41,6 +41,7 @@ type Props = {
   winner?: string;
   winners: string[];
   handleUpdateCounts: () => void;
+  paymentMethod: SplTokens | null;
 };
 
 export const SendTransaction = ({
@@ -52,6 +53,7 @@ export const SendTransaction = ({
   winner,
   winners,
   handleUpdateCounts,
+  paymentMethod,
 }: Props) => {
   const { connection } = useConnection();
 
@@ -219,8 +221,7 @@ export const SendTransaction = ({
         const amount = Number(numberOfTicketsToBuy) * raffle.priceInGoods;
 
         const mintAddress = getTokenMintAddress(token);
-
-        const tokenPublicKey = new PublicKey(mintAddress);
+        const tokenPublicKey = new PublicKey(mintAddress!);
 
         const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
           connection,
@@ -292,10 +293,11 @@ export const SendTransaction = ({
   );
 
   const handlePayment = () => {
-    if (raffle.priceInSol > 0) {
+    if (!paymentMethod) return;
+    if (paymentMethod === SplTokens.SOL) {
       handleSolPayment();
     } else {
-      handleSplPayment({ token: SplTokens.GOODS });
+      handleSplPayment({ token: paymentMethod });
     }
   };
 
@@ -345,6 +347,7 @@ export const SendTransaction = ({
         <button
           onClick={handlePayment}
           disabled={
+            !paymentMethod ||
             raffleIsOver ||
             !fromPublicKey ||
             isLoading ||
