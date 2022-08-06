@@ -1,12 +1,9 @@
 import RaffleListItem from "features/raffle-list/raffle-list-item";
 import { Raffle } from "types/types";
-import LoadingRaffleCard from "./loading-raffle-card";
-import { useQuery } from "@apollo/client";
-import { GET_RAFFLES } from "graphql/queries/get-raffles";
+
+import Image from "next/image";
 
 const RaffleList = ({ raffles }: { raffles: Raffle[] }) => {
-  const { data, loading, error } = useQuery(GET_RAFFLES);
-
   // if (loading)
   //   return (
   //     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 -mt-2 mb-8">
@@ -26,12 +23,21 @@ const RaffleList = ({ raffles }: { raffles: Raffle[] }) => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 -mt-2 mb-8">
-      {!!raffles &&
+      {!!raffles.length ? (
         raffles
           ?.filter((raffle) => !raffle.isArchived)
           .map((raffle: Raffle) => (
             <RaffleListItem key={raffle.id} raffle={raffle} />
-          ))}
+          ))
+      ) : (
+        <Image
+          className="animate-spin"
+          src="/images/loader.svg"
+          height={30}
+          width={30}
+          alt="Loading"
+        />
+      )}
     </div>
   );
 };

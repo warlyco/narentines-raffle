@@ -37,22 +37,22 @@ type Props = {
   raffle: Raffle;
   entryCount: number;
   numberOfTicketsToBuy: string;
-  setNumberOfTicketsToBuy: any;
   raffleIsOver: boolean;
   raffleIsSoldOut: boolean;
   winner?: string;
   winners: string[];
+  handleUpdateCounts: () => void;
 };
 
 export const SendTransaction = ({
   raffle,
   entryCount,
   numberOfTicketsToBuy,
-  setNumberOfTicketsToBuy,
   raffleIsOver,
   raffleIsSoldOut,
   winner,
   winners,
+  handleUpdateCounts,
 }: Props) => {
   const { connection } = useConnection();
 
@@ -68,6 +68,8 @@ export const SendTransaction = ({
     //   process.env.NEXT_PUBLIC_RPC_ENDPOINT || "",
     //   "confirmed"
     // );
+
+    setIsLoading(true);
 
     if (!fromPublicKey || !sendTransaction || !signTransaction) {
       console.log("error", "Wallet not connected!");
@@ -220,7 +222,8 @@ export const SendTransaction = ({
       }
       return;
     } finally {
-      setNumberOfTicketsToBuy(0);
+      handleUpdateCounts();
+      setIsLoading(false);
     }
   }, [
     fromPublicKey,
@@ -231,7 +234,7 @@ export const SendTransaction = ({
     raffle.id,
     connection,
     entryCount,
-    setNumberOfTicketsToBuy,
+    handleUpdateCounts,
   ]);
 
   const displayWinners = () => {

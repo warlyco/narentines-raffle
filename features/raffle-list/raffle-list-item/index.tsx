@@ -27,6 +27,7 @@ import LoadingRaffleCard from "../loading-raffle-card";
 import classNames from "classnames";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
+import { GET_SOLD_COUNT } from "graphql/queries/get-sold-count";
 
 const SwalReact = withReactContent(Swal);
 
@@ -53,6 +54,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
   const [pickingWinner, setPickingWinner] = useState(false);
   const [raffleIsOver, setRaffleIsOver] = useState(false);
   const [numberOfTicketsToBuy, setNumberOfTicketsToBuy] = useState("0");
+  const [soldCount, setSoldCount] = useState(0);
   const [entryCount, setEntryCount] = useState<number | undefined>(undefined);
   const [winner, setWinner] = useState("");
 
@@ -219,15 +221,19 @@ export const RaffleListItem = ({ raffle }: Props) => {
     }
   };
 
-  const [handleFetchEntries, { loading, data: entryRes }] = useLazyQuery(
-    GET_ENTRIES_BY_WALLET,
-    {
+  const [handleFetchEntries, { loading, data: entryRes, refetch }] =
+    useLazyQuery(GET_ENTRIES_BY_WALLET, {
       variables: {
         walletAddress: publicKey?.toString(),
         raffleId: raffle.id,
       },
-    }
-  );
+    });
+
+  const handleUpdateCounts = async () => {
+    refetch();
+    setSoldCount(soldCount + parseInt(numberOfTicketsToBuy));
+    setNumberOfTicketsToBuy(String(0));
+  };
 
   const fetchEntries = useCallback(async () => {
     await handleFetchEntries();
@@ -251,7 +257,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
     } else {
       setIsAdmin(false);
     }
-    // setSoldCount(raffle.soldTicketCount);
+    if (!soldCount) {
+      setSoldCount(raffle.soldTicketCount);
+    }
   }, [
     endsAt,
     publicKey,
@@ -259,6 +267,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
     raffle.soldTicketCount,
     handleFetchEntries,
     fetchEntries,
+    soldCount,
   ]);
 
   return (
@@ -340,7 +349,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
               Your tickets
             </div>
             <div className="text-lg font-bold">
-              {loading ? (
+              {loading || entryCount === undefined ? (
                 <Image
                   className="animate-spin"
                   src="/images/loader.svg"
@@ -359,9 +368,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
             Tickets Sold
           </div>
           <div className="text-lg font-bold">
-            {soldTicketCount > totalTicketCount
-              ? totalTicketCount
-              : soldTicketCount}
+            {soldCount > totalTicketCount ? totalTicketCount : soldCount}
           </div>
         </div>
         <div>
@@ -384,7 +391,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         </div>
       </div>
       <div>
-        {!raffleIsOver && !(totalTicketCount <= soldTicketCount) && publicKey && (
+        {!raffleIsOver && !(totalTicketCount <= soldCount) && publicKey && (
           <div>
             <div className="text-lg text-green-800 font-semibold mb-1">
               Number of Tickets
@@ -392,7 +399,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
             <input
               className="w-full p-2 rounded"
               value={numberOfTicketsToBuy}
-              max={totalTicketCount - soldTicketCount}
+              max={totalTicketCount - soldCount}
               min={0}
               type="number"
               onChange={(event) => setNumberOfTicketsToBuy(event.target.value)}
@@ -411,19 +418,19 @@ export const RaffleListItem = ({ raffle }: Props) => {
         )}
         <div className="pt-3">
           <SendTransaction
-            key={soldTicketCount}
+            key={soldCount}
             raffle={raffle}
             raffleIsOver={raffleIsOver}
-            raffleIsSoldOut={totalTicketCount <= soldTicketCount}
+            raffleIsSoldOut={totalTicketCount <= soldCount}
             entryCount={entryCount || 0}
             numberOfTicketsToBuy={numberOfTicketsToBuy}
-            setNumberOfTicketsToBuy={setNumberOfTicketsToBuy}
             winner={winner}
             winners={winners}
+            handleUpdateCounts={handleUpdateCounts}
           />
         </div>
         {isAdmin &&
-          (raffleIsOver || totalTicketCount <= soldTicketCount) &&
+          (raffleIsOver || totalTicketCount <= soldCount) &&
           !winner &&
           !winners?.length && (
             <div className="pt-3">
@@ -440,7 +447,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
               </button>
             </div>
           )}
-        {isAdmin && (raffleIsOver || totalTicketCount <= soldTicketCount) && (
+        {isAdmin && (raffleIsOver || totalTicketCount <= soldCount) && (
           <div className="pt-3">
             <button
               className="w-full p-2 rounded bg-green-800 text-white uppercase text-xl pt-2.5"

@@ -12,7 +12,6 @@ import { GET_RAFFLES } from "graphql/queries/get-raffles";
 
 const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
   const [publicKey, setPublicKey] = useState<string | null>(null);
-
   const wallet = useWallet();
 
   useEffect(() => {
