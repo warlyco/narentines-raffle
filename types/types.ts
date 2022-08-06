@@ -16,6 +16,7 @@ export type Raffle = {
   totalTicketCount: number;
   soldTicketCount: number;
   priceInGoods: number;
+  priceInSol: number;
   imgSrc: string;
   winner?: string;
   winners: string[];

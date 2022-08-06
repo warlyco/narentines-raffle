@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useCallback, useState } from "react";
+import { MouseEventHandler, useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { ADD_RAFFLE } from "api/raffles/endpoints";
@@ -12,11 +12,13 @@ const AdminPanel = () => {
   const [nftMintAddress, setNftMintAddress] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isTestRaffle, setIsTestRaffle] = useState<boolean>(false);
   const [endDateTime, setEndDateTime] = useState<string>("");
   const [startDateTime, setStartDateTime] = useState<string>("");
   const [imgUrl, setImgUrl] = useState<string>("");
   const [pricePerTicketInGoods, setPricePerTicketInGoods] =
-    useState<string>("3");
+    useState<string>("0");
+  const [pricePerTicketInSol, setPricePerTicketInSol] = useState<string>("0");
   const [totalTicketCount, setTotalTicketCount] = useState<string>("500");
   const [totalWinnerCount, setTotalWinnerCount] = useState<string>("1");
   const [projectWebsiteUrl, setProjectWebsiteUrl] = useState<string>("");
@@ -24,42 +26,49 @@ const AdminPanel = () => {
   const [projectDiscordUrl, setProjectDiscordUrl] = useState<string>("");
   const [addedRaffle, setAddedRaffle] = useState<Raffle>({} as Raffle);
 
-  const handleAddRaffle = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const { data } = await axios.post<RaffleResponse>(ADD_RAFFLE, {
-        name,
-        imgSrc: imgUrl,
-        mintAddress: nftMintAddress,
-        endsAt: endDateTime,
-        startsAt: dayjs().toISOString(),
-        projectWebsiteUrl,
-        projectTwitterUrl,
-        projectDiscordUrl,
-        priceInGoods: parseInt(pricePerTicketInGoods),
-        totalTicketCount: parseInt(totalTicketCount),
-        totalWinnerCount: parseInt(totalWinnerCount),
-      });
-      setAddedRaffle(data.raffle);
-      clearForm();
-      toast("Raffle added successfully!");
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    endDateTime,
-    imgUrl,
-    name,
-    nftMintAddress,
-    pricePerTicketInGoods,
-    projectDiscordUrl,
-    projectTwitterUrl,
-    projectWebsiteUrl,
-    totalTicketCount,
-    totalWinnerCount,
-  ]);
+  const handleAddRaffle = useCallback(
+    async (event: any) => {
+      event.preventDefault();
+
+      try {
+        setIsLoading(true);
+        const { data } = await axios.post<RaffleResponse>(ADD_RAFFLE, {
+          name,
+          isTestRaffle,
+          imgSrc: imgUrl,
+          mintAddress: nftMintAddress,
+          endsAt: endDateTime,
+          startsAt: dayjs().toISOString(),
+          projectWebsiteUrl,
+          projectTwitterUrl,
+          projectDiscordUrl,
+          priceInGoods: parseInt(pricePerTicketInGoods),
+          totalTicketCount: parseInt(totalTicketCount),
+          totalWinnerCount: parseInt(totalWinnerCount),
+        });
+        setAddedRaffle(data.raffle);
+        clearForm();
+        toast("Raffle added successfully!");
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [
+      endDateTime,
+      imgUrl,
+      isTestRaffle,
+      name,
+      nftMintAddress,
+      pricePerTicketInGoods,
+      projectDiscordUrl,
+      projectTwitterUrl,
+      projectWebsiteUrl,
+      totalTicketCount,
+      totalWinnerCount,
+    ]
+  );
 
   const clearForm = () => {
     setProjectWebsiteUrl("");
@@ -69,8 +78,9 @@ const AdminPanel = () => {
     setEndDateTime("");
     setStartDateTime("");
     setImgUrl("");
-    setPricePerTicketInGoods("3");
+    setPricePerTicketInGoods("0");
     setTotalTicketCount("500");
+    setIsTestRaffle(false);
   };
 
   return (
@@ -125,7 +135,10 @@ const AdminPanel = () => {
               onChange={(e) => setEndDateTime(e.target.value)}
             />
           </label>
-          <label htmlFor="price" className="flex space-x-4 items-center">
+          <label
+            htmlFor="price-in-goods"
+            className="flex space-x-4 items-center"
+          >
             <div className="whitespace-nowrap">Price (in $GOODS)</div>
             <input
               type="number"
@@ -133,6 +146,16 @@ const AdminPanel = () => {
               className="border p-1 w-full"
               value={pricePerTicketInGoods}
               onChange={(e) => setPricePerTicketInGoods(e.target.value)}
+            />
+          </label>
+          <label htmlFor="price-in-sol" className="flex space-x-4 items-center">
+            <div className="whitespace-nowrap">Price (in SOL)</div>
+            <input
+              type="number"
+              disabled={false}
+              className="border p-1 w-full"
+              value={pricePerTicketInSol}
+              onChange={(e) => setPricePerTicketInSol(e.target.value)}
             />
           </label>
           <label
@@ -198,6 +221,17 @@ const AdminPanel = () => {
               className="border p-1 w-full"
               value={projectDiscordUrl}
               onChange={(e) => setProjectDiscordUrl(e.target.value)}
+            />
+          </label>
+          <label
+            htmlFor="project-discord-url"
+            className="flex space-x-4 items-center"
+          >
+            <div className="whitespace-nowrap">Create as test raffle</div>
+            <input
+              type="checkbox"
+              checked={isTestRaffle}
+              onChange={() => setIsTestRaffle(!isTestRaffle)}
             />
           </label>
           <button

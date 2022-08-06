@@ -60,9 +60,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
     endsAt,
     totalTicketCount,
     priceInGoods,
+    priceInSol,
     imgSrc,
     id,
-    soldTicketCount,
     totalWinnerCount,
     winners,
     projectWebsiteUrl,
@@ -269,7 +269,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
   return (
     <div
-      className="w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg flex flex-col justify-between relative"
+      className="w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg flex flex-col justify-between relative deep-shadow"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
       <div>
@@ -383,7 +383,11 @@ export const RaffleListItem = ({ raffle }: Props) => {
           <div className="text-lg text-green-800 font-semibold">
             Ticket Price
           </div>
-          <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
+          {!!priceInSol ? (
+            <div className="text-lg font-bold">{priceInSol} SOL</div>
+          ) : (
+            <div className="text-lg font-bold">{priceInGoods} $GOODS</div>
+          )}
         </div>
         <div>
           <div className="text-lg text-green-800 font-semibold">
@@ -399,7 +403,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
               Number of Tickets
             </div>
             <input
-              className="w-full p-2 rounded"
+              className="w-full p-2 rounded bg-transparent funt-bold text-2xl border border-green-600 bg-slate-50 shadow-sm"
               value={numberOfTicketsToBuy}
               max={totalTicketCount - soldCount}
               min={0}

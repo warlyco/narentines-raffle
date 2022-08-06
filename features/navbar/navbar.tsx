@@ -23,33 +23,43 @@ export const Navbar = ({ toggleSidebar }: Props) => {
 
         <div className="hidden lg:flex items-center space-x-2">
           <a
-            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold"
+            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-xl"
             href="//www.narentines.com"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Home
           </a>
           <a
-            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold"
+            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-xl"
             href="//explore.narentines.com"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Explore the Valley
           </a>
           <a
-            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold"
+            className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-xl"
             href="//stake.narentines.com"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Staking
           </a>
           <a
-            className="bg-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold opacity-70"
-            href="#"
+            className="bg-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-xl opacity-70"
+            href="//bazaar.narentines.com/raffle"
             aria-disabled="true"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Raffle
           </a>
           <a
-            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black"
+            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black shadow-xl"
             href="//twitter.com/narentines"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <Image
               height={14}
@@ -60,7 +70,9 @@ export const Navbar = ({ toggleSidebar }: Props) => {
             />
           </a>
           <a
-            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black"
+            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black shadow-xl"
+            target="_blank"
+            rel="noopener noreferrer"
             href="//discord.gg/9Dfh3PJG8S"
           >
             <Image
@@ -72,7 +84,9 @@ export const Navbar = ({ toggleSidebar }: Props) => {
             />
           </a>
           <a
-            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black"
+            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black shadow-xl"
+            target="_blank"
+            rel="noopener noreferrer"
             href="//narentines.medium.com/"
           >
             <Image
@@ -81,6 +95,20 @@ export const Navbar = ({ toggleSidebar }: Props) => {
               src="/images/medium-black.svg"
               alt="Medium"
               className="cursor-pointer"
+            />
+          </a>
+          <a
+            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-pink-400 hover:border-2 hover:border-pink-400 rounded-lg text-black shadow-xl"
+            href="//magiceden.io/marketplace/narentinesnft"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              height={32}
+              width={32}
+              src="/images/magic-eden.webp"
+              alt="Medium"
+              className="cursor-pointer rounded-lg"
             />
           </a>
         </div>

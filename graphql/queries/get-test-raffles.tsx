@@ -1,10 +1,10 @@
 // import { gql } from "graphql-request";
 import { gql } from "@apollo/client";
 
-export const GET_RAFFLES = gql`
+export const GET_TEST_RAFFLES = gql`
   query Raffles {
     raffles(
-      where: { isArchived: { _eq: false }, isTestRaffle: { _eq: false } }
+      where: { isTestRaffle: { _eq: true } }
       order_by: { endsAt: desc }
     ) {
       id

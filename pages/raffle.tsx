@@ -9,6 +9,8 @@ import Head from "next/head";
 import { Raffle } from "types/types";
 import client from "graphql/apollo-client";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
+import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
+import { isProduction } from "constants/constants";
 
 const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
   const [publicKey, setPublicKey] = useState<string | null>(null);
@@ -90,8 +92,10 @@ const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
 };
 
 export async function getServerSideProps() {
+  const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
+
   const { data } = await client.query({
-    query: GET_RAFFLES,
+    query,
   });
 
   return {

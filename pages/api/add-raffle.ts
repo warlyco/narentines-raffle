@@ -20,11 +20,13 @@ const addRaffle: NextApiHandler = async (req, response) => {
     mintAddress,
     name,
     priceInGoods,
+    priceInSol,
     totalTicketCount,
     totalWinnerCount,
     projectWebsiteUrl,
     projectTwitterUrl,
     projectDiscordUrl,
+    isTestRaffle,
   } = req.body;
 
   if (
@@ -32,7 +34,7 @@ const addRaffle: NextApiHandler = async (req, response) => {
     !startsAt ||
     !imgSrc ||
     !name ||
-    !priceInGoods ||
+    (!priceInGoods && !priceInSol) ||
     !totalTicketCount ||
     !totalWinnerCount
   )
@@ -52,8 +54,10 @@ const addRaffle: NextApiHandler = async (req, response) => {
         projectDiscordUrl,
         name,
         priceInGoods,
+        priceInSol,
         totalTicketCount,
         totalWinnerCount,
+        isTestRaffle: !!isTestRaffle,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,

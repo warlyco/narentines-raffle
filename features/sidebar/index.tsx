@@ -58,6 +58,8 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                 <a
                   className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
                   href="//narentines.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Home
                 </a>
@@ -66,6 +68,8 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                 <a
                   className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
                   href="//explore.narentines.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Explore the Valley
                 </a>
@@ -74,6 +78,8 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                 <a
                   className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
                   href="//stake.narentines.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Staking
                 </a>
@@ -81,7 +87,9 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
               <div>
                 <div className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold py-[4px] inline-block -mt-1">
                   <a
-                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="//bazaar.narentines.com/raffle"
                     onClick={handleCloseSidebar}
                     className="inline-block"
                   >
@@ -103,6 +111,8 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                 className="flex justify-center items-center h-12 w-12 bg-amber-200 hover:bg-amber-400 rounded-lg text-black"
                 href="//twitter.com/narentines"
                 onClick={handleCloseSidebar}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Image
                   height={18}
@@ -116,6 +126,8 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                 className="flex justify-center items-center h-12 w-12 bg-amber-200 hover:bg-amber-400 rounded-lg text-black"
                 href="//discord.gg/9Dfh3PJG8S"
                 onClick={handleCloseSidebar}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Image
                   height={22}
@@ -129,6 +141,8 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                 className="flex justify-center items-center h-12 w-12 bg-amber-200 hover:bg-amber-400 rounded-lg text-black"
                 href="//narentines.medium.com/"
                 onClick={handleCloseSidebar}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Image
                   height={22}
@@ -136,6 +150,21 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
                   src="/images/medium-black.svg"
                   alt="Medium"
                   className="cursor-pointer"
+                />
+              </a>
+              <a
+                className="flex justify-center items-center h-12 w-12 bg-black border border-amber-200 hover:bg-pink-400 hover:border-2 hover:border-pink-400 rounded-lg text-black shadow-xl"
+                href="//magiceden.io/marketplace/narentinesnft"
+                onClick={handleCloseSidebar}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Image
+                  height={40}
+                  width={40}
+                  src="/images/magic-eden.webp"
+                  alt="Medium"
+                  className="cursor-pointer rounded-lg"
                 />
               </a>
             </div>
