@@ -20,3 +20,10 @@ body, #__next {
   -webkit-box-shadow: 11px 20px 19px 0px rgba(0,0,0,0.53);
   -moz-box-shadow: 11px 20px 19px 0px rgba(0,0,0,0.53);
 }
+
+.swal2-popup {
+  @apply bg-amber-400 rounded-xl !important;
+}
+.swal2-confirm {
+  @apply bg-green-800 text-amber-400 !important;
+}

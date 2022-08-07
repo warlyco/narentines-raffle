@@ -2,6 +2,7 @@ import RaffleListItem from "features/raffle-list/raffle-list-item";
 import { Raffle } from "types/types";
 
 import Image from "next/image";
+import Spinner from "features/UI/Spinner";
 
 const RaffleList = ({ raffles }: { raffles: Raffle[] }) => {
   // if (loading)
@@ -30,13 +31,7 @@ const RaffleList = ({ raffles }: { raffles: Raffle[] }) => {
             <RaffleListItem key={raffle.id} raffle={raffle} />
           ))
       ) : (
-        <Image
-          className="animate-spin"
-          src="/images/loader.svg"
-          height={30}
-          width={30}
-          alt="Loading"
-        />
+        <Spinner />
       )}
     </div>
   );

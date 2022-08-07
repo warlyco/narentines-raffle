@@ -28,6 +28,7 @@
     "@solana/wallet-adapter-react-ui": "^0.9.8",
     "@solana/wallet-adapter-wallets": "^0.16.2",
     "@solana/web3.js": "^1.48.0",
+    "@sweetalert/with-react": "^0.1.1",
     "add": "^2.0.6",
     "axios": "^0.27.2",
     "bs58": "^5.0.0",
@@ -48,6 +49,7 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.1",
     "request": "^2.88.2",
+    "sweetalert": "^2.1.2",
     "sweetalert2": "^11.4.24",
     "sweetalert2-react-content": "^5.0.2",
     "yarn": "^1.22.19"

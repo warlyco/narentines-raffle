@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import UserButton from "./user-button";
 
 type Props = {
   toggleSidebar: () => void;
@@ -46,9 +47,20 @@ export const Navbar = ({ toggleSidebar }: Props) => {
           >
             Staking
           </a>
-          <div className="bg-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-xl opacity-70">
-            Raffle
-          </div>
+          <a
+            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-pink-400 hover:border-2 hover:border-pink-400 rounded-lg text-black shadow-xl"
+            href="//magiceden.io/marketplace/narentinesnft"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              height={32}
+              width={32}
+              src="/images/magic-eden.webp"
+              alt="Medium"
+              className="cursor-pointer rounded-lg"
+            />
+          </a>
           <a
             className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-opacity-0 hover:border-2 hover:border-amber-200 rounded-lg text-black shadow-xl"
             href="//twitter.com/narentines"
@@ -91,20 +103,7 @@ export const Navbar = ({ toggleSidebar }: Props) => {
               className="cursor-pointer"
             />
           </a>
-          <a
-            className="flex justify-center items-center h-8 w-8 bg-amber-200 hover:bg-pink-400 hover:border-2 hover:border-pink-400 rounded-lg text-black shadow-xl"
-            href="//magiceden.io/marketplace/narentinesnft"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              height={32}
-              width={32}
-              src="/images/magic-eden.webp"
-              alt="Medium"
-              className="cursor-pointer rounded-lg"
-            />
-          </a>
+          <UserButton />
         </div>
         <button
           onClick={toggleSidebar}

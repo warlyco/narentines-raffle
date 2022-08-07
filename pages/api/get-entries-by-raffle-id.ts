@@ -1,9 +1,9 @@
 import type { NextApiHandler } from "next";
 
-import { GraphQLClient } from "graphql-request";
 import * as Sentry from "@sentry/node";
 import GET_ENTRIES_BY_RAFFLE_ID from "graphql/queries/get-entries-by-raffle-id";
 import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
+import request from "graphql-request";
 
 Sentry.init({
   dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
@@ -14,21 +14,14 @@ Sentry.init({
   tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
 });
 
-const getEntriesById: NextApiHandler = async (request, response) => {
-  const client = new GraphQLClient(
-    process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
-    {
-      headers: {
-        "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
-      },
-    }
-  );
-
-  const { id } = request.query;
+const getEntriesById: NextApiHandler = async (req, response) => {
+  const { id } = req.query;
 
   try {
-    const { entries } = await client.request(GET_ENTRIES_BY_RAFFLE_ID, {
-      id,
+    const { entries } = await request({
+      url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
+      variables: { id },
+      document: GET_ENTRIES_BY_RAFFLE_ID,
     });
 
     if (!entries) {

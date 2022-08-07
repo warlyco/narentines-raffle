@@ -36,6 +36,7 @@ import {
 import client from "graphql/apollo-client";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
+import Spinner from "features/UI/Spinner";
 
 const SwalReact = withReactContent(Swal);
 
@@ -358,7 +359,12 @@ export const SendTransaction = ({
     if (winner) return `Winner: ${winner}`;
     if (raffleIsOver) return "Raffle is over";
     if (!fromPublicKey) return "Connect wallet to buy";
-    if (isLoading) return "Submitting...";
+    if (isLoading)
+      return (
+        <div>
+          Submitting... <Spinner />
+        </div>
+      );
     if (raffleIsSoldOut) return "Sold Out";
     if (
       Number(numberOfTicketsToBuy) >

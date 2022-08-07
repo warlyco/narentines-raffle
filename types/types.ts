@@ -28,6 +28,11 @@ export type Raffle = {
   projectDiscordUrl: string;
 };
 
+export type RaffleEntry = {
+  walletAddress: string;
+  count: number;
+};
+
 export type RaffleResponse = {
   raffle: Raffle;
 };

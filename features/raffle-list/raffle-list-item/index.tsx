@@ -3,20 +3,14 @@ import dayjs from "dayjs";
 import {
   ArchiveRaffleResponse,
   Raffle,
+  RaffleEntry,
   RaffleWinnerResponse,
   RaffleWinnersResponse,
   SplTokens,
 } from "types/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { SendTransaction } from "features/solana/send-transaction";
-import {
-  ChangeEvent,
-  ChangeEventHandler,
-  FormEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import bg from "public/images/single-item-bg.png";
 
 import axios from "axios";
@@ -35,23 +29,15 @@ import { useLazyQuery, useQuery } from "@apollo/client";
 import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
 import { method } from "lodash";
 import { TicketPrice } from "./ticket-price";
+import Spinner from "features/UI/Spinner";
+import { selectWinners, selectWinningWalletAddress } from "utils/pick-winner";
 
 const SwalReact = withReactContent(Swal);
 
 dayjs.extend(relativeTime);
 
-type RaffleEntry = {
-  walletAddress: string;
-  count: number;
-};
-
 type Props = {
   raffle: Raffle;
-};
-
-type CountResponse = {
-  count: number;
-  soldTicketCount: number;
 };
 
 export const RaffleListItem = ({ raffle }: Props) => {
@@ -84,23 +70,6 @@ export const RaffleListItem = ({ raffle }: Props) => {
     projectDiscordUrl,
     priceInDust,
   } = raffle;
-
-  const selectContestants = (entries: RaffleEntry[]) => {
-    let contestants = [];
-    for (const entry of entries) {
-      for (let i = 0; i < entry.count; i++) {
-        contestants.push(entry.walletAddress);
-      }
-    }
-    return contestants;
-  };
-
-  const selectWinningWalletAddress = (contestants: string[]) => {
-    const randomContenstantIndex = Math.floor(
-      Math.random() * contestants.length
-    );
-    return contestants[randomContenstantIndex];
-  };
 
   const selectSingleWinner = async (contestants: string[]) => {
     const winnerWalletAddress = selectWinningWalletAddress(contestants);
@@ -153,15 +122,11 @@ export const RaffleListItem = ({ raffle }: Props) => {
     });
   };
 
-  const selectMultipleWinners = async (contestants: string[]) => {
-    const winnerWalletAddresses: string[] = [];
-    for (let i = 0; i < totalWinnerCount; i++) {
-      // winnerWalletAddresses.push(selectWinningWalletAddress(contestants));
-      const newWinner = selectWinningWalletAddress(contestants);
-      if (!winnerWalletAddresses.includes(newWinner)) {
-        winnerWalletAddresses.push(newWinner);
-      }
-    }
+  const selectMultipleWinners = async (entries: RaffleEntry[]) => {
+    const winnerWalletAddresses = selectWinners({
+      entries,
+      numberOfWinnersToPick: totalWinnerCount,
+    });
     try {
       const { data } = await axios.post<RaffleWinnersResponse>(
         ADD_RAFFLE_WINNERS,
@@ -201,12 +166,11 @@ export const RaffleListItem = ({ raffle }: Props) => {
     // if (winner || winners.length) return;
     setPickingWinner(true);
     const entries = await fetchRaffleEntries();
-    const contestants = selectContestants(entries);
 
     if (totalWinnerCount > 1) {
-      selectMultipleWinners(contestants);
+      selectMultipleWinners(entries);
     } else {
-      selectSingleWinner(contestants);
+      selectSingleWinner(entries);
     }
   };
 
@@ -401,13 +365,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
             </div>
             <div className="text-lg font-bold">
               {loading || entryCount === undefined ? (
-                <Image
-                  className="animate-spin"
-                  src="/images/loader.svg"
-                  height={18}
-                  width={18}
-                  alt="Loading"
-                />
+                <Spinner />
               ) : (
                 <span>{String(entryCount)}</span>
               )}
