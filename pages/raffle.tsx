@@ -89,7 +89,19 @@ const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
   );
 };
 
-export async function getServerSideProps() {
+// export async function getServerSideProps() {
+//   const { data } = await client.query({
+//     query: GET_RAFFLES,
+//   });
+
+//   return {
+//     props: {
+//       raffles: data.raffles,
+//     },
+//   };
+// }
+
+export async function getStaticProps() {
   const { data } = await client.query({
     query: GET_RAFFLES,
   });
@@ -98,6 +110,7 @@ export async function getServerSideProps() {
     props: {
       raffles: data.raffles,
     },
+    revalidate: 30,
   };
 }
 
