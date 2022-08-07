@@ -1,8 +1,8 @@
 import type { NextApiHandler } from "next";
 import { GET_RAFFLE_BY_ID } from "graphql/queries/get-raffle-by-id";
-
 import { GraphQLClient } from "graphql-request";
 import * as Sentry from "@sentry/node";
+import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 
 Sentry.init({
   dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
@@ -10,7 +10,7 @@ Sentry.init({
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
+  tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
 });
 
 const getRaffles: NextApiHandler = async (request, response) => {

@@ -3,7 +3,7 @@ import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import * as Sentry from "@sentry/node";
 import { request } from "graphql-request";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
-import { isProduction } from "constants/constants";
+import { isProduction, SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 
 Sentry.init({
   dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
@@ -11,7 +11,7 @@ Sentry.init({
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
+  tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
 });
 
 const getRaffles: NextApiHandler = async (_, response) => {

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import RaffleList from "features/raffle-list";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useEffect, useState } from "react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useCallback, useEffect, useState } from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import classNames from "classnames";
 import Head from "next/head";
@@ -10,10 +10,14 @@ import client from "graphql/apollo-client";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 import { isProduction } from "constants/constants";
+import { performReverseLookup, getAllDomains } from "@bonfida/spl-name-service";
+import { PublicKey } from "@solana/web3.js";
 
 const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const wallet = useWallet();
+
+  const [domainName, setDomainName] = useState<string | null>(null);
 
   useEffect(() => {
     if (!wallet?.publicKey) return;
@@ -52,7 +56,7 @@ const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
               Aye, Aye. Roll the dice ya amphibian coward!
             </div>
             <div>
-              <WalletMultiButton />
+              <WalletMultiButton /> {domainName}
             </div>
             <div className="text-sm italic">
               Have an issue or bug to report? <br /> Open a support ticket on
