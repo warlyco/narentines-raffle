@@ -103,7 +103,7 @@ export const Navbar = ({ toggleSidebar }: Props) => {
               className="cursor-pointer"
             />
           </a>
-          <UserButton />
+          {/* <UserButton /> */}
         </div>
         <button
           onClick={toggleSidebar}
