@@ -1,10 +1,19 @@
 import Image from "next/image";
-// import swal from "@sweetalert/with-react";
-import Prefs from "./prefs";
+import swal from "@sweetalert/with-react";
+import Prefs from "features/navbar/prefs";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+import { useWallet } from "@solana/wallet-adapter-react";
+const SwalReact = withReactContent(Swal);
 
 const UserButton = () => {
+  const { publicKey } = useWallet();
+
   const showPefsDialog = () => {
-    // swal(Prefs);
+    if (!publicKey) return;
+    SwalReact.fire({
+      html: <Prefs publicKey={publicKey.toString()} />,
+    });
   };
 
   return (

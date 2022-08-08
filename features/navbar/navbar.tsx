@@ -1,3 +1,4 @@
+import { useWallet } from "@solana/wallet-adapter-react";
 import Image from "next/image";
 import Link from "next/link";
 import UserButton from "./user-button";
@@ -7,6 +8,7 @@ type Props = {
 };
 
 export const Navbar = ({ toggleSidebar }: Props) => {
+  const { publicKey } = useWallet();
   return (
     <div className="w-full fixed top-0">
       <div className="flex justify-between items-center max-w-5xl m-auto p-4">
@@ -103,7 +105,7 @@ export const Navbar = ({ toggleSidebar }: Props) => {
               className="cursor-pointer"
             />
           </a>
-          {/* <UserButton /> */}
+          {publicKey?.toString().length && <UserButton />}
         </div>
         <button
           onClick={toggleSidebar}

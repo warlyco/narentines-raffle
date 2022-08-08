@@ -15,7 +15,7 @@ Sentry.init({
 });
 
 const addUser: NextApiHandler = async (req, response) => {
-  const { walletAddress, discordName } = req.body;
+  const { walletAddress, discordName, avatarUrl } = req.body;
 
   const reqIp = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
@@ -32,6 +32,7 @@ const addUser: NextApiHandler = async (req, response) => {
       url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
       document: ADD_USER,
       variables: {
+        avatarUrl,
         walletAddress,
         discordName,
       },

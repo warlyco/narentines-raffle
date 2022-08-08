@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["place-hold.it", "gateway.pinata.cloud"],
+    domains: ["place-hold.it", "gateway.pinata.cloud", "cdn.discordapp.com"],
   },
 };
 

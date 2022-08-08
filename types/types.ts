@@ -67,3 +67,27 @@ export enum SplTokens {
   GOODS = "GOODS",
   DUST = "DUST",
 }
+
+export type DiscordUser = {
+  accent_color: string;
+  avatar: string;
+  avatar_decoration: string;
+  banner: string;
+  banner_color: string;
+  discriminator: string;
+  flags: number;
+  id: string;
+  locale: string;
+  mfa_enabled: boolean;
+  premium_type: number;
+  public_flags: number;
+  username: string;
+};
+
+export type User = {
+  id: string;
+  username: string;
+  avatarUrl: string;
+  discordName: string;
+  walletAddress: string;
+};
