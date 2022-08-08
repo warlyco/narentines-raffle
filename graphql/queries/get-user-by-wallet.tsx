@@ -8,6 +8,7 @@ export const GET_USER_BY_WALLET = gql`
       walletAddress
       name
       avatarUrl
+      discordId
     }
   }
 `;

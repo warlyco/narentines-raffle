@@ -4,15 +4,29 @@ import Prefs from "features/navbar/prefs";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
+import { User } from "@sentry/types";
+import client from "graphql/apollo-client";
 const SwalReact = withReactContent(Swal);
 
 const UserButton = () => {
   const { publicKey } = useWallet();
 
-  const showPefsDialog = () => {
+  const showPefsDialog = async () => {
     if (!publicKey) return;
+
+    const { data } = await client.query({
+      query: GET_USER_BY_WALLET,
+      variables: { walletAddress: publicKey?.toString() },
+      fetchPolicy: "network-only",
+    });
+
     SwalReact.fire({
-      html: <Prefs publicKey={publicKey.toString()} />,
+      showCloseButton: true,
+      showConfirmButton: false,
+      html: <Prefs user={data?.users?.[0]} />,
     });
   };
 

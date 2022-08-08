@@ -15,7 +15,7 @@ Sentry.init({
 });
 
 const addUser: NextApiHandler = async (req, response) => {
-  const { walletAddress, discordName, avatarUrl } = req.body;
+  const { walletAddress, discordName, avatarUrl, discordId } = req.body;
 
   const reqIp = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
@@ -35,6 +35,7 @@ const addUser: NextApiHandler = async (req, response) => {
         avatarUrl,
         walletAddress,
         discordName,
+        discordId,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,

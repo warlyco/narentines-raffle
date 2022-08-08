@@ -6,6 +6,7 @@ export const ADD_USER = gql`
     $email: String
     $walletAddress: String
     $avatarUrl: String
+    $discordId: String
   ) {
     insert_users_one(
       object: {
@@ -13,12 +14,14 @@ export const ADD_USER = gql`
         email: $email
         walletAddress: $walletAddress
         avatarUrl: $avatarUrl
+        discordId: $discordId
       }
     ) {
       id
       discordName
       walletAddress
       avatarUrl
+      discordId
     }
   }
 `;
