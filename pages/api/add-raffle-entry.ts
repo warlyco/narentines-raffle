@@ -7,6 +7,7 @@ import { request } from "graphql-request";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 import { isProduction, SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
+import isAllowedIp from "utils/is-allowed-ip";
 
 Sentry.init({
   dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
@@ -20,6 +21,14 @@ Sentry.init({
 const addRaffleEntry: NextApiHandler = async (req, response) => {
   const { raffleId, walletAddress, oldCount, newCount, txSignature } = req.body;
   const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
+
+  const reqIp = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+
+  if (!reqIp || !isAllowedIp(reqIp)) {
+    response.statusCode = 403;
+    response.end(`Not allowed for ${reqIp}`);
+    return;
+  }
 
   if (
     !raffleId ||

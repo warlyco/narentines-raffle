@@ -1,8 +1,8 @@
 import type { NextApiHandler } from "next";
-import { ADD_RAFFLE } from "graphql/mutations/add-raffle";
 import * as Sentry from "@sentry/node";
 import request from "graphql-request";
 import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
+import { ADD_USER } from "graphql/mutations/add-user";
 import isAllowedIp from "utils/is-allowed-ip";
 
 Sentry.init({
@@ -14,23 +14,8 @@ Sentry.init({
   tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
 });
 
-const addRaffle: NextApiHandler = async (req, response) => {
-  const {
-    endsAt,
-    startsAt,
-    imgSrc,
-    mintAddress,
-    name,
-    priceInGoods,
-    priceInSol,
-    priceInDust,
-    totalTicketCount,
-    totalWinnerCount,
-    projectWebsiteUrl,
-    projectTwitterUrl,
-    projectDiscordUrl,
-    isTestRaffle,
-  } = req.body;
+const addUser: NextApiHandler = async (req, response) => {
+  const { walletAddress, discordName } = req.body;
 
   const reqIp = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
@@ -40,43 +25,24 @@ const addRaffle: NextApiHandler = async (req, response) => {
     return;
   }
 
-  if (
-    !endsAt ||
-    !startsAt ||
-    !imgSrc ||
-    !name ||
-    (!priceInGoods && !priceInSol && !priceInDust) ||
-    !totalTicketCount ||
-    !totalWinnerCount
-  )
-    throw new Error("Missing required fields");
+  if (!walletAddress) throw new Error("Missing required fields");
 
   try {
-    const res = await request({
+    const { insert_users_one: newUser } = await request({
       url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
-      document: ADD_RAFFLE,
+      document: ADD_USER,
       variables: {
-        endsAt,
-        startsAt,
-        imgSrc,
-        mintAddress,
-        projectWebsiteUrl,
-        projectTwitterUrl,
-        projectDiscordUrl,
-        name,
-        priceInGoods,
-        priceInSol,
-        priceInDust,
-        totalTicketCount,
-        totalWinnerCount,
-        isTestRaffle: !!isTestRaffle,
+        walletAddress,
+        discordName,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
       },
     });
 
-    response.json({ data: res.addRaffle });
+    console.log(newUser);
+
+    response.json({ newUser });
   } catch (error) {
     console.error(error);
     Sentry.captureException(error);
@@ -84,4 +50,4 @@ const addRaffle: NextApiHandler = async (req, response) => {
   }
 };
 
-export default addRaffle;
+export default addUser;

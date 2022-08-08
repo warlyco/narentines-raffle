@@ -3,6 +3,7 @@ import { ADD_RAFFLE_WINNER } from "graphql/mutations/add-raffle-winner";
 import * as Sentry from "@sentry/node";
 import { GraphQLClient } from "graphql-request";
 import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
+import isAllowedIp from "utils/is-allowed-ip";
 
 Sentry.init({
   dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
@@ -13,8 +14,16 @@ Sentry.init({
   tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
 });
 
-const addRaffle: NextApiHandler = async (request, response) => {
-  const { id, winnerWalletAddress } = request.body;
+const addRaffle: NextApiHandler = async (req, response) => {
+  const { id, winnerWalletAddress } = req.body;
+
+  const reqIp = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+
+  if (!reqIp || !isAllowedIp(reqIp)) {
+    response.statusCode = 403;
+    response.end(`Not allowed for ${reqIp}`);
+    return;
+  }
 
   if (!id || !winnerWalletAddress) throw new Error("Missing required fields");
 
