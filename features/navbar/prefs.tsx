@@ -16,11 +16,11 @@ const Prefs = ({ user }: Props) => {
   switch (process.env.NEXT_PUBLIC_ENV) {
     case "production":
       href =
-        "https://discord.com/api/oauth2/authorize?client_id=1005970963986399272&redirect_uri=https%3A%2F%2Fbazaar.narentines.com%2Fdiscord-redirect&response_type=code&scope=identify";
+        "https://discord.com/api/oauth2/authorize?client_id=1005970963986399272&redirect_uri=https%3A%2F%2Fbazaar.narentines.com%2Fdiscord-redirect&response_type=token&scope=identify";
       break;
     case "preview":
       href =
-        "https://discord.com/api/oauth2/authorize?client_id=1005970963986399272&redirect_uri=https%3A%2F%2Ftest-bazaar.narentines.com%2Fdiscord-redirect&response_type=code&scope=identify";
+        "https://discord.com/api/oauth2/authorize?client_id=1005970963986399272&redirect_uri=https%3A%2F%2Ftest-bazaar.narentines.com%2Fdiscord-redirect&response_type=token&scope=identify";
       break;
     case "local":
     default:
