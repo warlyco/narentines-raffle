@@ -62,7 +62,6 @@ const DiscordRedirect = () => {
       accessToken: string;
       tokenType: string;
     }) => {
-      console.log("fetchDiscordUser", `${tokenType} ${accessToken}`);
       try {
         const { data } = await axios.get(`https://discord.com/api/users/@me`, {
           headers: {
