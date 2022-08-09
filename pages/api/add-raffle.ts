@@ -40,14 +40,6 @@ const addRaffle: NextApiHandler = async (req, response) => {
     publicKeyString,
   } = req.body;
 
-  // const reqIp = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-
-  // if (!reqIp || !isAllowedIp(reqIp)) {
-  //   response.statusCode = 403;
-  //   response.end(`Not allowed for ${reqIp}`);
-  //   return;
-  // }
-
   if (
     !endsAt ||
     !startsAt ||

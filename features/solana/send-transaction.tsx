@@ -361,7 +361,8 @@ export const SendTransaction = ({
     if (isLoading)
       return (
         <div>
-          Submitting... <Spinner />
+          Submitting...
+          {/* <Spinner /> */}
         </div>
       );
     if (raffleIsSoldOut) return "Sold Out";
