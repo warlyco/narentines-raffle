@@ -12,6 +12,23 @@ type Props = {
 };
 
 const Prefs = ({ user }: Props) => {
+  let href;
+  switch (process.env.NEXT_PUBLIC_ENV) {
+    case "production":
+      href =
+        "https://discord.com/api/oauth2/authorize?client_id=1005970963986399272&redirect_uri=https%3A%2F%2Fbazaar.narentines.com%2Fdiscord-redirect&response_type=code&scope=identify";
+      break;
+    case "preview":
+      href =
+        "https://discord.com/api/oauth2/authorize?client_id=1005970963986399272&redirect_uri=https%3A%2F%2Ftest-bazaar.narentines.com%2Fdiscord-redirect&response_type=code&scope=identify";
+      break;
+    case "local":
+    default:
+      href =
+        "https://discord.com/api/oauth2/authorize?client_id=1005970963986399272&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fdiscord-redirect&response_type=token&scope=identify";
+      break;
+  }
+
   return (
     <div>
       {!!user ? (
@@ -34,7 +51,7 @@ const Prefs = ({ user }: Props) => {
         <div className="pb-4 pt-8">
           <a
             className="text-2xl bg-purple-700 text-amber-200 rounded-md px-4 py-2 inline-flex items-center justify-center uppercase"
-            href="https://discord.com/api/oauth2/authorize?client_id=1005970963986399272&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fdiscord-redirect&response_type=token&scope=identify"
+            href={href}
           >
             <div className="mr-2">Connect with</div>
             <div className="mt-1">
