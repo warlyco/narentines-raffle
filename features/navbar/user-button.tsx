@@ -1,13 +1,9 @@
 import Image from "next/image";
-import swal from "@sweetalert/with-react";
 import Prefs from "features/navbar/prefs";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
-import { useLazyQuery, useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
-import { User } from "@sentry/types";
 import client from "graphql/apollo-client";
 const SwalReact = withReactContent(Swal);
 
