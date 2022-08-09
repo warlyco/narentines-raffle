@@ -5,19 +5,15 @@ import { useCallback, useEffect, useState } from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import classNames from "classnames";
 import Head from "next/head";
-import { Raffle } from "types/types";
-import client from "graphql/apollo-client";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 import { isProduction } from "constants/constants";
-import { performReverseLookup, getAllDomains } from "@bonfida/spl-name-service";
-import { PublicKey } from "@solana/web3.js";
 
-const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
+import { useQuery } from "@apollo/client";
+
+const RafflePage = () => {
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const wallet = useWallet();
-
-  const [domainName, setDomainName] = useState<string | null>(null);
 
   useEffect(() => {
     if (!wallet?.publicKey) return;
@@ -56,7 +52,7 @@ const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
               Aye, Aye. Roll the dice ya amphibian coward!
             </div>
             <div>
-              <WalletMultiButton /> {domainName}
+              <WalletMultiButton />
             </div>
             <div className="text-sm italic">
               Have an issue or bug to report? <br /> Open a support ticket on
@@ -77,7 +73,7 @@ const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
           </div>
           <div className="pr-0 md:pr-4"></div>
         </div>
-        <RaffleList raffles={raffles} />
+        <RaffleList />
         <style>
           {`
         @media only screen and (max-width: 767px) {
@@ -93,19 +89,5 @@ const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
     </>
   );
 };
-
-export async function getStaticProps() {
-  const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
-
-  const { data } = await client.query({
-    query,
-  });
-
-  return {
-    props: {
-      raffles: data.raffles,
-    },
-  };
-}
 
 export default RafflePage;

@@ -3,30 +3,30 @@ import { Raffle } from "types/types";
 
 import Image from "next/image";
 import Spinner from "features/UI/Spinner";
+import { isProduction } from "constants/constants";
+import { GET_RAFFLES } from "graphql/queries/get-raffles";
+import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
+import { useQuery } from "@apollo/client";
+import LoadingRaffleCard from "./loading-raffle-card";
 
-const RaffleList = ({ raffles }: { raffles: Raffle[] }) => {
-  // if (loading)
-  //   return (
-  //     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 -mt-2 mb-8">
-  //       <LoadingRaffleCard />
-  //       <LoadingRaffleCard />
-  //       <LoadingRaffleCard />
-  //     </div>
-  //   );
+const RaffleList = () => {
+  const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
+  const { loading, data, refetch } = useQuery(query);
 
-  // if (error) {
-  //   return (
-  //     <div className="text-4xl font-bold animate-pulse text-center w-full py-8">
-  //       There was an error. Please refresh.
-  //     </div>
-  //   );
-  // }
+  if (loading)
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 -mt-2 mb-8">
+        <LoadingRaffleCard />
+        <LoadingRaffleCard />
+        <LoadingRaffleCard />
+      </div>
+    );
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 -mt-2 mb-8">
-      {!!raffles.length ? (
-        raffles
-          ?.filter((raffle) => !raffle.isArchived)
+      {!!data?.raffles.length ? (
+        data.raffles
+          ?.filter((raffle: Raffle) => !raffle.isArchived)
           .map((raffle: Raffle) => (
             <RaffleListItem key={raffle.id} raffle={raffle} />
           ))
