@@ -83,7 +83,6 @@ export const SendTransaction = ({
       if (!signTransaction || !fromPublicKey) return;
       try {
         const signed = await signTransaction(transaction);
-        // const { data } = await axios.get<RafflesResponse>(GET_RAFFLES);
         const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
 
         const { data } = await client.query({

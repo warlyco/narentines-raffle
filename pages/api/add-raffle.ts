@@ -6,6 +6,8 @@ import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 import { decodeBase64, decodeUTF8 } from "tweetnacl-util";
 import nacl from "tweetnacl";
 import { isConstValueNode } from "graphql";
+import verifySignature from "utils/auth/verify-signature";
+import verifyAdmin from "utils/auth/verify-admin";
 
 Sentry.init({
   dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
@@ -57,24 +59,8 @@ const addRaffle: NextApiHandler = async (req, response) => {
   )
     throw new Error("Missing required fields");
 
-  const adminWallets = process.env.NEXT_PUBLIC_ADMIN_WALLETS;
-
-  if (!adminWallets) throw new Error("Missing admin wallet addresses");
-
-  console.log({ message, signature, publicKey });
-  console.log(
-    decodeUTF8(message),
-    Buffer.from(JSON.parse(signature).data),
-    Buffer.from(JSON.parse(publicKey).data)
-  );
-
-  const isVerified = nacl.sign.detached.verify(
-    decodeUTF8(message),
-    Buffer.from(JSON.parse(signature).data),
-    Buffer.from(JSON.parse(publicKey).data)
-  );
-  const isAdmin = adminWallets.includes(publicKeyString);
-  console.log("isVerified", isVerified, "isAdmin", isAdmin);
+  const isAdmin = verifyAdmin(publicKeyString);
+  const isVerified = verifySignature({ message, signature, publicKey });
 
   if (!isAdmin || !isVerified) {
     response.status(403).json("Not allowed");
