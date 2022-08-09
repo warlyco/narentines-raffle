@@ -10,9 +10,14 @@ const selectContestants = (entries: RaffleEntry[]) => {
   return contestants;
 };
 
-export const selectWinningWalletAddress = (contestants: string[]) => {
+const selectWinningWalletAddress = (contestants: string[]) => {
   const randomContenstantIndex = Math.floor(Math.random() * contestants.length);
   return contestants[randomContenstantIndex];
+};
+
+export const selectWinner = (entries: RaffleEntry[]) => {
+  const contestants = selectContestants(entries);
+  return selectWinningWalletAddress(contestants);
 };
 
 export const selectWinners = ({

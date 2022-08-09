@@ -84,8 +84,6 @@ const addRaffle: NextApiHandler = async (req, response) => {
       },
     });
 
-    response.revalidate("/raffle");
-
     response.json({ data: res.addRaffle });
   } catch (error) {
     console.error(error);

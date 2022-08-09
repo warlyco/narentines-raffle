@@ -32,8 +32,6 @@ const addRaffleWinners: NextApiHandler = async (req, response) => {
       },
     });
 
-    response.revalidate("/raffle");
-
     response.json({ winners: res.update_raffles_by_pk.winners });
   } catch (error) {
     console.error(error);

@@ -34,8 +34,6 @@ const addRaffle: NextApiHandler = async (req, response) => {
       now: new Date().toISOString(),
     });
 
-    response.revalidate("/raffle");
-
     response.json({ winner: res.update_raffles_by_pk.winner });
   } catch (error) {
     console.error(error);

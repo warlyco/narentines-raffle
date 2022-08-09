@@ -27,10 +27,9 @@ import withReactContent from "sweetalert2-react-content";
 import classNames from "classnames";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
-import { method } from "lodash";
 import { TicketPrice } from "./ticket-price";
 import Spinner from "features/UI/Spinner";
-import { selectWinners, selectWinningWalletAddress } from "utils/pick-winner";
+import { selectWinner, selectWinners } from "utils/pick-winner";
 
 const SwalReact = withReactContent(Swal);
 
@@ -71,9 +70,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
     priceInDust,
   } = raffle;
 
-  const selectSingleWinner = async (contestants: string[]) => {
-    const winnerWalletAddress = selectWinningWalletAddress(contestants);
-
+  const selectSingleWinner = async (entries: RaffleEntry[]) => {
+    const winnerWalletAddress = selectWinner(entries);
+    debugger;
     try {
       const { data } = await axios.post<RaffleWinnerResponse>(
         ADD_RAFFLE_WINNER,
@@ -86,7 +85,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
       toast.custom(
         <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-          <div className="font-bold">Winner selected!</div>
+          <div className="font-bold">Winner selected!&nbsp;</div>
           <div>{winner}</div>
         </div>
       );
@@ -94,7 +93,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
     } catch (error) {
       toast.custom(
         <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-          <div className="font-bold">There was an error selecting winner.</div>
+          <div className="font-bold">
+            There was an error selecting winner.&nbsp;
+          </div>
           <div>Please refresh and try again.</div>
         </div>
       );
@@ -142,7 +143,9 @@ export const RaffleListItem = ({ raffle }: Props) => {
     } catch (error) {
       toast.custom(
         <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-          <div className="font-bold">There was an error selecting winners.</div>
+          <div className="font-bold">
+            There was an error selecting winners.&nbsp;
+          </div>
           <div>Please refresh and try again.</div>
         </div>
       );
@@ -183,14 +186,14 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
       toast.custom(
         <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-          <div className="font-bold">Raffle Archived!</div>
+          <div className="font-bold">Raffle Archived!&nbsp;</div>
           <div>{name}</div>
         </div>
       );
     } catch (error) {
       toast.custom(
         <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-          <div className="font-bold">There was a problem archiving.</div>
+          <div className="font-bold">There was a problem archiving.&nbsp;</div>
           <div>Please refresh and try again.</div>
         </div>
       );

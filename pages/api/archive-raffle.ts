@@ -29,7 +29,7 @@ const archiveRaffle: NextApiHandler = async (req, response) => {
     if (!res?.update_raffles_by_pk) {
       throw new Error("Raffle not found");
     }
-    response.revalidate("/raffle");
+
     response.status(200).json(res?.update_raffles_by_pk);
   } catch (error) {
     Sentry.captureException(error);
