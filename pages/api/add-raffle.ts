@@ -92,7 +92,7 @@ const addRaffle: NextApiHandler = async (req, response) => {
       },
     });
 
-    res.revalidate("/raffle");
+    response.revalidate("/raffle");
 
     response.json({ data: res.addRaffle });
   } catch (error) {

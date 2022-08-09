@@ -74,6 +74,8 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
       return;
     }
 
+    response.revalidate("/raffle");
+
     response.json({
       updatedCount: oldCount + newCount,
       updatedSoldCount: data.update_raffles.returning?.[0]?.soldTicketCount,
