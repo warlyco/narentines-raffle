@@ -5,6 +5,10 @@ import axios from "axios";
 import { ADD_RAFFLE } from "api/raffles/endpoints";
 import { Raffle, RaffleResponse } from "types/types";
 import dayjs from "dayjs";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { signMessage } from "@toruslabs/base-controllers";
+import { decodeBase64, decodeUTF8, encodeUTF8 } from "tweetnacl-util";
+import nacl from "tweetnacl";
 
 const AdminPanel = () => {
   const [walletAddressInputValue, setWalletAddressInputValue] =
@@ -27,9 +31,27 @@ const AdminPanel = () => {
   const [projectDiscordUrl, setProjectDiscordUrl] = useState<string>("");
   const [addedRaffle, setAddedRaffle] = useState<Raffle>({} as Raffle);
 
+  const { publicKey, sendTransaction, signTransaction, signMessage } =
+    useWallet();
+
   const handleAddRaffle = useCallback(
     async (event: any) => {
       event.preventDefault();
+      if (!signMessage || !publicKey) return;
+
+      const message = "Confirm that you are an admin";
+      const signature = await signMessage(new TextEncoder().encode(message));
+
+      const signatureString = JSON.stringify(signature);
+      let signatureRestored = Buffer.from(JSON.parse(signatureString).data);
+
+      const isVerified = nacl.sign.detached.verify(
+        decodeUTF8(message),
+        signatureRestored,
+        publicKey.toBytes()
+      );
+
+      debugger;
 
       try {
         setIsLoading(true);
@@ -48,6 +70,10 @@ const AdminPanel = () => {
           priceInDust: Number(pricePerTicketInDust),
           totalTicketCount: parseInt(totalTicketCount),
           totalWinnerCount: parseInt(totalWinnerCount),
+          message,
+          signature: JSON.stringify(signature),
+          publicKey: JSON.stringify(publicKey.toBytes()),
+          publicKeyString: publicKey.toString(),
         });
         setAddedRaffle(data.raffle);
         // clearForm();
@@ -70,6 +96,8 @@ const AdminPanel = () => {
       projectDiscordUrl,
       projectTwitterUrl,
       projectWebsiteUrl,
+      publicKey,
+      signMessage,
       totalTicketCount,
       totalWinnerCount,
     ]

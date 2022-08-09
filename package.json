@@ -52,6 +52,9 @@
     "sweetalert": "^2.1.2",
     "sweetalert2": "^11.4.24",
     "sweetalert2-react-content": "^5.0.2",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
+    "utf8-to-uint8array": "^1.0.3",
     "yarn": "^1.22.19"
   },
   "devDependencies": {
