@@ -3,9 +3,10 @@ import { MouseEventHandler, useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { ADD_RAFFLE } from "api/raffles/endpoints";
-import { Raffle, RaffleResponse } from "types/types";
+import { Raffle, RaffleResponse, VercelJobResponse } from "types/types";
 import dayjs from "dayjs";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { isProduction } from "constants/constants";
 
 const AdminPanel = () => {
   const [walletAddressInputValue, setWalletAddressInputValue] =
@@ -61,8 +62,11 @@ const AdminPanel = () => {
           publicKeyString: publicKey.toString(),
         });
         setAddedRaffle(data.raffle);
-        clearForm();
-        toast("Raffle added successfully!");
+        // clearForm();
+        // const url = isProduction ? BUILD_HOOK : BUILD_HOOK_PREVIEW;
+
+        // axios.post<VercelJobResponse>(url)
+        toast("Raffle added successfully! It will be displayed shortly.");
       } catch (error) {
         console.error(error);
       } finally {

@@ -91,3 +91,13 @@ export type User = {
   discordName: string;
   walletAddress: string;
 };
+
+type VercelJob = {
+  id: string;
+  state: string;
+  createdAt: number;
+};
+
+export type VercelJobResponse = {
+  job: VercelJob;
+};

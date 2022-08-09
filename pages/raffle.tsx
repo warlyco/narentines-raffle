@@ -94,7 +94,7 @@ const RafflePage = ({ raffles }: { raffles: Raffle[] }) => {
   );
 };
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
 
   const { data } = await client.query({
