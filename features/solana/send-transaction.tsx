@@ -50,6 +50,7 @@ type Props = {
   winner?: string;
   winners: string[];
   handleUpdateCounts: () => void;
+  handleCompleteTransaction: () => void;
   paymentMethod: SplTokens | null;
 };
 
@@ -62,6 +63,7 @@ export const SendTransaction = ({
   winner,
   winners,
   handleUpdateCounts,
+  handleCompleteTransaction,
   paymentMethod,
 }: Props) => {
   const { connection } = useConnection();
@@ -72,6 +74,43 @@ export const SendTransaction = ({
     sendTransaction,
     signTransaction,
   } = useWallet();
+
+  const checkIfPurchaseIsAllowed = async () => {
+    return new Promise(async (resolve, reject) => {
+      const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
+
+      const { data } = await client.query({
+        query,
+        fetchPolicy: "no-cache",
+      });
+
+      const updatedRaffle = data.raffles.find(
+        ({ id }: Raffle) => id === raffle.id
+      );
+      console.log({ updatedRaffle });
+      debugger;
+
+      if (!updatedRaffle) {
+        toast("Unkown raffle");
+        reject("Unkown raffle");
+        throw new Error("Unkown raffle");
+      }
+
+      const { totalTicketCount, soldTicketCount } = updatedRaffle;
+      if (totalTicketCount - soldTicketCount <= 0) {
+        toast("Raffle is sold out!");
+        reject("Raffle is sold out!");
+        throw new Error("Raffle is sold out!");
+      }
+      if (totalTicketCount - soldTicketCount < Number(numberOfTicketsToBuy)) {
+        toast("Not enough tickets left");
+        reject("Not enough tickets left");
+        throw new Error("Not enough tickets left");
+      }
+
+      resolve(true);
+    });
+  };
 
   const handleSendTransaction = useCallback(
     async ({
@@ -84,30 +123,6 @@ export const SendTransaction = ({
       if (!signTransaction || !fromPublicKey) return;
       try {
         const signed = await signTransaction(transaction);
-        const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
-
-        const { data } = await client.query({
-          query,
-        });
-
-        const updatedRaffle = data.raffles.find(
-          ({ id }: Raffle) => id === raffle.id
-        );
-
-        if (!updatedRaffle) {
-          toast("Unkown raffle");
-          throw new Error("Unkown raffle");
-        }
-
-        const { totalTicketCount, soldTicketCount } = updatedRaffle;
-        if (totalTicketCount - soldTicketCount <= 0) {
-          toast("Raffle is sold out!");
-          throw new Error("Raffle is sold out!");
-        }
-        if (totalTicketCount - soldTicketCount < Number(numberOfTicketsToBuy)) {
-          toast("Not enough tickets left");
-          throw new Error("Not enough tickets left");
-        }
 
         const signature = await connection.sendRawTransaction(
           signed.serialize()
@@ -172,7 +187,7 @@ export const SendTransaction = ({
 
         const { update_entries } = verificationData;
 
-        if (!updatedCount) {
+        if (!updatedCount || !update_entries?.returning?.[0]) {
           toast("Unkown error - Please open a support ticket in discord");
           throw new Error("Unkown error");
         }
@@ -197,6 +212,8 @@ export const SendTransaction = ({
       } catch (error) {
         console.error("error", error);
         setIsLoading(false);
+      } finally {
+        handleCompleteTransaction();
       }
     },
     [
@@ -207,6 +224,7 @@ export const SendTransaction = ({
       entryCount,
       raffle.id,
       handleUpdateCounts,
+      handleCompleteTransaction,
     ]
   );
 
@@ -355,9 +373,12 @@ export const SendTransaction = ({
     ]
   );
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (!paymentMethod) return;
     setIsLoading(true);
+    const isAllowed = await checkIfPurchaseIsAllowed();
+    if (!isAllowed) return;
+
     if (paymentMethod === SplTokens.SOL) {
       handleSolPayment();
     } else {

@@ -48,6 +48,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
   const [pickingWinner, setPickingWinner] = useState(false);
   const [raffleIsOver, setRaffleIsOver] = useState(false);
   const [numberOfTicketsToBuy, setNumberOfTicketsToBuy] = useState("0");
+  const [sendTransactionKey, setSendTransactionKey] = useState(0);
   const [soldCount, setSoldCount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<SplTokens | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<SplTokens[] | null>(
@@ -71,6 +72,10 @@ export const RaffleListItem = ({ raffle }: Props) => {
     projectDiscordUrl,
     priceInDust,
   } = raffle;
+
+  const handleCompleteTransaction = () => {
+    setSendTransactionKey(sendTransactionKey + 1);
+  };
 
   const selectSingleWinner = async (entries: RaffleEntry[]) => {
     const winnerWalletAddress = selectWinner(entries);
@@ -440,7 +445,8 @@ export const RaffleListItem = ({ raffle }: Props) => {
         )}
         <div className="pt-3">
           <SendTransaction
-            key={soldCount}
+            handleCompleteTransaction={handleCompleteTransaction}
+            key={sendTransactionKey}
             raffle={raffle}
             raffleIsOver={raffleIsOver}
             raffleIsSoldOut={totalTicketCount <= soldCount}
