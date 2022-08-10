@@ -10,6 +10,8 @@ import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 import { isProduction } from "constants/constants";
 
 import { useQuery } from "@apollo/client";
+import axios from "axios";
+import { ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
 
 const RafflePage = () => {
   const [publicKey, setPublicKey] = useState<string | null>(null);
@@ -18,6 +20,7 @@ const RafflePage = () => {
   useEffect(() => {
     if (!wallet?.publicKey) return;
     setPublicKey(wallet.publicKey?.toString());
+    axios.post(ADD_RAFFLE_ENTRY, { noop: true });
   }, [wallet, wallet.publicKey]);
 
   return (
