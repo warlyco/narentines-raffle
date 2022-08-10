@@ -261,6 +261,12 @@ export const RaffleListItem = ({ raffle }: Props) => {
     setPaymentMethods(paymentMethods);
   }, [raffle]);
 
+  const formatUrl = (url: string) => {
+    return url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `//${url}`;
+  };
+
   useEffect(() => {
     if (raffle.winner) setWinner(raffle.winner);
     setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
@@ -311,12 +317,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
           {!!projectWebsiteUrl?.length && (
             <a
               className="block"
-              href={
-                projectWebsiteUrl.startsWith("http://") ||
-                projectWebsiteUrl.startsWith("https://")
-                  ? projectWebsiteUrl
-                  : `//${projectWebsiteUrl}`
-              }
+              href={formatUrl(projectWebsiteUrl)}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -331,7 +332,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
           )}
           {!!projectTwitterUrl?.length && (
             <a
-              href={projectTwitterUrl}
+              href={formatUrl(projectTwitterUrl)}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -346,7 +347,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
           )}
           {!!projectDiscordUrl?.length && (
             <a
-              href={projectDiscordUrl}
+              href={formatUrl(projectDiscordUrl)}
               target="_blank"
               rel="noopener noreferrer"
             >
