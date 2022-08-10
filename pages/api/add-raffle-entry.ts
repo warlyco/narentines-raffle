@@ -18,10 +18,18 @@ Sentry.init({
 });
 
 const addRaffleEntry: NextApiHandler = async (req, response) => {
-  const { raffleId, walletAddress, oldCount, newCount, txSignature } = req.body;
+  const {
+    raffleId,
+    walletAddress,
+    oldCount,
+    newCount,
+    txSignature,
+    isVerified,
+    noop,
+  } = req.body;
   const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
 
-  const reqIp = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+  if (noop) return response.status(200).json({});
 
   if (
     !raffleId ||
@@ -57,6 +65,7 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
       walletAddress,
       count: oldCount + newCount,
       soldTicketCount: soldTicketCount + newCount,
+      isVerified,
     });
 
     if (
@@ -70,6 +79,7 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
     response.json({
       updatedCount: oldCount + newCount,
       updatedSoldCount: data.update_raffles.returning?.[0]?.soldTicketCount,
+      id: data.insert_entries.returning?.[0]?.id,
     });
   } catch (error) {
     Sentry.captureException(error);

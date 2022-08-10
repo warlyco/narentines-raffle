@@ -7,6 +7,7 @@ export const ADD_RAFFLE_ENTRY = gql`
     $raffleId: uuid
     $count: Int
     $soldTicketCount: Int
+    $isVerified: Boolean
   ) {
     insert_entries(
       objects: [
@@ -15,6 +16,7 @@ export const ADD_RAFFLE_ENTRY = gql`
           raffleId: $raffleId
           count: $count
           txSignature: $txSignature
+          isVerified: $isVerified
         }
       ]
       on_conflict: {
@@ -38,7 +40,6 @@ export const ADD_RAFFLE_ENTRY = gql`
     ) {
       affected_rows
       returning {
-        id
         soldTicketCount
         totalTicketCount
       }

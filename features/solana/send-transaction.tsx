@@ -36,7 +36,8 @@ import {
 import client from "graphql/apollo-client";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
-import Spinner from "features/UI/Spinner";
+
+import VERIFY_RAFFLE_ENTRY from "graphql/mutations/verify-raffle-entry";
 
 const SwalReact = withReactContent(Swal);
 
@@ -111,6 +112,19 @@ export const SendTransaction = ({
         const signature = await connection.sendRawTransaction(
           signed.serialize()
         );
+
+        const { data: raffleEntryData } = await axios.post<RaffleEntryResponse>(
+          ADD_RAFFLE_ENTRY,
+          {
+            txSignature: signature,
+            walletAddress: fromPublicKey.toString(),
+            oldCount: entryCount,
+            newCount: Number(numberOfTicketsToBuy),
+            raffleId: raffle.id,
+            isVerified: false,
+          }
+        );
+
         toast.custom(
           <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
             <div>Transaction sent...</div>
@@ -132,23 +146,38 @@ export const SendTransaction = ({
         });
         console.log("success", "Transaction successful!", signature);
 
-        const { data: raffleEntryData } = await axios.post<RaffleEntryResponse>(
-          ADD_RAFFLE_ENTRY,
-          {
-            txSignature: signature,
-            walletAddress: fromPublicKey.toString(),
-            oldCount: entryCount,
-            newCount: Number(numberOfTicketsToBuy),
-            raffleId: raffle.id,
-          }
-        );
+        // const { data: raffleEntryData } = await axios.post<RaffleEntryResponse>(
+        //   ADD_RAFFLE_ENTRY,
+        //   {
+        //     txSignature: signature,
+        //     walletAddress: fromPublicKey.toString(),
+        //     oldCount: entryCount,
+        //     newCount: Number(numberOfTicketsToBuy),
+        //     raffleId: raffle.id,
+        //   }
+        // );
 
-        const { updatedCount } = raffleEntryData;
+        const { updatedCount, id } = raffleEntryData;
+        debugger;
+
+        const { data: verificationData } = await client.mutate({
+          mutation: VERIFY_RAFFLE_ENTRY,
+          variables: {
+            id,
+          },
+        });
+
+        console.log({ verificationData });
+        debugger;
+
+        const { update_entries } = verificationData;
 
         if (!updatedCount) {
           toast("Unkown error - Please open a support ticket in discord");
           throw new Error("Unkown error");
         }
+
+        // verify entry
 
         toast.custom(
           <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">

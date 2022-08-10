@@ -55,6 +55,7 @@ export type RaffleWinnersResponse = {
 
 export type RaffleEntryResponse = {
   updatedCount: number;
+  id: string;
   updatedSoldCount: number;
 };
 
