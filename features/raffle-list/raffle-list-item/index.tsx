@@ -30,6 +30,8 @@ import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
 import { TicketPrice } from "./ticket-price";
 import Spinner from "features/UI/Spinner";
 import { selectWinner, selectWinners } from "utils/pick-winner";
+import { useCountdown } from "hooks/use-countdown";
+import CountdownTimer from "features/countdown/countdown-timer";
 
 const SwalReact = withReactContent(Swal);
 
@@ -358,7 +360,11 @@ export const RaffleListItem = ({ raffle }: Props) => {
             {dayjs().isAfter(dayjs(endsAt)) ? "Ended" : "Ends in"}
           </div>
           <div className="text-lg font-bold">
-            {dayjs(Date.now()).to(endsAt).replace("in ", "")}
+            {dayjs().isAfter(dayjs(endsAt)) ? (
+              dayjs(Date.now()).to(endsAt).replace("in ", "")
+            ) : (
+              <CountdownTimer endsAt={endsAt} />
+            )}
           </div>
         </div>
         {publicKey && (
