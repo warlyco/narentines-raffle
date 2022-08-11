@@ -87,8 +87,6 @@ export const SendTransaction = ({
       const updatedRaffle = data.raffles.find(
         ({ id }: Raffle) => id === raffle.id
       );
-      console.log({ updatedRaffle });
-      debugger;
 
       if (!updatedRaffle) {
         toast("Unkown raffle");
@@ -159,18 +157,6 @@ export const SendTransaction = ({
           lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
           blockhash: latestBlockHash.blockhash,
         });
-        console.log("success", "Transaction successful!", signature);
-
-        // const { data: raffleEntryData } = await axios.post<RaffleEntryResponse>(
-        //   ADD_RAFFLE_ENTRY,
-        //   {
-        //     txSignature: signature,
-        //     walletAddress: fromPublicKey.toString(),
-        //     oldCount: entryCount,
-        //     newCount: Number(numberOfTicketsToBuy),
-        //     raffleId: raffle.id,
-        //   }
-        // );
 
         const { updatedCount, id } = raffleEntryData;
         debugger;
@@ -181,9 +167,6 @@ export const SendTransaction = ({
             id,
           },
         });
-
-        console.log({ verificationData });
-        debugger;
 
         const { update_entries } = verificationData;
 

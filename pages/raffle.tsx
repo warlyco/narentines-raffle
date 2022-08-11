@@ -5,10 +5,6 @@ import { useCallback, useEffect, useState } from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import classNames from "classnames";
 import Head from "next/head";
-import { GET_RAFFLES } from "graphql/queries/get-raffles";
-import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
-import { isProduction } from "constants/constants";
-
 import { useQuery } from "@apollo/client";
 import axios from "axios";
 import { ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";

@@ -33,8 +33,6 @@ const addUser: NextApiHandler = async (req, response) => {
       },
     });
 
-    console.log(newUser);
-
     response.json({ newUser });
   } catch (error) {
     console.error(error);

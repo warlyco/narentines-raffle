@@ -115,7 +115,7 @@ export const Navbar = ({ toggleSidebar }: Props) => {
             height={34}
             width={37}
             src="/images/hamburger.svg"
-            alt="Medium"
+            alt="hamburger"
             className="cursor-pointer"
           />
         </button>
