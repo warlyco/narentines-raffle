@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import ClientOnly from "features/client-only";
+import Overlay from "features/overlay";
 import Image from "next/image";
 import Link from "next/link";
 import bg from "public/images/bg-black.png";
@@ -19,16 +20,7 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
 
   return (
     <ClientOnly>
-      <ScrollLock isActive={isOpenSidebar}>
-        <div
-          onClick={handleCloseSidebar}
-          className={classNames({
-            "absolute top-0 right-0 bottom-0 left-0 transition-opacity duration-500 ease-in-out opacity-40 bg-slate-800 py-6":
-              isOpenSidebar,
-            "opacity-0 pointer-events-none": !isOpenSidebar,
-          })}
-        ></div>
-      </ScrollLock>
+      <Overlay onClick={handleCloseSidebar} isVisible={isOpenSidebar} />
       <div
         className={classNames({
           "fixed top-0 right-0 bottom-0 w-full sm:w-[380px] h-screen transition-position duration-500 ease-in-out py-4":
