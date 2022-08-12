@@ -4,7 +4,7 @@ import ScrollLock from "react-scrolllock";
 import { ModalTypes } from "types/types";
 
 type Props = {
-  onClick: () => void;
+  onClick?: () => void;
   isVisible: boolean;
   modalType?: ModalTypes;
 };
