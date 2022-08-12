@@ -6,3 +6,5 @@ export const GET_ENTRIES_BY_RAFFLE_ID = "/api/get-entries-by-raffle-id";
 export const ADD_RAFFLE_WINNER = "/api/add-raffle-winner";
 export const ADD_RAFFLE_WINNERS = "/api/add-raffle-winners";
 export const ARCHIVE_RAFFLE = "/api/archive-raffle";
+export const UPDATE_ENTRY_COUNT = "/api/update-entry-count";
+export const UPDATE_ENTRY_SIGNATURE = "/api/update-entry-signature";

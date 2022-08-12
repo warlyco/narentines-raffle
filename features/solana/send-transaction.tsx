@@ -28,7 +28,11 @@ import {
   TokenInvalidAccountOwnerError,
 } from "@solana/spl-token";
 import axios from "axios";
-import { ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
+import {
+  ADD_RAFFLE_ENTRY,
+  UPDATE_ENTRY_COUNT,
+  UPDATE_ENTRY_SIGNATURE,
+} from "api/raffles/endpoints";
 import {
   createSolanaTransaction,
   getTokenMintAddress,
@@ -38,7 +42,6 @@ import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 
 import VERIFY_RAFFLE_ENTRY from "graphql/mutations/verify-raffle-entry";
-import Overlay from "features/overlay";
 
 const SwalReact = withReactContent(Swal);
 
@@ -72,11 +75,33 @@ export const SendTransaction = ({
   const { connection } = useConnection();
 
   const [isLoading, setIsLoading] = useState(false);
+
   const {
     publicKey: fromPublicKey,
     sendTransaction,
     signTransaction,
   } = useWallet();
+
+  const handleRollbackPurchase = useCallback(
+    async (
+      entryId: string,
+      message1: string,
+      message2: string = "Please try again."
+    ) => {
+      const res = await axios.post(UPDATE_ENTRY_COUNT, {
+        id: entryId,
+        count: entryCount,
+      });
+
+      toast.custom(
+        <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
+          <div>{message1}</div>
+          <div>{message2}</div>
+        </div>
+      );
+    },
+    [entryCount]
+  );
 
   const checkIfPurchaseIsAllowed = async () => {
     return new Promise(async (resolve, reject) => {
@@ -125,14 +150,9 @@ export const SendTransaction = ({
       try {
         const signed = await signTransaction(transaction);
 
-        const signature = await connection.sendRawTransaction(
-          signed.serialize()
-        );
-
         const { data: raffleEntryData } = await axios.post<RaffleEntryResponse>(
           ADD_RAFFLE_ENTRY,
           {
-            txSignature: signature,
             walletAddress: fromPublicKey.toString(),
             oldCount: entryCount,
             newCount: Number(numberOfTicketsToBuy),
@@ -140,6 +160,26 @@ export const SendTransaction = ({
             isVerified: false,
           }
         );
+
+        const { updatedCount, id } = raffleEntryData;
+
+        let signature;
+        try {
+          signature = await connection.sendRawTransaction(signed.serialize());
+        } catch (error) {
+          handleRollbackPurchase(id, "Your purchase could not be completed.");
+          return;
+        }
+
+        if (!signature) {
+          toast("Unkown error - Please open a support ticket in discord");
+          throw new Error("Unkown error");
+        }
+
+        const res = await axios.post(UPDATE_ENTRY_SIGNATURE, {
+          id,
+          txSignature: signature,
+        });
 
         toast.custom(
           <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
@@ -155,13 +195,20 @@ export const SendTransaction = ({
           </div>
         );
 
-        await connection.confirmTransaction({
-          signature,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          blockhash: latestBlockHash.blockhash,
-        });
-
-        const { updatedCount, id } = raffleEntryData;
+        try {
+          await connection.confirmTransaction({
+            signature,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            blockhash: latestBlockHash.blockhash,
+          });
+        } catch (error) {
+          handleRollbackPurchase(
+            id,
+            "Your purchase could not be confirmed.",
+            "Please open a support ticket in discord for assistance."
+          );
+          return;
+        }
 
         const { data: verificationData } = await client.mutate({
           mutation: VERIFY_RAFFLE_ENTRY,
@@ -176,8 +223,6 @@ export const SendTransaction = ({
           toast("Unkown error - Please open a support ticket in discord");
           throw new Error("Unkown error");
         }
-
-        // verify entry
 
         toast.custom(
           <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
@@ -209,6 +254,7 @@ export const SendTransaction = ({
       numberOfTicketsToBuy,
       raffle.id,
       handleUpdateCounts,
+      handleRollbackPurchase,
       setIsSendingTransaction,
       handleCompleteTransaction,
     ]
@@ -363,6 +409,7 @@ export const SendTransaction = ({
 
   const handlePayment = async () => {
     if (!paymentMethod) return;
+    axios.post(UPDATE_ENTRY_COUNT, { noop: true });
     setIsLoading(true);
     setIsSendingTransaction(true);
     const isAllowed = await checkIfPurchaseIsAllowed();
