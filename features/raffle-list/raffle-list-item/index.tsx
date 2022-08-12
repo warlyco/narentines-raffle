@@ -409,6 +409,7 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
             paymentMethods={paymentMethods}
             winner={winner}
             winners={winners}
+            raffleIsOver={raffleIsOver}
           />
         )}
         <div>

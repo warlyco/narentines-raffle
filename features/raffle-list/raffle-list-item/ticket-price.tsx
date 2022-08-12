@@ -10,6 +10,7 @@ type Price = {
 };
 
 type Props = {
+  raffleIsOver: boolean;
   prices: Price;
   paymentMethod: SplTokens;
   paymentMethods: SplTokens[];
@@ -26,6 +27,7 @@ export const TicketPrice = ({
   winner,
   winners,
   prices,
+  raffleIsOver,
   handleUpdatePaymentMethod,
 }: Props) => {
   const { publicKey } = useWallet();
@@ -76,7 +78,7 @@ export const TicketPrice = ({
         <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
         {paymentMethods?.length === 1 ? (
           getPriceDisplay()
-        ) : winner || winners?.length || !publicKey ? (
+        ) : winner || winners?.length || raffleIsOver || !publicKey ? (
           getTicketPriceList()
         ) : (
           <select
