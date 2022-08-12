@@ -1,3 +1,4 @@
+import { useWallet } from "@solana/wallet-adapter-react";
 import { divide } from "lodash";
 import { ChangeEvent } from "react";
 import { SplTokens } from "types/types";
@@ -27,6 +28,7 @@ export const TicketPrice = ({
   prices,
   handleUpdatePaymentMethod,
 }: Props) => {
+  const { publicKey } = useWallet();
   const { priceInSol, priceInDust, priceInGoods } = prices;
   const { SOL, DUST, GOODS } = SplTokens;
   const getPrice = (paymentMethod: SplTokens) => {
@@ -74,7 +76,7 @@ export const TicketPrice = ({
         <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
         {paymentMethods?.length === 1 ? (
           getPriceDisplay()
-        ) : winner || winners?.length ? (
+        ) : winner || winners?.length || !publicKey ? (
           getTicketPriceList()
         ) : (
           <select

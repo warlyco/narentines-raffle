@@ -43,8 +43,7 @@ type Props = {
 };
 
 export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
-  const wallet = useWallet();
-  const { publicKey } = wallet;
+  const { publicKey } = useWallet();
   const [isAdmin, setIsAdmin] = useState(false);
   const [pickingWinner, setPickingWinner] = useState(false);
   const [raffleIsOver, setRaffleIsOver] = useState(false);
@@ -271,10 +270,10 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
   useEffect(() => {
     if (raffle.winner) setWinner(raffle.winner);
     setRaffleIsOver(dayjs().isAfter(dayjs(endsAt)));
+    handleSetInitialPaymentMethood();
+    handleSetInitialPaymentMethoods();
+    fetchEntries();
     if (publicKey) {
-      fetchEntries();
-      handleSetInitialPaymentMethood();
-      handleSetInitialPaymentMethoods();
       setIsAdmin(
         process.env.NEXT_PUBLIC_ADMIN_WALLETS!.indexOf(publicKey.toString()) >
           -1
