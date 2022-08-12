@@ -102,3 +102,7 @@ type VercelJob = {
 export type VercelJobResponse = {
   job: VercelJob;
 };
+
+export enum ModalTypes {
+  SENDING_TRNASACTION = "SENDING_TRNASACTION",
+}

@@ -38,6 +38,7 @@ import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 
 import VERIFY_RAFFLE_ENTRY from "graphql/mutations/verify-raffle-entry";
+import Overlay from "features/overlay";
 
 const SwalReact = withReactContent(Swal);
 
@@ -51,6 +52,7 @@ type Props = {
   winners: string[];
   handleUpdateCounts: () => void;
   handleCompleteTransaction: () => void;
+  setIsSendingTransaction: (isSendingTransaction: boolean) => void;
   paymentMethod: SplTokens | null;
 };
 
@@ -64,6 +66,7 @@ export const SendTransaction = ({
   winners,
   handleUpdateCounts,
   handleCompleteTransaction,
+  setIsSendingTransaction,
   paymentMethod,
 }: Props) => {
   const { connection } = useConnection();
@@ -159,7 +162,6 @@ export const SendTransaction = ({
         });
 
         const { updatedCount, id } = raffleEntryData;
-        debugger;
 
         const { data: verificationData } = await client.mutate({
           mutation: VERIFY_RAFFLE_ENTRY,
@@ -191,22 +193,23 @@ export const SendTransaction = ({
           </div>
         );
         handleUpdateCounts();
-        setIsLoading(false);
       } catch (error) {
         console.error("error", error);
-        setIsLoading(false);
       } finally {
+        setIsLoading(false);
+        setIsSendingTransaction(false);
         handleCompleteTransaction();
       }
     },
     [
       signTransaction,
       fromPublicKey,
-      numberOfTicketsToBuy,
       connection,
       entryCount,
+      numberOfTicketsToBuy,
       raffle.id,
       handleUpdateCounts,
+      setIsSendingTransaction,
       handleCompleteTransaction,
     ]
   );
@@ -324,6 +327,7 @@ export const SendTransaction = ({
         handleSendTransaction({ transaction, latestBlockHash });
       } catch (error: any) {
         setIsLoading(false);
+        setIsSendingTransaction(false);
         if (
           error instanceof TokenAccountNotFoundError ||
           error instanceof TokenInvalidAccountOwnerError
@@ -353,12 +357,14 @@ export const SendTransaction = ({
       getAmount,
       connection,
       handleSendTransaction,
+      setIsSendingTransaction,
     ]
   );
 
   const handlePayment = async () => {
     if (!paymentMethod) return;
     setIsLoading(true);
+    setIsSendingTransaction(true);
     const isAllowed = await checkIfPurchaseIsAllowed();
     if (!isAllowed) return;
 

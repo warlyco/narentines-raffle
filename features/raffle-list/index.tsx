@@ -9,7 +9,11 @@ import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 import { useQuery } from "@apollo/client";
 import LoadingRaffleCard from "./loading-raffle-card";
 
-const RaffleList = () => {
+type Props = {
+  setIsSendingTransaction: (isSendingTransaction: boolean) => void;
+};
+
+const RaffleList = ({ setIsSendingTransaction }: Props) => {
   const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
   const { loading, data, refetch } = useQuery(query);
 
@@ -28,7 +32,11 @@ const RaffleList = () => {
         data.raffles
           ?.filter((raffle: Raffle) => !raffle.isArchived)
           .map((raffle: Raffle) => (
-            <RaffleListItem key={raffle.id} raffle={raffle} />
+            <RaffleListItem
+              key={raffle.id}
+              raffle={raffle}
+              setIsSendingTransaction={setIsSendingTransaction}
+            />
           ))
       ) : (
         <Spinner />

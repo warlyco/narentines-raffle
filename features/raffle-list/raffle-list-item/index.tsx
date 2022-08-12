@@ -39,9 +39,10 @@ dayjs.extend(relativeTime);
 
 type Props = {
   raffle: Raffle;
+  setIsSendingTransaction: (isSendingTransaction: boolean) => void;
 };
 
-export const RaffleListItem = ({ raffle }: Props) => {
+export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
   const wallet = useWallet();
   const { publicKey } = wallet;
   const [isAdmin, setIsAdmin] = useState(false);
@@ -79,7 +80,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
 
   const selectSingleWinner = async (entries: RaffleEntry[]) => {
     const winnerWalletAddress = selectWinner(entries);
-    debugger;
+
     try {
       const { data } = await axios.post<RaffleWinnerResponse>(
         ADD_RAFFLE_WINNER,
@@ -446,6 +447,7 @@ export const RaffleListItem = ({ raffle }: Props) => {
         )}
         <div className="pt-3">
           <SendTransaction
+            setIsSendingTransaction={setIsSendingTransaction}
             handleCompleteTransaction={handleCompleteTransaction}
             key={sendTransactionKey}
             raffle={raffle}

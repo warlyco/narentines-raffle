@@ -8,9 +8,13 @@ import Head from "next/head";
 import { useQuery } from "@apollo/client";
 import axios from "axios";
 import { ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
+import Overlay from "features/overlay";
+import { ModalTypes } from "types/types";
 
 const RafflePage = () => {
   const [publicKey, setPublicKey] = useState<string | null>(null);
+  const [isSendingTransaction, setIsSendingTransaction] =
+    useState<boolean>(false);
   const wallet = useWallet();
 
   useEffect(() => {
@@ -72,7 +76,11 @@ const RafflePage = () => {
           </div>
           <div className="pr-0 md:pr-4"></div>
         </div>
-        <RaffleList />
+        <RaffleList setIsSendingTransaction={setIsSendingTransaction} />
+        <Overlay
+          isVisible={isSendingTransaction}
+          modalType={ModalTypes.SENDING_TRNASACTION}
+        />
         <style>
           {`
         @media only screen and (max-width: 767px) {
