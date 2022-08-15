@@ -58,11 +58,11 @@ export const TicketPrice = ({
 
   const getTicketPriceList = () => {
     return (
-      <div className="flex flex-wrap text-lg leading-7">
+      <div className="flex flex-wrap text-lg leading-7 font-bold">
         {paymentMethods.map((method, i) => (
           <div key={method}>
-            {method !== SplTokens.SOL && "$"}
-            {getPrice(method)} {method}
+            {getPrice(method)} {method !== SplTokens.SOL && "$"}
+            {method}
             {i !== paymentMethods.length - 1 && (
               <span>&nbsp;&nbsp;||&nbsp;&nbsp;</span>
             )}
