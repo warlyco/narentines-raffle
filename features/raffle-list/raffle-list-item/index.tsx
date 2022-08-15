@@ -73,6 +73,9 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
     priceInDust,
     priceInForge,
     priceInGear,
+    moonRankRarity,
+    collectionSize,
+    mintAddress,
   } = raffle;
 
   const handleCompleteTransaction = () => {
@@ -321,51 +324,71 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
           })}
         />
         <div className="text-2xl font-bold py-1">{name}</div>
-        <div className="flex w-full py-1 space-x-3">
-          {!!projectWebsiteUrl?.length && (
-            <a
-              className="block"
-              href={formatUrl(projectWebsiteUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Image
-                height={18}
-                width={20}
-                src="/images/globe.svg"
-                alt="Twitter"
-                className="cursor-pointer"
-              />
-            </a>
+        <div className="flex w-full py-1 mb-2 items-center justify-between">
+          {(!!projectWebsiteUrl?.length ||
+            !!projectTwitterUrl?.length ||
+            !!projectDiscordUrl?.length) && (
+            <div className="flex space-x-3">
+              {!!projectWebsiteUrl?.length && (
+                <a
+                  className="flex justify-center"
+                  href={formatUrl(projectWebsiteUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Image
+                    height={18}
+                    width={20}
+                    src="/images/globe.svg"
+                    alt="Twitter"
+                    className="cursor-pointer"
+                  />
+                </a>
+              )}
+              {!!projectTwitterUrl?.length && (
+                <a
+                  className="flex justify-center"
+                  href={formatUrl(projectTwitterUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Image
+                    height={18}
+                    width={20}
+                    src="/images/twitter-black.svg"
+                    alt="Twitter"
+                    className="cursor-pointer"
+                  />
+                </a>
+              )}
+              {!!projectDiscordUrl?.length && (
+                <a
+                  className="flex justify-center"
+                  href={formatUrl(projectDiscordUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Image
+                    height={18}
+                    width={20}
+                    src="/images/discord-black.svg"
+                    alt="Twitter"
+                    className="cursor-pointer"
+                  />
+                </a>
+              )}
+            </div>
           )}
-          {!!projectTwitterUrl?.length && (
+          {moonRankRarity && (
             <a
-              href={formatUrl(projectTwitterUrl)}
+              href={`//moonrank.app/${mintAddress}`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Image
-                height={18}
-                width={20}
-                src="/images/twitter-black.svg"
-                alt="Twitter"
-                className="cursor-pointer"
-              />
-            </a>
-          )}
-          {!!projectDiscordUrl?.length && (
-            <a
-              href={formatUrl(projectDiscordUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Image
-                height={18}
-                width={20}
-                src="/images/discord-black.svg"
-                alt="Twitter"
-                className="cursor-pointer"
-              />
+              <div className="flex items-center justify-center p-1 px-2 border-2 border-black rounded-lg">
+                MR:&nbsp;
+                {moonRankRarity}&nbsp;/&nbsp;{collectionSize}
+              </div>
             </a>
           )}
         </div>

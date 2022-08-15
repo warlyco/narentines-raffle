@@ -22,6 +22,8 @@ export const GET_RAFFLES = gql`
       winners
       totalWinnerCount
       isArchived
+      moonRankRarity
+      collectionSize
     }
   }
 `;

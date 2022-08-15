@@ -29,6 +29,8 @@ export const GET_RAFFLES = gql`
       projectWebsiteUrl
       projectTwitterUrl
       projectDiscordUrl
+      moonRankRarity
+      collectionSize
     }
   }
 `;
