@@ -1,6 +1,7 @@
-import { useWallet } from "@solana/wallet-adapter-react";
-import { ChangeEvent } from "react";
-import { SplTokens } from "types/types";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import { ChangeEvent, useEffect } from "react";
+import { Balances, SplTokens } from "types/types";
 
 type Price = {
   priceInSol: number;
@@ -20,6 +21,7 @@ type Props = {
   handleUpdatePaymentMethod: (
     ev: ChangeEvent<HTMLSelectElement>
   ) => Promise<void>;
+  userBalances: Balances | null;
 };
 
 export const TicketPrice = ({
@@ -30,11 +32,13 @@ export const TicketPrice = ({
   prices,
   raffleIsOver,
   handleUpdatePaymentMethod,
+  userBalances,
 }: Props) => {
   const { publicKey } = useWallet();
   const { priceInSol, priceInDust, priceInGoods, priceInForge, priceInGear } =
     prices;
   const { SOL, DUST, GOODS, FORGE, GEAR } = SplTokens;
+
   const getPrice = (paymentMethod: SplTokens) => {
     switch (paymentMethod) {
       case SOL:
@@ -84,13 +88,13 @@ export const TicketPrice = ({
 
   return (
     <div>
-      <label>
-        <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
-        {paymentMethods?.length === 1 ? (
-          getPriceDisplay()
-        ) : winner || winners?.length || raffleIsOver || !publicKey ? (
-          getTicketPriceList()
-        ) : (
+      <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
+      {paymentMethods?.length === 1 ? (
+        getPriceDisplay()
+      ) : winner || winners?.length || raffleIsOver || !publicKey ? (
+        getTicketPriceList()
+      ) : (
+        <label>
           <select
             className="text-lg font-bold rounded mb-2 w-full bg-slate-50 p-1"
             value={String(paymentMethod)}
@@ -103,8 +107,29 @@ export const TicketPrice = ({
               </option>
             ))}
           </select>
-        )}
-      </label>
+        </label>
+      )}
+
+      {userBalances && userBalances[paymentMethod] && (
+        <div className="flex justify-between">
+          <div>
+            <div className="text-lg text-green-800 font-semibold">Balance</div>
+            <div className="text-lg font-bold">
+              {userBalances[paymentMethod]}
+            </div>
+          </div>
+          <div>
+            <div className="text-lg text-green-800 font-semibold">
+              Purchasable
+            </div>
+            <div className="text-lg font-bold">
+              {Math.floor(
+                Number(userBalances[paymentMethod]) / getPrice(paymentMethod)
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

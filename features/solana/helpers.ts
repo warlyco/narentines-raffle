@@ -34,7 +34,8 @@ export const getTokenMintAddress = (token: SplTokens) => {
     !process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS ||
     !process.env.NEXT_PUBLIC_DUST_TOKEN_MINT_ADDRESS ||
     !process.env.NEXT_PUBLIC_FORGE_TOKEN_MINT_ADDRESS ||
-    !process.env.NEXT_PUBLIC_GEAR_TOKEN_MINT_ADDRESS
+    !process.env.NEXT_PUBLIC_GEAR_TOKEN_MINT_ADDRESS ||
+    !process.env.NEXT_PUBLIC_SOL_TOKEN_MINT_ADDRESS
   ) {
     console.log("error", "Missing environment variables!");
     return;
@@ -49,5 +50,7 @@ export const getTokenMintAddress = (token: SplTokens) => {
       return process.env.NEXT_PUBLIC_FORGE_TOKEN_MINT_ADDRESS;
     case SplTokens.GEAR:
       return process.env.NEXT_PUBLIC_GEAR_TOKEN_MINT_ADDRESS;
+    case SplTokens.SOL:
+      return process.env.NEXT_PUBLIC_SOL_TOKEN_MINT_ADDRESS;
   }
 };

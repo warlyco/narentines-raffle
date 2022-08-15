@@ -2,6 +2,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import {
   ArchiveRaffleResponse,
+  Balances,
   Raffle,
   RaffleEntry,
   RaffleWinnerResponse,
@@ -40,9 +41,14 @@ dayjs.extend(relativeTime);
 type Props = {
   raffle: Raffle;
   setIsSendingTransaction: (isSendingTransaction: boolean) => void;
+  userBalances: Balances | null;
 };
 
-export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
+export const RaffleListItem = ({
+  raffle,
+  setIsSendingTransaction,
+  userBalances,
+}: Props) => {
   const { publicKey } = useWallet();
   const [isAdmin, setIsAdmin] = useState(false);
   const [pickingWinner, setPickingWinner] = useState(false);
@@ -312,7 +318,7 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
       className="w-full p-4 bg-amber-200 space-y-2 flex-shrink-0 rounded-lg flex flex-col justify-between relative deep-shadow"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
-      <div>
+      <div className="space-y-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           height={250}
@@ -404,26 +410,28 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
             )}
           </div>
         </div>
-        {publicKey && (
+        <div className="flex">
+          {publicKey && (
+            <div className="w-1/2">
+              <div className="text-lg text-green-800 font-semibold">
+                Your tickets
+              </div>
+              <div className="text-lg font-bold">
+                {loading || entryCount === undefined ? (
+                  <Spinner />
+                ) : (
+                  <span>{String(entryCount)}</span>
+                )}
+              </div>
+            </div>
+          )}
           <div>
             <div className="text-lg text-green-800 font-semibold">
-              Your tickets
+              Tickets Sold
             </div>
             <div className="text-lg font-bold">
-              {loading || entryCount === undefined ? (
-                <Spinner />
-              ) : (
-                <span>{String(entryCount)}</span>
-              )}
+              {soldCount > totalTicketCount ? totalTicketCount : soldCount}
             </div>
-          </div>
-        )}
-        <div>
-          <div className="text-lg text-green-800 font-semibold">
-            Tickets Sold
-          </div>
-          <div className="text-lg font-bold">
-            {soldCount > totalTicketCount ? totalTicketCount : soldCount}
           </div>
         </div>
         <div>
@@ -432,8 +440,15 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
           </div>
           <div className="text-lg font-bold">{totalTicketCount}</div>
         </div>
+        <div>
+          <div className="text-lg text-green-800 font-semibold">
+            Amount of Winners
+          </div>
+          <div className="text-lg font-bold">{totalWinnerCount}</div>
+        </div>
         {!loading && paymentMethods?.length && paymentMethod && (
           <TicketPrice
+            userBalances={userBalances}
             handleUpdatePaymentMethod={handleUpdatePaymentMethod}
             prices={{
               priceInDust,
@@ -449,12 +464,6 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
             raffleIsOver={raffleIsOver}
           />
         )}
-        <div>
-          <div className="text-lg text-green-800 font-semibold">
-            Amount of Winners
-          </div>
-          <div className="text-lg font-bold">{totalWinnerCount}</div>
-        </div>
       </div>
       <div>
         {!raffleIsOver && !(totalTicketCount <= soldCount) && publicKey && (

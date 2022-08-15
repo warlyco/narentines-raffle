@@ -1,5 +1,5 @@
 import RaffleListItem from "features/raffle-list/raffle-list-item";
-import { Raffle } from "types/types";
+import { Balances, Raffle } from "types/types";
 
 import Image from "next/image";
 import Spinner from "features/UI/Spinner";
@@ -11,9 +11,10 @@ import LoadingRaffleCard from "./loading-raffle-card";
 
 type Props = {
   setIsSendingTransaction: (isSendingTransaction: boolean) => void;
+  userBalances: Balances | null;
 };
 
-const RaffleList = ({ setIsSendingTransaction }: Props) => {
+const RaffleList = ({ setIsSendingTransaction, userBalances }: Props) => {
   const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
   const { loading, data, refetch } = useQuery(query);
 
@@ -33,6 +34,7 @@ const RaffleList = ({ setIsSendingTransaction }: Props) => {
           ?.filter((raffle: Raffle) => !raffle.isArchived)
           .map((raffle: Raffle) => (
             <RaffleListItem
+              userBalances={userBalances}
               key={raffle.id}
               raffle={raffle}
               setIsSendingTransaction={setIsSendingTransaction}

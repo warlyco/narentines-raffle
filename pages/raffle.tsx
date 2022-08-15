@@ -5,23 +5,53 @@ import { useCallback, useEffect, useState } from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import classNames from "classnames";
 import Head from "next/head";
-import { useQuery } from "@apollo/client";
 import axios from "axios";
 import { ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
 import Overlay from "features/overlay";
-import { ModalTypes } from "types/types";
+import { Balances, ModalTypes, SplTokens } from "types/types";
+import { PublicKey } from "@solana/web3.js";
+import { getTokenMintAddress } from "features/solana/helpers";
+
+type Token = Record<SplTokens, string>;
 
 const RafflePage = () => {
-  const [publicKey, setPublicKey] = useState<string | null>(null);
+  const { connection } = useConnection();
+  const { publicKey } = useWallet();
+  const [userBalances, setUserBalances] = useState<Balances | null>(null);
   const [isSendingTransaction, setIsSendingTransaction] =
     useState<boolean>(false);
-  const wallet = useWallet();
+
+  const { SOL, DUST, GOODS, FORGE, GEAR } = SplTokens;
+
+  const fetchUserBalances = useCallback(async () => {
+    let balances = {};
+    for (const token of Object.keys(SplTokens)) {
+      if (token !== SplTokens.SOL) {
+        const address = getTokenMintAddress(token as SplTokens);
+        console.log(token, address);
+        debugger;
+        if (!publicKey || !address || !token) return;
+        const { value: tokenAccounts } =
+          await connection.getParsedTokenAccountsByOwner(publicKey, {
+            mint: new PublicKey(address),
+          });
+        const balance =
+          tokenAccounts?.[0]?.account?.data?.parsed?.info?.tokenAmount
+            ?.uiAmount;
+        console.log(balance);
+        balances = { ...balances, [token]: balance };
+      }
+    }
+
+    setUserBalances(balances);
+  }, [connection, publicKey]);
 
   useEffect(() => {
-    if (!wallet?.publicKey) return;
-    setPublicKey(wallet.publicKey?.toString());
     axios.post(ADD_RAFFLE_ENTRY, { noop: true });
-  }, [wallet, wallet.publicKey]);
+    if (!publicKey) return;
+    fetchUserBalances();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [publicKey]);
 
   return (
     <>
@@ -56,7 +86,9 @@ const RafflePage = () => {
             </div>
             <div>
               <WalletMultiButton />
+              {!!userBalances && JSON.stringify(userBalances)}
             </div>
+
             <div className="text-sm italic">
               Have an issue or bug to report? <br /> Open a support ticket on
               our &nbsp;
@@ -76,7 +108,10 @@ const RafflePage = () => {
           </div>
           <div className="pr-0 md:pr-4"></div>
         </div>
-        <RaffleList setIsSendingTransaction={setIsSendingTransaction} />
+        <RaffleList
+          setIsSendingTransaction={setIsSendingTransaction}
+          userBalances={userBalances}
+        />
         <Overlay
           isVisible={isSendingTransaction}
           modalType={ModalTypes.SENDING_TRNASACTION}

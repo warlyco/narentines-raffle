@@ -112,3 +112,7 @@ export type VercelJobResponse = {
 export enum ModalTypes {
   SENDING_TRNASACTION = "SENDING_TRNASACTION",
 }
+
+export type Balances = {
+  [key: string]: string;
+};
