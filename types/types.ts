@@ -18,6 +18,8 @@ export type Raffle = {
   priceInGoods: number;
   priceInSol: number;
   priceInDust: number;
+  priceInForge: number;
+  priceInGear: number;
   imgSrc: string;
   winner?: string;
   winners: string[];
@@ -67,6 +69,8 @@ export enum SplTokens {
   SOL = "SOL",
   GOODS = "GOODS",
   DUST = "DUST",
+  FORGE = "FORGE",
+  GEAR = "GEAR",
 }
 
 export type DiscordUser = {

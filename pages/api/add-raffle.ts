@@ -28,6 +28,8 @@ const addRaffle: NextApiHandler = async (req, response) => {
     priceInGoods,
     priceInSol,
     priceInDust,
+    priceInForge,
+    priceInGear,
     totalTicketCount,
     totalWinnerCount,
     projectWebsiteUrl,
@@ -45,7 +47,11 @@ const addRaffle: NextApiHandler = async (req, response) => {
     !startsAt ||
     !imgSrc ||
     !name ||
-    (!priceInGoods && !priceInSol && !priceInDust) ||
+    (!priceInGoods &&
+      !priceInSol &&
+      !priceInDust &&
+      !priceInForge &&
+      !priceInGear) ||
     !totalTicketCount ||
     !totalWinnerCount
   )
@@ -75,6 +81,8 @@ const addRaffle: NextApiHandler = async (req, response) => {
         priceInGoods,
         priceInSol,
         priceInDust,
+        priceInForge,
+        priceInGear,
         totalTicketCount,
         totalWinnerCount,
         isTestRaffle: !!isTestRaffle,

@@ -10,6 +10,8 @@ export const ADD_RAFFLE = gql`
     $priceInGoods: Int
     $priceInSol: float8
     $priceInDust: float8
+    $priceInForge: float8
+    $priceInGear: float8
     $totalTicketCount: Int
     $totalWinnerCount: Int
     $projectWebsiteUrl: String
@@ -27,6 +29,8 @@ export const ADD_RAFFLE = gql`
         priceInGoods: $priceInGoods
         priceInSol: $priceInSol
         priceInDust: $priceInDust
+        priceInForge: $priceInForge
+        priceInGear: $priceInGear
         totalTicketCount: $totalTicketCount
         totalWinnerCount: $totalWinnerCount
         projectWebsiteUrl: $projectWebsiteUrl

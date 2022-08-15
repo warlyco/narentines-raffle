@@ -22,6 +22,9 @@ const AdminPanel = () => {
     useState<string>("0");
   const [pricePerTicketInSol, setPricePerTicketInSol] = useState<string>("0");
   const [pricePerTicketInDust, setPricePerTicketInDust] = useState<string>("0");
+  const [pricePerTicketInForge, setPricePerTicketInForge] =
+    useState<string>("0");
+  const [pricePerTicketInGear, setPricePerTicketInGear] = useState<string>("0");
   const [totalTicketCount, setTotalTicketCount] = useState<string>("500");
   const [totalWinnerCount, setTotalWinnerCount] = useState<string>("1");
   const [projectWebsiteUrl, setProjectWebsiteUrl] = useState<string>("");
@@ -60,6 +63,8 @@ const AdminPanel = () => {
           priceInGoods: parseInt(pricePerTicketInGoods),
           priceInSol: Number(pricePerTicketInSol),
           priceInDust: Number(pricePerTicketInDust),
+          priceInForge: Number(pricePerTicketInForge),
+          priceInGear: Number(pricePerTicketInGear),
           totalTicketCount: parseInt(totalTicketCount),
           totalWinnerCount: parseInt(totalWinnerCount),
           message,
@@ -71,7 +76,6 @@ const AdminPanel = () => {
         // clearForm();
         // const url = isProduction ? BUILD_HOOK : BUILD_HOOK_PREVIEW;
 
-        // axios.post<VercelJobResponse>(url)
         toast("Raffle added successfully! It will be displayed shortly.");
       } catch (error) {
         console.error(error);
@@ -86,6 +90,8 @@ const AdminPanel = () => {
       name,
       nftMintAddress,
       pricePerTicketInDust,
+      pricePerTicketInForge,
+      pricePerTicketInGear,
       pricePerTicketInGoods,
       pricePerTicketInSol,
       projectDiscordUrl,
@@ -197,6 +203,32 @@ const AdminPanel = () => {
               className="border p-1 w-full"
               value={pricePerTicketInDust}
               onChange={(e) => setPricePerTicketInDust(e.target.value)}
+            />
+          </label>
+          <label
+            htmlFor="price-in-forge"
+            className="flex space-x-4 items-center"
+          >
+            <div className="whitespace-nowrap">Price (in $FORGE)</div>
+            <input
+              type="number"
+              disabled={false}
+              className="border p-1 w-full"
+              value={pricePerTicketInForge}
+              onChange={(e) => setPricePerTicketInForge(e.target.value)}
+            />
+          </label>
+          <label
+            htmlFor="price-in-gear"
+            className="flex space-x-4 items-center"
+          >
+            <div className="whitespace-nowrap">Price (in $GEAR)</div>
+            <input
+              type="number"
+              disabled={false}
+              className="border p-1 w-full"
+              value={pricePerTicketInGear}
+              onChange={(e) => setPricePerTicketInGear(e.target.value)}
             />
           </label>
           <label

@@ -15,6 +15,8 @@ export const GET_RAFFLES = gql`
       priceInGoods
       priceInSol
       priceInDust
+      priceInForge
+      priceInGear
       imgSrc
       winner
       winners
