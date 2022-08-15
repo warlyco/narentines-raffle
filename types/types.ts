@@ -28,6 +28,8 @@ export type Raffle = {
   projectWebsiteUrl: string;
   projectTwitterUrl: string;
   projectDiscordUrl: string;
+  moonRankRarity: number;
+  collectionSize: number;
 };
 
 export type RaffleEntry = {
