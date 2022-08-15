@@ -89,36 +89,40 @@ export const TicketPrice = ({
   return (
     <div>
       <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
-      {paymentMethods?.length === 1 ? (
-        getPriceDisplay()
-      ) : winner || winners?.length || raffleIsOver || !publicKey ? (
-        getTicketPriceList()
-      ) : (
-        <label>
-          <select
-            className="text-lg font-bold rounded mb-2 w-full bg-slate-50 p-1"
-            value={String(paymentMethod)}
-            onChange={handleUpdatePaymentMethod}
-          >
-            {paymentMethods?.map((method) => (
-              <option value={method} key={method}>
-                {getPrice(method)} {method !== SplTokens.SOL && "$"}
-                {method}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
+      <div className="mb-2">
+        {paymentMethods?.length === 1 ? (
+          getPriceDisplay()
+        ) : winner || winners?.length || raffleIsOver || !publicKey ? (
+          getTicketPriceList()
+        ) : (
+          <label>
+            <select
+              className="text-lg font-bold rounded mb-2 w-full bg-slate-50 p-1"
+              value={String(paymentMethod)}
+              onChange={handleUpdatePaymentMethod}
+            >
+              {paymentMethods?.map((method) => (
+                <option value={method} key={method}>
+                  {getPrice(method)} {method !== SplTokens.SOL && "$"}
+                  {method}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+      </div>
 
-      {userBalances && userBalances[paymentMethod] && (
+      {userBalances && userBalances[paymentMethod] && !raffleIsOver && (
         <div className="flex justify-between">
-          <div>
-            <div className="text-lg text-green-800 font-semibold">Balance</div>
+          <div className="w-1/2">
+            <div className="text-lg text-green-800 font-semibold">
+              Your {paymentMethod}
+            </div>
             <div className="text-lg font-bold">
               {userBalances[paymentMethod]}
             </div>
           </div>
-          <div>
+          <div className="w-1/2">
             <div className="text-lg text-green-800 font-semibold">
               Purchasable
             </div>

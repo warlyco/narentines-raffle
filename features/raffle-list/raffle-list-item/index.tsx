@@ -330,7 +330,7 @@ export const RaffleListItem = ({
           })}
         />
         <div className="text-2xl font-bold py-1">{name}</div>
-        <div className="flex w-full py-1 mb-2 items-center justify-between">
+        <div className="flex w-full pb-2 items-center justify-between">
           {(!!projectWebsiteUrl?.length ||
             !!projectTwitterUrl?.length ||
             !!projectDiscordUrl?.length) && (
@@ -434,17 +434,19 @@ export const RaffleListItem = ({
             </div>
           </div>
         </div>
-        <div>
-          <div className="text-lg text-green-800 font-semibold">
-            Total Tickets
+        <div className="flex">
+          <div className="w-1/2">
+            <div className="text-lg text-green-800 font-semibold">
+              Total Tickets
+            </div>
+            <div className="text-lg font-bold">{totalTicketCount}</div>
           </div>
-          <div className="text-lg font-bold">{totalTicketCount}</div>
-        </div>
-        <div>
-          <div className="text-lg text-green-800 font-semibold">
-            Amount of Winners
+          <div className="w-1/2">
+            <div className="text-lg text-green-800 font-semibold">
+              # of Winners
+            </div>
+            <div className="text-lg font-bold">{totalWinnerCount}</div>
           </div>
-          <div className="text-lg font-bold">{totalWinnerCount}</div>
         </div>
         {!loading && paymentMethods?.length && paymentMethod && (
           <TicketPrice

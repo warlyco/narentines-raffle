@@ -9,7 +9,7 @@ import axios from "axios";
 import { ADD_RAFFLE_ENTRY } from "api/raffles/endpoints";
 import Overlay from "features/overlay";
 import { Balances, ModalTypes, SplTokens } from "types/types";
-import { PublicKey } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { getTokenMintAddress } from "features/solana/helpers";
 
 type Token = Record<SplTokens, string>;
@@ -21,16 +21,18 @@ const RafflePage = () => {
   const [isSendingTransaction, setIsSendingTransaction] =
     useState<boolean>(false);
 
-  const { SOL, DUST, GOODS, FORGE, GEAR } = SplTokens;
-
   const fetchUserBalances = useCallback(async () => {
+    if (!publicKey) return;
     let balances = {};
     for (const token of Object.keys(SplTokens)) {
-      if (token !== SplTokens.SOL) {
+      if (token === SplTokens.SOL) {
+        const balanceInLamports = await connection.getBalance(publicKey);
+        const balance = balanceInLamports / LAMPORTS_PER_SOL;
+
+        balances = { ...balances, [token]: balance };
+      } else {
         const address = getTokenMintAddress(token as SplTokens);
-        console.log(token, address);
-        debugger;
-        if (!publicKey || !address || !token) return;
+        if (!address || !token) return;
         const { value: tokenAccounts } =
           await connection.getParsedTokenAccountsByOwner(publicKey, {
             mint: new PublicKey(address),
@@ -86,7 +88,6 @@ const RafflePage = () => {
             </div>
             <div>
               <WalletMultiButton />
-              {!!userBalances && JSON.stringify(userBalances)}
             </div>
 
             <div className="text-sm italic">
