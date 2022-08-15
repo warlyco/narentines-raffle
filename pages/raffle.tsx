@@ -50,7 +50,10 @@ const RafflePage = () => {
 
   useEffect(() => {
     axios.post(ADD_RAFFLE_ENTRY, { noop: true });
-    if (!publicKey) return;
+    if (!publicKey) {
+      setUserBalances(null);
+      return;
+    }
     fetchUserBalances();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey]);
