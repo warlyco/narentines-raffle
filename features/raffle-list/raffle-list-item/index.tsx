@@ -75,6 +75,7 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
     priceInGear,
     moonRankRarity,
     collectionSize,
+    mintAddress,
   } = raffle;
 
   const handleCompleteTransaction = () => {
@@ -379,10 +380,16 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
             </div>
           )}
           {moonRankRarity && (
-            <div className="flex items-center justify-center p-1 px-2 border-2 border-black rounded-lg">
-              MR:&nbsp;
-              {moonRankRarity}&nbsp;/&nbsp;{collectionSize}
-            </div>
+            <a
+              href={`//moonrank.app/${mintAddress}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="flex items-center justify-center p-1 px-2 border-2 border-black rounded-lg">
+                MR:&nbsp;
+                {moonRankRarity}&nbsp;/&nbsp;{collectionSize}
+              </div>
+            </a>
           )}
         </div>
         <div>
