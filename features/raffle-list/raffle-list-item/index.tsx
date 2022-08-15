@@ -71,6 +71,8 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
     projectTwitterUrl,
     projectDiscordUrl,
     priceInDust,
+    priceInForge,
+    priceInGear,
   } = raffle;
 
   const handleCompleteTransaction = () => {
@@ -258,6 +260,12 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
     if (raffle.priceInDust) {
       paymentMethods.push(SplTokens.DUST);
     }
+    if (raffle.priceInForge) {
+      paymentMethods.push(SplTokens.FORGE);
+    }
+    if (raffle.priceInGear) {
+      paymentMethods.push(SplTokens.GEAR);
+    }
     setPaymentMethods(paymentMethods);
   }, [raffle]);
 
@@ -404,7 +412,13 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
         {!loading && paymentMethods?.length && paymentMethod && (
           <TicketPrice
             handleUpdatePaymentMethod={handleUpdatePaymentMethod}
-            prices={{ priceInDust, priceInGoods, priceInSol }}
+            prices={{
+              priceInDust,
+              priceInGoods,
+              priceInSol,
+              priceInForge,
+              priceInGear,
+            }}
             paymentMethod={paymentMethod}
             paymentMethods={paymentMethods}
             winner={winner}

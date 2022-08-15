@@ -1,5 +1,4 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { divide } from "lodash";
 import { ChangeEvent } from "react";
 import { SplTokens } from "types/types";
 
@@ -7,6 +6,8 @@ type Price = {
   priceInSol: number;
   priceInDust: number;
   priceInGoods: number;
+  priceInForge: number;
+  priceInGear: number;
 };
 
 type Props = {
@@ -31,8 +32,9 @@ export const TicketPrice = ({
   handleUpdatePaymentMethod,
 }: Props) => {
   const { publicKey } = useWallet();
-  const { priceInSol, priceInDust, priceInGoods } = prices;
-  const { SOL, DUST, GOODS } = SplTokens;
+  const { priceInSol, priceInDust, priceInGoods, priceInForge, priceInGear } =
+    prices;
+  const { SOL, DUST, GOODS, FORGE, GEAR } = SplTokens;
   const getPrice = (paymentMethod: SplTokens) => {
     switch (paymentMethod) {
       case SOL:
@@ -41,6 +43,10 @@ export const TicketPrice = ({
         return priceInDust;
       case GOODS:
         return priceInGoods;
+      case FORGE:
+        return priceInForge;
+      case GEAR:
+        return priceInGear;
     }
   };
 
@@ -50,6 +56,10 @@ export const TicketPrice = ({
         return <div className="text-lg font-bold">{priceInSol} SOL</div>;
       case DUST:
         return <div className="text-lg font-bold">{priceInDust} $DUST</div>;
+      case FORGE:
+        return <div className="text-lg font-bold">{priceInForge} $FORGE</div>;
+      case GEAR:
+        return <div className="text-lg font-bold">{priceInGear} $GEAR</div>;
       case GOODS:
       default:
         return <div className="text-lg font-bold">{priceInGoods} $GOODS</div>;

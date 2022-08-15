@@ -305,11 +305,17 @@ export const SendTransaction = ({
           return Number(numberOfTicketsToBuy) * raffle.priceInSol;
         case SplTokens.DUST:
           return Number(numberOfTicketsToBuy) * raffle.priceInDust * 10000000;
+        case SplTokens.FORGE:
+          return Number(numberOfTicketsToBuy) * raffle.priceInForge * 10000000;
+        case SplTokens.GEAR:
+          return Number(numberOfTicketsToBuy) * raffle.priceInGear * 10000000;
       }
     },
     [
       numberOfTicketsToBuy,
       raffle.priceInDust,
+      raffle.priceInForge,
+      raffle.priceInGear,
       raffle.priceInGoods,
       raffle.priceInSol,
     ]
