@@ -88,10 +88,18 @@ export const SendTransaction = ({
       message1: string,
       message2: string = "Please try again."
     ) => {
-      const res = await axios.post(UPDATE_ENTRY_COUNT, {
-        id: entryId,
-        count: entryCount,
-      });
+      let res;
+      try {
+        res = await axios.post(UPDATE_ENTRY_COUNT, {
+          id: entryId,
+          count: entryCount,
+        });
+      } catch (error) {
+        console.error(
+          `Failed to rollback purchase: ${(error as Error).message}`
+        );
+        return;
+      }
 
       toast.custom(
         <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
@@ -150,16 +158,31 @@ export const SendTransaction = ({
       try {
         const signed = await signTransaction(transaction);
 
-        const { data: raffleEntryData } = await axios.post<RaffleEntryResponse>(
-          ADD_RAFFLE_ENTRY,
-          {
-            walletAddress: fromPublicKey.toString(),
-            oldCount: entryCount,
-            newCount: Number(numberOfTicketsToBuy),
-            raffleId: raffle.id,
-            isVerified: false,
-          }
-        );
+        let raffleEntryData: RaffleEntryResponse | null;
+        try {
+          const { data } = await axios.post<RaffleEntryResponse>(
+            ADD_RAFFLE_ENTRY,
+            {
+              walletAddress: fromPublicKey.toString(),
+              oldCount: entryCount,
+              newCount: Number(numberOfTicketsToBuy),
+              raffleId: raffle.id,
+              isVerified: false,
+            }
+          );
+          raffleEntryData = data;
+        } catch (error) {
+          toast("There was a problem. Please try again.");
+          console.error(
+            `Could not save raffle entry: ${(error as Error).message}`
+          );
+          return;
+        }
+
+        if (!raffleEntryData) {
+          toast("There was a problem. Please try again.");
+          throw new Error("Could not save raffle entry");
+        }
 
         const { updatedCount, id } = raffleEntryData;
 
@@ -168,18 +191,29 @@ export const SendTransaction = ({
           signature = await connection.sendRawTransaction(signed.serialize());
         } catch (error) {
           handleRollbackPurchase(id, "Your purchase could not be completed.");
+
+          console.error(
+            `Could not send transaction: ${(error as Error).message}`
+          );
           return;
         }
 
         if (!signature) {
           toast("Unkown error - Please open a support ticket in discord");
-          throw new Error("Unkown error");
+          console.error("Tx signature missing");
+          return;
         }
 
-        const res = await axios.post(UPDATE_ENTRY_SIGNATURE, {
-          id,
-          txSignature: signature,
-        });
+        try {
+          const res = await axios.post(UPDATE_ENTRY_SIGNATURE, {
+            id,
+            txSignature: signature,
+          });
+        } catch (error) {
+          toast("Unkown error - Please open a support ticket in discord");
+          console.error(`Update signature failed: ${(error as Error).message}`);
+          return;
+        }
 
         toast.custom(
           <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
@@ -207,21 +241,32 @@ export const SendTransaction = ({
             "Your purchase could not be confirmed.",
             "Please open a support ticket in discord for assistance."
           );
+          console.error(
+            `Could not confirm transaction: ${(error as Error).message}`
+          );
           return;
         }
 
-        const { data: verificationData } = await client.mutate({
-          mutation: VERIFY_RAFFLE_ENTRY,
-          variables: {
-            id,
-          },
-        });
+        let verificationData;
+        try {
+          const { data } = await client.mutate({
+            mutation: VERIFY_RAFFLE_ENTRY,
+            variables: {
+              id,
+            },
+          });
+          verificationData = data;
+        } catch (error) {
+          toast("Unkown error - Please open a support ticket in discord");
+          console.error(`Unkown error: ${(error as Error).message}`);
+          return;
+        }
 
         const { update_entries } = verificationData;
 
         if (!updatedCount || !update_entries?.returning?.[0]) {
           toast("Unkown error - Please open a support ticket in discord");
-          throw new Error("Unkown error");
+          throw new Error("Unkown error: could not verify raffle entry");
         }
 
         toast.custom(
@@ -239,7 +284,9 @@ export const SendTransaction = ({
         );
         handleUpdateCounts();
       } catch (error) {
-        console.error("error", error);
+        console.error(
+          `Error in handleSendTransaction: ${(error as Error).message}`
+        );
       } finally {
         setIsLoading(false);
         setIsSendingTransaction(false);
@@ -284,7 +331,8 @@ export const SendTransaction = ({
 
       handleSendTransaction({ transaction, latestBlockHash });
     } catch (error) {
-      console.log("error", error);
+      console.error(`Could not send transaction: ${(error as Error).message}`);
+      return;
     }
   }, [
     connection,
@@ -418,7 +466,13 @@ export const SendTransaction = ({
     axios.post(UPDATE_ENTRY_COUNT, { noop: true });
     setIsLoading(true);
     setIsSendingTransaction(true);
-    const isAllowed = await checkIfPurchaseIsAllowed();
+
+    let isAllowed;
+    try {
+      isAllowed = await checkIfPurchaseIsAllowed();
+    } catch (error) {
+      console.error(`Purchase not allowed: ${(error as Error).message}`);
+    }
     if (!isAllowed) return;
 
     if (paymentMethod === SplTokens.SOL) {
