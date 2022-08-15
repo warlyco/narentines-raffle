@@ -87,7 +87,7 @@ export const TicketPrice = ({
   };
 
   return (
-    <div>
+    <div className="pt-2">
       <div className="text-lg text-green-800 font-semibold">Ticket Price</div>
       <div className="mb-2">
         {paymentMethods?.length === 1 ? (
@@ -111,8 +111,7 @@ export const TicketPrice = ({
           </label>
         )}
       </div>
-
-      {userBalances && userBalances[paymentMethod] && !raffleIsOver && (
+      {!!userBalances && !raffleIsOver && (
         <div className="flex justify-between">
           <div className="w-1/2">
             <div className="text-lg text-green-800 font-semibold">
