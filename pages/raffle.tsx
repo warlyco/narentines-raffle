@@ -40,7 +40,7 @@ const RafflePage = () => {
         const balance =
           tokenAccounts?.[0]?.account?.data?.parsed?.info?.tokenAmount
             ?.uiAmount;
-        console.log(balance);
+
         balances = { ...balances, [token]: balance };
       }
     }

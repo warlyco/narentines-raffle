@@ -118,7 +118,7 @@ export const TicketPrice = ({
               Your {paymentMethod}
             </div>
             <div className="text-lg font-bold">
-              {userBalances[paymentMethod]}
+              {userBalances[paymentMethod] || 0}
             </div>
           </div>
           <div className="w-1/2">
@@ -126,9 +126,12 @@ export const TicketPrice = ({
               Purchasable
             </div>
             <div className="text-lg font-bold">
-              {Math.floor(
-                Number(userBalances[paymentMethod]) / getPrice(paymentMethod)
-              )}
+              {userBalances[paymentMethod]
+                ? Math.floor(
+                    Number(userBalances[paymentMethod]) /
+                      getPrice(paymentMethod)
+                  )
+                : 0}
             </div>
           </div>
         </div>
