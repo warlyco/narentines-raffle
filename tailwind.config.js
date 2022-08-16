@@ -21,6 +21,7 @@ module.exports = {
   },
   plugins: [],
   safelist: [
+    "overflow-x-hidden",
     "min-h-screen",
     "h-full",
     "w-full",

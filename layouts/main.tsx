@@ -18,7 +18,7 @@ export default function MainLayout({ children }: Props) {
 
   return (
     <div
-      className="h-full w-full relative min-h-screen overflow-hidden"
+      className="h-full w-full relative min-h-screen overflow-x-hidden"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
       <Toaster />
