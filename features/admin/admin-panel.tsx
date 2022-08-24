@@ -261,7 +261,7 @@ const AdminPanel = () => {
             htmlFor="project-website-url"
             className="flex space-x-4 items-center"
           >
-            <div className="whitespace-nowrap">Porject website url</div>
+            <div className="whitespace-nowrap">Project website url</div>
             <input
               type="text"
               disabled={false}
@@ -274,7 +274,7 @@ const AdminPanel = () => {
             htmlFor="project-twitter-url"
             className="flex space-x-4 items-center"
           >
-            <div className="whitespace-nowrap">Porject twitter url</div>
+            <div className="whitespace-nowrap">Project twitter url</div>
             <input
               type="text"
               disabled={false}
@@ -287,7 +287,7 @@ const AdminPanel = () => {
             htmlFor="project-discord-url"
             className="flex space-x-4 items-center"
           >
-            <div className="whitespace-nowrap">Porject discord url</div>
+            <div className="whitespace-nowrap">Project discord url</div>
             <input
               type="text"
               disabled={false}
