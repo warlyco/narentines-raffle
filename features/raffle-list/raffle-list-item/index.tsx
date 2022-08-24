@@ -449,12 +449,12 @@ export const RaffleListItem = ({ raffle, setIsSendingTransaction }: Props) => {
             raffleIsOver={raffleIsOver}
           />
         )}
-        <div>
+        {/* <div>
           <div className="text-lg text-green-800 font-semibold">
             Amount of Winners
           </div>
           <div className="text-lg font-bold">{totalWinnerCount}</div>
-        </div>
+        </div> */}
       </div>
       <div>
         {!raffleIsOver && !(totalTicketCount <= soldCount) && publicKey && (
