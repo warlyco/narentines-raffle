@@ -58,6 +58,7 @@ const confirmTransaction = async (
     const preTokenBalance = transaction?.meta?.preTokenBalances?.[1];
     console.log(transaction);
     if (
+      // @ts-ignore
       postTokenBalance?.mint === MINT_ADDRESSES[paymentMethod] &&
       postTokenBalance?.owner === publicKey.toString()
     ) {
