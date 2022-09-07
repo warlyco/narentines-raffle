@@ -8,6 +8,8 @@ type Props = {
 };
 
 const verifySignature = ({ signature, message, publicKey }: Props) => {
+  console.log({ signature, message, publicKey });
+
   return nacl.sign.detached.verify(
     decodeUTF8(message),
     Buffer.from(JSON.parse(signature).data),

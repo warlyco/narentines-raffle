@@ -80,6 +80,7 @@ export const SendTransaction = ({
     publicKey: fromPublicKey,
     sendTransaction,
     signTransaction,
+    signMessage,
   } = useWallet();
 
   const handleRollbackPurchase = useCallback(
@@ -154,8 +155,16 @@ export const SendTransaction = ({
       transaction: Transaction;
       latestBlockHash: BlockhashWithExpiryBlockHeight;
     }) => {
-      if (!signTransaction || !fromPublicKey) return;
+      if (!signTransaction || !fromPublicKey || !signMessage) return;
       try {
+        const ticketsPlural =
+          Number(numberOfTicketsToBuy) > 1 ? "tickets" : "ticket";
+        const message = `Buying ${Number(
+          numberOfTicketsToBuy
+        )} raffle ${ticketsPlural}`;
+        const messageSignature = await signMessage(
+          new TextEncoder().encode(message)
+        );
         const signed = await signTransaction(transaction);
 
         let raffleEntryData: RaffleEntryResponse | null;
@@ -168,6 +177,10 @@ export const SendTransaction = ({
               newCount: Number(numberOfTicketsToBuy),
               raffleId: raffle.id,
               isVerified: false,
+              transaction,
+              signature: JSON.stringify(messageSignature),
+              publicKey: JSON.stringify(fromPublicKey.toBytes()),
+              message,
             }
           );
           raffleEntryData = data;

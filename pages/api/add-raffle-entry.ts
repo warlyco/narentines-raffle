@@ -7,6 +7,7 @@ import { request } from "graphql-request";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 import { isProduction, SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
+import verifySignature from "utils/auth/verify-signature";
 
 Sentry.init({
   dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
@@ -18,9 +19,30 @@ Sentry.init({
 });
 
 const addRaffleEntry: NextApiHandler = async (req, response) => {
-  const { raffleId, walletAddress, oldCount, newCount, isVerified, noop } =
-    req.body;
+  const {
+    raffleId,
+    walletAddress,
+    oldCount,
+    newCount,
+    isVerified,
+    noop,
+    message,
+    signature,
+    publicKey,
+  } = req.body;
   const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
+  const isSignatureVerified = verifySignature({
+    message,
+    signature,
+    publicKey,
+  });
+
+  if (!isSignatureVerified) {
+    response.status(401).json({
+      error: "Signature verification failed",
+    });
+    return;
+  }
 
   if (noop) return response.status(200).json({});
 
