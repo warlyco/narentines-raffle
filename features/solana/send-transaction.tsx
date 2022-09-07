@@ -1,5 +1,6 @@
 import {
   isProduction,
+  MINT_ADDRESSES,
   RPC_ENDPOINT,
   SOLANA_CLUSTER,
 } from "constants/constants";
@@ -40,8 +41,9 @@ import {
 import client from "graphql/apollo-client";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
-
+import base58 from "bs58";
 import VERIFY_RAFFLE_ENTRY from "graphql/mutations/verify-raffle-entry";
+import nacl from "tweetnacl";
 
 const SwalReact = withReactContent(Swal);
 
@@ -165,7 +167,51 @@ export const SendTransaction = ({
         const messageSignature = await signMessage(
           new TextEncoder().encode(message)
         );
-        const signed = await signTransaction(transaction);
+        const signedTransaction = await signTransaction(transaction);
+        // console.log(signedTransaction);
+        const { signature: txSignature } = signedTransaction.signatures?.[0];
+        // const txSig = "";
+        // const txSig = base58.decode(txSignature.buffer);
+        if (!txSignature) return;
+        const txSig = base58.encode(txSignature);
+        console.log(txSig, txSignature);
+
+        let signature;
+        try {
+          signature = await connection.sendRawTransaction(
+            signedTransaction.serialize()
+          );
+        } catch (error) {
+          console.error(
+            `Could not send transaction: ${(error as Error).message}`
+          );
+          return;
+        }
+
+        if (!signature) {
+          toast("Unkown error - Please open a support ticket in discord");
+          console.error("Tx signature missing");
+          return;
+        }
+
+        try {
+          await connection.confirmTransaction({
+            signature,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            blockhash: latestBlockHash.blockhash,
+          });
+        } catch (error) {
+          toast.custom(
+            <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
+              <div>Your purchase could not be confirmed.</div>
+              <div>Please open a support ticket in discord for assistance.</div>
+            </div>
+          );
+          console.error(
+            `Could not confirm transaction: ${(error as Error).message}`
+          );
+          return;
+        }
 
         let raffleEntryData: RaffleEntryResponse | null;
         try {
@@ -178,44 +224,36 @@ export const SendTransaction = ({
               raffleId: raffle.id,
               isVerified: false,
               transaction,
+              transactionSignature: txSig,
               signature: JSON.stringify(messageSignature),
               publicKey: JSON.stringify(fromPublicKey.toBytes()),
               message,
+              paymentMethod,
             }
           );
           raffleEntryData = data;
         } catch (error) {
-          toast("There was a problem. Please try again.");
-          console.error(
-            `Could not save raffle entry: ${(error as Error).message}`
+          toast.custom(
+            <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
+              <div>Your purchase could not be confirmed.</div>
+              <div>Please open a support ticket in discord for assistance.</div>
+            </div>
           );
           return;
         }
 
         if (!raffleEntryData) {
+          toast.custom(
+            <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
+              <div>Your purchase could not be confirmed.</div>
+              <div>Please open a support ticket in discord for assistance.</div>
+            </div>
+          );
           toast("There was a problem. Please try again.");
           throw new Error("Could not save raffle entry");
         }
 
         const { updatedCount, id } = raffleEntryData;
-
-        let signature;
-        try {
-          signature = await connection.sendRawTransaction(signed.serialize());
-        } catch (error) {
-          handleRollbackPurchase(id, "Your purchase could not be completed.");
-
-          console.error(
-            `Could not send transaction: ${(error as Error).message}`
-          );
-          return;
-        }
-
-        if (!signature) {
-          toast("Unkown error - Please open a support ticket in discord");
-          console.error("Tx signature missing");
-          return;
-        }
 
         try {
           const res = await axios.post(UPDATE_ENTRY_SIGNATURE, {
@@ -242,24 +280,6 @@ export const SendTransaction = ({
           </div>
         );
 
-        try {
-          await connection.confirmTransaction({
-            signature,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            blockhash: latestBlockHash.blockhash,
-          });
-        } catch (error) {
-          handleRollbackPurchase(
-            id,
-            "Your purchase could not be confirmed.",
-            "Please open a support ticket in discord for assistance."
-          );
-          console.error(
-            `Could not confirm transaction: ${(error as Error).message}`
-          );
-          return;
-        }
-
         let verificationData;
         try {
           const { data } = await client.mutate({
@@ -270,16 +290,22 @@ export const SendTransaction = ({
           });
           verificationData = data;
         } catch (error) {
-          toast("Unkown error - Please open a support ticket in discord");
-          console.error(`Unkown error: ${(error as Error).message}`);
+          handleRollbackPurchase(
+            id,
+            "Your purchase could not be confirmed.",
+            "Please open a support ticket in discord for assistance."
+          );
           return;
         }
 
         const { update_entries } = verificationData;
 
         if (!updatedCount || !update_entries?.returning?.[0]) {
-          toast("Unkown error - Please open a support ticket in discord");
-          throw new Error("Unkown error: could not verify raffle entry");
+          handleRollbackPurchase(
+            id,
+            "Your purchase could not be confirmed.",
+            "Please open a support ticket in discord for assistance."
+          );
         }
 
         toast.custom(
