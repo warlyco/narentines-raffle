@@ -129,25 +129,31 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
     signature,
     publicKey,
   });
-
+  if (noop) return response.status(200).json({});
   const connection = new Connection(RPC_ENDPOINT);
 
-  await retry(
-    async (bail) => {
-      await confirmTransaction(
-        connection,
-        new PublicKey(walletAddress),
-        1,
-        paymentMethod,
-        transactionSignature,
-        newCount,
-        bail
-      );
-    },
-    {
-      retries: 5,
-    }
-  );
+  try {
+    await retry(
+      async (bail) => {
+        await confirmTransaction(
+          connection,
+          new PublicKey(walletAddress),
+          1,
+          paymentMethod,
+          transactionSignature,
+          newCount,
+          bail
+        );
+      },
+      {
+        retries: 8,
+      }
+    );
+  } catch (error) {
+    return response
+      .status(500)
+      .json({ error: "Could not confirm solana transaction" });
+  }
 
   if (!isSignatureVerified) {
     response.status(401).json({
@@ -155,8 +161,6 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
     });
     return;
   }
-
-  if (noop) return response.status(200).json({});
 
   if (!raffleId || !walletAddress || oldCount === undefined || !newCount)
     throw new Error("Missing required fields");
