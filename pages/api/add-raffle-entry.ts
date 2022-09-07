@@ -143,13 +143,6 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
       .json({ error: "Could not confirm solana transaction" });
   }
 
-  if (!isSignatureVerified) {
-    response.status(401).json({
-      error: "Signature verification failed",
-    });
-    return;
-  }
-
   if (!raffleId || !walletAddress || oldCount === undefined || !newCount)
     throw new Error("Missing required fields");
 
