@@ -46,17 +46,12 @@ const confirmTransaction = async (
   let unparsedTransactionDetails = await connection.getTransactions([
     signature,
   ]);
-  console.log({
-    unparsedTransactionDetails: JSON.stringify(unparsedTransactionDetails),
-    signature,
-  });
 
   if (!paymentMethod) return;
   let txConfirmed = false;
   unparsedTransactionDetails.forEach((transaction) => {
     const postTokenBalance = transaction?.meta?.postTokenBalances?.[1];
     const preTokenBalance = transaction?.meta?.preTokenBalances?.[1];
-    console.log(transaction);
     if (
       // @ts-ignore
       postTokenBalance?.mint === MINT_ADDRESSES[paymentMethod] &&
@@ -116,20 +111,13 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
     newCount,
     isVerified,
     noop,
-    message,
-    signature,
-    publicKey,
-    transaction,
     paymentMethod,
     transactionSignature,
   } = req.body;
-  const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
-  const isSignatureVerified = verifySignature({
-    message,
-    signature,
-    publicKey,
-  });
+
   if (noop) return response.status(200).json({});
+
+  const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
   const connection = new Connection(RPC_ENDPOINT);
 
   try {

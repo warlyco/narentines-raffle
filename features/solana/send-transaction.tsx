@@ -159,14 +159,6 @@ export const SendTransaction = ({
     }) => {
       if (!signTransaction || !fromPublicKey || !signMessage) return;
       try {
-        const ticketsPlural =
-          Number(numberOfTicketsToBuy) > 1 ? "tickets" : "ticket";
-        const message = `Buying ${Number(
-          numberOfTicketsToBuy
-        )} raffle ${ticketsPlural}`;
-        const messageSignature = await signMessage(
-          new TextEncoder().encode(message)
-        );
         const signedTransaction = await signTransaction(transaction);
         // console.log(signedTransaction);
         const { signature: txSignature } = signedTransaction.signatures?.[0];
@@ -223,11 +215,7 @@ export const SendTransaction = ({
               newCount: Number(numberOfTicketsToBuy),
               raffleId: raffle.id,
               isVerified: false,
-              transaction,
               transactionSignature: txSig,
-              signature: JSON.stringify(messageSignature),
-              publicKey: JSON.stringify(fromPublicKey.toBytes()),
-              message,
               paymentMethod,
             }
           );
