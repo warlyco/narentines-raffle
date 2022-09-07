@@ -62,17 +62,14 @@ const confirmTransaction = async (
       postTokenBalance?.mint === MINT_ADDRESSES[paymentMethod] &&
       postTokenBalance?.owner === publicKey.toString()
     ) {
-      // is valid transaction, check amount
-      console.log(
-        preTokenBalance.uiTokenAmount,
-        postTokenBalance.uiTokenAmount,
-        preTokenBalance.uiTokenAmount.uiAmount -
-          postTokenBalance.uiTokenAmount.uiAmount
-      );
+      if (
+        !preTokenBalance?.uiTokenAmount?.uiAmount ||
+        !postTokenBalance?.uiTokenAmount?.uiAmount
+      )
+        return;
       const tokenBalanceChangeAmount =
-        preTokenBalance.uiTokenAmount.uiAmount -
+        preTokenBalance?.uiTokenAmount?.uiAmount -
         postTokenBalance.uiTokenAmount.uiAmount;
-      console.log({ tokenBalanceChangeAmount, purchaseCount });
       if (purchaseCount === tokenBalanceChangeAmount) {
         txConfirmed = true;
         console.log("Transaction confirmed!");
@@ -90,16 +87,19 @@ const confirmTransaction = async (
   }
 
   transactionList.forEach((transaction, i) => {
+    // @ts-ignore
     const date = new Date(transaction.blockTime * 1000);
     const transactionInstructions =
       transactionDetails[i]?.transaction.message.instructions || [];
     console.log(`Transaction No: ${i + 1}`);
     console.log(`Signature: ${transaction.signature}`);
     console.log(`Time: ${date}`);
+    // @ts-ignore
     console.log(`Status: ${transaction.confirmationStatus}`);
     transactionInstructions.forEach((instruction, n) => {
       console.log(
         `---Program Instructions ${n + 1}: ${
+          // @ts-ignore
           instruction.program ? instruction.program + ":" : ""
         } ${instruction.programId.toString()}`
       );
