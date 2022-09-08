@@ -508,7 +508,7 @@ export const RaffleListItem = ({
             raffleIsOver={raffleIsOver}
             raffleIsSoldOut={totalTicketCount <= soldCount}
             entryCount={entryCount || 0}
-            numberOfTicketsToBuy={numberOfTicketsToBuy}
+            numberOfTicketsToBuy={Number(numberOfTicketsToBuy)}
             winner={winner}
             winners={winners}
             handleUpdateCounts={handleUpdateCounts}

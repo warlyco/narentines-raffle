@@ -116,3 +116,8 @@ export enum ModalTypes {
 export type Balances = {
   [key: string]: string;
 };
+
+export type Link = {
+  url: string;
+  title: string;
+};

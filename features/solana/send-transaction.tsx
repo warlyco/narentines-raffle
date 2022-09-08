@@ -35,6 +35,7 @@ import {
   UPDATE_ENTRY_SIGNATURE,
 } from "api/raffles/endpoints";
 import {
+  checkIfPurchaseIsAllowed,
   createSolanaTransaction,
   getTokenMintAddress,
 } from "features/solana/helpers";
@@ -44,13 +45,14 @@ import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 import base58 from "bs58";
 import VERIFY_RAFFLE_ENTRY from "graphql/mutations/verify-raffle-entry";
 import nacl from "tweetnacl";
+import showToast from "features/toasts/show-toast";
 
 const SwalReact = withReactContent(Swal);
 
 type Props = {
   raffle: Raffle;
   entryCount: number;
-  numberOfTicketsToBuy: string;
+  numberOfTicketsToBuy: number;
   raffleIsOver: boolean;
   raffleIsSoldOut: boolean;
   winner?: string;
@@ -88,8 +90,8 @@ export const SendTransaction = ({
   const handleRollbackPurchase = useCallback(
     async (
       entryId: string,
-      message1: string,
-      message2: string = "Please try again."
+      primaryMessage: string,
+      secondaryMessage: string = "Please try again."
     ) => {
       let res;
       try {
@@ -104,50 +106,10 @@ export const SendTransaction = ({
         return;
       }
 
-      toast.custom(
-        <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-          <div>{message1}</div>
-          <div>{message2}</div>
-        </div>
-      );
+      showToast({ primaryMessage, secondaryMessage });
     },
     [entryCount]
   );
-
-  const checkIfPurchaseIsAllowed = async () => {
-    return new Promise(async (resolve, reject) => {
-      const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
-
-      const { data } = await client.query({
-        query,
-        fetchPolicy: "no-cache",
-      });
-
-      const updatedRaffle = data.raffles.find(
-        ({ id }: Raffle) => id === raffle.id
-      );
-
-      if (!updatedRaffle) {
-        toast("Unkown raffle");
-        reject("Unkown raffle");
-        throw new Error("Unkown raffle");
-      }
-
-      const { totalTicketCount, soldTicketCount } = updatedRaffle;
-      if (totalTicketCount - soldTicketCount <= 0) {
-        toast("Raffle is sold out!");
-        reject("Raffle is sold out!");
-        throw new Error("Raffle is sold out!");
-      }
-      if (totalTicketCount - soldTicketCount < Number(numberOfTicketsToBuy)) {
-        toast("Not enough tickets left");
-        reject("Not enough tickets left");
-        throw new Error("Not enough tickets left");
-      }
-
-      resolve(true);
-    });
-  };
 
   const handleSendTransaction = useCallback(
     async ({
@@ -220,7 +182,7 @@ export const SendTransaction = ({
             {
               walletAddress: fromPublicKey.toString(),
               oldCount: entryCount,
-              newCount: Number(numberOfTicketsToBuy),
+              newCount: numberOfTicketsToBuy,
               raffleId: raffle.id,
               isVerified: false,
               transactionSignature: txSig,
@@ -302,37 +264,34 @@ export const SendTransaction = ({
           });
           verificationData = data;
         } catch (error) {
-          handleRollbackPurchase(
-            id,
-            "Your purchase could not be confirmed.",
-            "Please open a support ticket in discord for assistance."
-          );
+          showToast({
+            primaryMessage: "Your purchase could not be confirmed.",
+            secondaryMessage:
+              "Please open a support ticket in discord for assistance.",
+          });
           return;
         }
 
         const { update_entries } = verificationData;
 
         if (!updatedCount || !update_entries?.returning?.[0]) {
-          handleRollbackPurchase(
-            id,
-            "Your purchase could not be confirmed.",
-            "Please open a support ticket in discord for assistance."
-          );
+          showToast({
+            primaryMessage: "Your purchase could not be confirmed.",
+            secondaryMessage:
+              "Please open a support ticket in discord for assistance.",
+          });
         }
 
-        toast.custom(
-          <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-            <div>Transaction successful!</div>
-            <a
-              href={`https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline block ml-2"
-            >
-              View
-            </a>
-          </div>
-        );
+        showToast({
+          primaryMessage: "Transaction successful!",
+          secondaryMessage:
+            "Please open a support ticket in discord for assistance.",
+          link: {
+            url: `https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`,
+            title: "View Transaction",
+          },
+        });
+
         handleUpdateCounts();
       } catch (error) {
         console.error(
@@ -347,12 +306,13 @@ export const SendTransaction = ({
     [
       signTransaction,
       fromPublicKey,
+      signMessage,
+      handleUpdateCounts,
       connection,
       entryCount,
       numberOfTicketsToBuy,
       raffle.id,
-      handleUpdateCounts,
-      handleRollbackPurchase,
+      paymentMethod,
       setIsSendingTransaction,
       handleCompleteTransaction,
     ]
@@ -372,7 +332,7 @@ export const SendTransaction = ({
       const transaction = createSolanaTransaction({
         fromPublicKey,
         toPublicKey: new PublicKey(process.env.NEXT_PUBLIC_COLLECTION_WALLET),
-        numberOfTicketsToBuy: Number(numberOfTicketsToBuy),
+        numberOfTicketsToBuy: numberOfTicketsToBuy,
         pricePerTicket: raffle.priceInSol,
       });
 
@@ -399,15 +359,15 @@ export const SendTransaction = ({
     (token: SplTokens) => {
       switch (token) {
         case SplTokens.GOODS:
-          return Number(numberOfTicketsToBuy) * raffle.priceInGoods;
+          return numberOfTicketsToBuy * raffle.priceInGoods;
         case SplTokens.SOL:
-          return Number(numberOfTicketsToBuy) * raffle.priceInSol;
+          return numberOfTicketsToBuy * raffle.priceInSol;
         case SplTokens.DUST:
-          return Number(numberOfTicketsToBuy) * raffle.priceInDust * 10000000;
+          return numberOfTicketsToBuy * raffle.priceInDust * 10000000;
         case SplTokens.FORGE:
-          return Number(numberOfTicketsToBuy) * raffle.priceInForge * 10000000;
+          return numberOfTicketsToBuy * raffle.priceInForge * 10000000;
         case SplTokens.GEAR:
-          return Number(numberOfTicketsToBuy) * raffle.priceInGear * 10000000;
+          return numberOfTicketsToBuy * raffle.priceInGear * 10000000;
       }
     },
     [
@@ -520,7 +480,7 @@ export const SendTransaction = ({
 
     let isAllowed;
     try {
-      isAllowed = await checkIfPurchaseIsAllowed();
+      isAllowed = await checkIfPurchaseIsAllowed(raffle, numberOfTicketsToBuy);
     } catch (error) {
       console.error(`Purchase not allowed: ${(error as Error).message}`);
     }
@@ -563,10 +523,7 @@ export const SendTransaction = ({
         </div>
       );
     if (raffleIsSoldOut) return "Sold Out";
-    if (
-      Number(numberOfTicketsToBuy) >
-      raffle.totalTicketCount - raffle.soldTicketCount
-    )
+    if (numberOfTicketsToBuy > raffle.totalTicketCount - raffle.soldTicketCount)
       return "Not enough tickets";
 
     return "Buy tickets";
@@ -589,9 +546,9 @@ export const SendTransaction = ({
             raffleIsOver ||
             !fromPublicKey ||
             isLoading ||
-            Number(numberOfTicketsToBuy) % 1 !== 0 ||
-            Number(numberOfTicketsToBuy) <= 0 ||
-            Number(numberOfTicketsToBuy) >
+            numberOfTicketsToBuy % 1 !== 0 ||
+            numberOfTicketsToBuy <= 0 ||
+            numberOfTicketsToBuy >
               raffle.totalTicketCount - raffle.soldTicketCount
           }
           className={classNames({
@@ -605,8 +562,8 @@ export const SendTransaction = ({
               raffleIsOver ||
               !fromPublicKey ||
               isLoading ||
-              Number(numberOfTicketsToBuy) <= 0 ||
-              Number(numberOfTicketsToBuy) >
+              numberOfTicketsToBuy <= 0 ||
+              numberOfTicketsToBuy >
                 raffle.totalTicketCount - raffle.soldTicketCount,
           })}
         >
