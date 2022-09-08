@@ -30,6 +30,10 @@ const ShowCounter = ({ days, hours, minutes, seconds }: Props) => {
 const CountdownTimer = ({ endsAt }: { endsAt: string }) => {
   const [days, hours, minutes, seconds] = useCountdown(endsAt);
 
+  if (days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0) {
+    return <></>;
+  }
+
   return (
     <ShowCounter
       days={days}

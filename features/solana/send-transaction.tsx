@@ -29,7 +29,6 @@ import {
   getTokenMintAddress,
 } from "features/solana/helpers";
 import base58 from "bs58";
-import showToast from "features/toasts/show-toast";
 import { E001, E002, E003, E004, E005, E006, E007 } from "errors/types";
 import showTransactionSuccessToast from "features/toasts/show-transaction-success-toast";
 import showGenericErrorToast from "features/toasts/show-generic-error-toast";
