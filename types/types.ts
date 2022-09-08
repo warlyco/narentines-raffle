@@ -117,7 +117,12 @@ export type Balances = {
   [key: string]: string;
 };
 
-export type Link = {
+export type AppError = {
+  code: string;
+  message: string;
+};
+
+export type ToastLink = {
   url: string;
   title: string;
 };

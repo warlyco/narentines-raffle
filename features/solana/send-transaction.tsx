@@ -1,9 +1,3 @@
-import {
-  isProduction,
-  MINT_ADDRESSES,
-  RPC_ENDPOINT,
-  SOLANA_CLUSTER,
-} from "constants/constants";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -15,12 +9,7 @@ import {
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import classNames from "classnames";
-import {
-  Raffle,
-  RaffleEntryResponse,
-  RafflesResponse,
-  SplTokens,
-} from "types/types";
+import { Raffle, RaffleEntryResponse, SplTokens } from "types/types";
 import {
   TOKEN_PROGRAM_ID,
   createTransferInstruction,
@@ -39,13 +28,12 @@ import {
   createSolanaTransaction,
   getTokenMintAddress,
 } from "features/solana/helpers";
-import client from "graphql/apollo-client";
-import { GET_RAFFLES } from "graphql/queries/get-raffles";
-import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 import base58 from "bs58";
-import VERIFY_RAFFLE_ENTRY from "graphql/mutations/verify-raffle-entry";
-import nacl from "tweetnacl";
 import showToast from "features/toasts/show-toast";
+import { E001, E002, E003, E004, E005, E006, E007 } from "errors/types";
+import showTransactionSuccessToast from "features/toasts/show-transaction-success-toast";
+import showGenericErrorToast from "features/toasts/show-generic-error-toast";
+import showCouldNotConfirmTransactionToast from "features/toasts/show-could-not-confirm-transaction-toast";
 
 const SwalReact = withReactContent(Swal);
 
@@ -87,29 +75,29 @@ export const SendTransaction = ({
     signMessage,
   } = useWallet();
 
-  const handleRollbackPurchase = useCallback(
-    async (
-      entryId: string,
-      primaryMessage: string,
-      secondaryMessage: string = "Please try again."
-    ) => {
-      let res;
-      try {
-        res = await axios.post(UPDATE_ENTRY_COUNT, {
-          id: entryId,
-          count: entryCount,
-        });
-      } catch (error) {
-        console.error(
-          `Failed to rollback purchase: ${(error as Error).message}`
-        );
-        return;
-      }
+  // const handleRollbackPurchase = useCallback(
+  //   async (
+  //     entryId: string,
+  //     primaryMessage: string,
+  //     secondaryMessage: string = "Please try again."
+  //   ) => {
+  //     let res;
+  //     try {
+  //       res = await axios.post(UPDATE_ENTRY_COUNT, {
+  //         id: entryId,
+  //         count: entryCount,
+  //       });
+  //     } catch (error) {
+  //       console.error(
+  //         `Failed to rollback purchase: ${(error as Error).message}`
+  //       );
+  //       return;
+  //     }
 
-      showToast({ primaryMessage, secondaryMessage });
-    },
-    [entryCount]
-  );
+  //     showToast({ primaryMessage, secondaryMessage });
+  //   },
+  //   [entryCount]
+  // );
 
   const handleSendTransaction = useCallback(
     async ({
@@ -122,29 +110,24 @@ export const SendTransaction = ({
       if (!signTransaction || !fromPublicKey || !signMessage) return;
       try {
         const signedTransaction = await signTransaction(transaction);
-        // console.log(signedTransaction);
         const { signature: txSignature } = signedTransaction.signatures?.[0];
-        // const txSig = "";
-        // const txSig = base58.decode(txSignature.buffer);
-        if (!txSignature) return;
-        const txSig = base58.encode(txSignature);
-        console.log(txSig, txSignature);
 
+        if (!txSignature) return;
+
+        const txSig = base58.encode(txSignature);
         let signature;
+
         try {
           signature = await connection.sendRawTransaction(
             signedTransaction.serialize()
           );
         } catch (error) {
-          console.error(
-            `Could not send transaction: ${(error as Error).message}`
-          );
+          showGenericErrorToast(E001);
           return;
         }
 
         if (!signature) {
-          toast("Unkown error - Please open a support ticket in discord");
-          console.error("Tx signature missing");
+          showGenericErrorToast(E002);
           return;
         }
 
@@ -155,23 +138,7 @@ export const SendTransaction = ({
             blockhash: latestBlockHash.blockhash,
           });
         } catch (error) {
-          toast.custom(
-            <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-              <div>Your purchase could not be confirmed.</div>
-              <div>Please open a support ticket in discord for assistance.</div>
-              <a
-                href={`https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline block ml-2"
-              >
-                View
-              </a>
-            </div>
-          );
-          console.error(
-            `Could not confirm transaction: ${(error as Error).message}`
-          );
+          showCouldNotConfirmTransactionToast({ signature, error: E003 });
           return;
         }
 
@@ -191,107 +158,27 @@ export const SendTransaction = ({
           );
           raffleEntryData = data;
         } catch (error) {
-          toast.custom(
-            <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-              <div>Your purchase could not be confirmed.</div>
-              <div>Please open a support ticket in discord for assistance.</div>
-              <a
-                href={`https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline block ml-2"
-              >
-                View
-              </a>
-            </div>
-          );
+          showCouldNotConfirmTransactionToast({ signature, error: E004 });
           return;
         }
 
         if (!raffleEntryData) {
-          toast.custom(
-            <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-              <div>Your purchase could not be confirmed.</div>
-              <div>Please open a support ticket in discord for assistance.</div>
-              <a
-                href={`https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline block ml-2"
-              >
-                View
-              </a>
-            </div>
-          );
-          toast("There was a problem. Please try again.");
-          throw new Error("Could not save raffle entry");
+          showCouldNotConfirmTransactionToast({ signature, error: E005 });
         }
 
-        const { updatedCount, id } = raffleEntryData;
-
+        // TODO: Add new tx to own db table
         try {
-          const res = await axios.post(UPDATE_ENTRY_SIGNATURE, {
+          const { id } = raffleEntryData;
+          await axios.post(UPDATE_ENTRY_SIGNATURE, {
             id,
             txSignature: signature,
           });
         } catch (error) {
-          toast("Unkown error - Please open a support ticket in discord");
-          console.error(`Update signature failed: ${(error as Error).message}`);
+          showCouldNotConfirmTransactionToast({ signature, error: E006 });
           return;
         }
 
-        toast.custom(
-          <div className="flex bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
-            <div>Transaction sent...</div>
-            <a
-              href={`https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline block ml-2"
-            >
-              View
-            </a>
-          </div>
-        );
-
-        let verificationData;
-        try {
-          const { data } = await client.mutate({
-            mutation: VERIFY_RAFFLE_ENTRY,
-            variables: {
-              id,
-            },
-          });
-          verificationData = data;
-        } catch (error) {
-          showToast({
-            primaryMessage: "Your purchase could not be confirmed.",
-            secondaryMessage:
-              "Please open a support ticket in discord for assistance.",
-          });
-          return;
-        }
-
-        const { update_entries } = verificationData;
-
-        if (!updatedCount || !update_entries?.returning?.[0]) {
-          showToast({
-            primaryMessage: "Your purchase could not be confirmed.",
-            secondaryMessage:
-              "Please open a support ticket in discord for assistance.",
-          });
-        }
-
-        showToast({
-          primaryMessage: "Transaction successful!",
-          secondaryMessage:
-            "Please open a support ticket in discord for assistance.",
-          link: {
-            url: `https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`,
-            title: "View Transaction",
-          },
-        });
-
+        showTransactionSuccessToast(signature);
         handleUpdateCounts();
       } catch (error) {
         console.error(
@@ -342,7 +229,7 @@ export const SendTransaction = ({
 
       handleSendTransaction({ transaction, latestBlockHash });
     } catch (error) {
-      console.error(`Could not send transaction: ${(error as Error).message}`);
+      showGenericErrorToast(E007);
       return;
     }
   }, [
