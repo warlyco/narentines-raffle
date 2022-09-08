@@ -52,8 +52,7 @@ const addRaffle: NextApiHandler = async (req, response) => {
       !priceInDust &&
       !priceInForge &&
       !priceInGear) ||
-    !totalTicketCount ||
-    !totalWinnerCount
+    !totalTicketCount
   )
     throw new Error("Missing required fields");
 
