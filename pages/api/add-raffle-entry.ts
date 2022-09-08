@@ -12,7 +12,13 @@ import {
   RPC_ENDPOINT,
   SENTRY_TRACE_SAMPLE_RATE,
 } from "constants/constants";
-import { Connection, PublicKey } from "@solana/web3.js";
+import {
+  Connection,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  Transaction,
+  TransactionResponse,
+} from "@solana/web3.js";
 import retry from "async-retry";
 
 Sentry.init({
@@ -23,6 +29,83 @@ Sentry.init({
   // We recommend adjusting this value in production
   tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
 });
+
+const calculateSolCost = (
+  transaction: TransactionResponse,
+  price: number,
+  purchaseCount: number
+) => {
+  const postTokenBalance = transaction?.meta?.postBalances[0];
+  const preTokenBalance = transaction?.meta?.preBalances[0];
+  const fee = transaction?.meta?.fee;
+
+  if (!postTokenBalance || !preTokenBalance || !fee) {
+    console.log("no balance found");
+    return {
+      totalCost: 0,
+      tokenBalanceChangeAmount: 0,
+    };
+  }
+  const tokenBalanceChangeAmount = preTokenBalance - (postTokenBalance + fee);
+  const totalCost = price * purchaseCount * LAMPORTS_PER_SOL;
+
+  console.log("calculateSolCost", {
+    postTokenBalance,
+    preTokenBalance,
+    fee,
+    tokenBalanceChangeAmount,
+    totalCost,
+    purchaseCount,
+  });
+
+  return {
+    totalCost,
+    tokenBalanceChangeAmount,
+  };
+};
+
+const calculateSplCost = (
+  transaction: TransactionResponse,
+  ownerPublicKey: PublicKey,
+  price: number,
+  purchaseCount: number
+) => {
+  const postTokenBalance = transaction?.meta?.postTokenBalances?.find(
+    (balance: any) => balance.owner === ownerPublicKey.toString()
+  );
+  const preTokenBalance = transaction?.meta?.preTokenBalances?.find(
+    (balance: any) => balance.owner === ownerPublicKey.toString()
+  );
+  if (
+    !preTokenBalance?.uiTokenAmount?.uiAmount ||
+    !postTokenBalance?.uiTokenAmount?.uiAmount
+  ) {
+    console.log("no balance found");
+    return {
+      totalCost: 0,
+      tokenBalanceChangeAmount: 0,
+    };
+  }
+
+  const tokenBalanceChangeAmount = (
+    preTokenBalance?.uiTokenAmount?.uiAmount -
+    postTokenBalance.uiTokenAmount.uiAmount
+  ).toFixed(8);
+  const totalCost = (price * purchaseCount).toFixed(8);
+
+  console.log("calculateSplCost", {
+    postTokenBalance,
+    preTokenBalance,
+    tokenBalanceChangeAmount,
+    purchaseCount,
+    totalCost,
+  });
+
+  return {
+    totalCost,
+    tokenBalanceChangeAmount,
+  };
+};
 
 const confirmTransaction = async (
   connection: Connection,
@@ -38,9 +121,6 @@ const confirmTransaction = async (
     limit: numTx,
   });
 
-  // let signatureList = transactionList.map(
-  //   (transaction) => transaction.signature
-  // );
   let transactionDetails = await connection.getParsedTransactions([signature]);
 
   let unparsedTransactionDetails = await connection.getTransactions([
@@ -51,54 +131,31 @@ const confirmTransaction = async (
   let txConfirmed = false;
 
   unparsedTransactionDetails.forEach((transaction) => {
-    // console.log(MINT_ADDRESSES[paymentMethod], MINT_ADDRESSES);
-    const postTokenBalance = transaction?.meta?.postTokenBalances?.find(
-      (balance) => balance.owner === publicKey.toString()
-    );
-    const preTokenBalance = transaction?.meta?.preTokenBalances?.find(
-      (balance) => balance.owner === publicKey.toString()
-    );
-    if (
-      !preTokenBalance?.uiTokenAmount?.uiAmount ||
-      !postTokenBalance?.uiTokenAmount?.uiAmount
-    )
-      return;
+    if (!transaction?.meta) return;
 
-    const tokenBalanceChangeAmount = (
-      preTokenBalance?.uiTokenAmount?.uiAmount -
-      postTokenBalance.uiTokenAmount.uiAmount
-    ).toFixed(8);
-    const totalCost = (price * purchaseCount).toFixed(8);
+    let totalCost;
+    let tokenBalanceChangeAmount;
+    if (paymentMethod === SplTokens.SOL) {
+      const {
+        totalCost: solTotalCost,
+        tokenBalanceChangeAmount: solTokenBalanceChangeAmount,
+      } = calculateSolCost(transaction, price, purchaseCount);
+      totalCost = solTotalCost;
+      tokenBalanceChangeAmount = solTokenBalanceChangeAmount;
+    } else {
+      const {
+        totalCost: splTotalCost,
+        tokenBalanceChangeAmount: splTokenBalanceChangeAmount,
+      } = calculateSplCost(transaction, publicKey, price, purchaseCount);
+      totalCost = splTotalCost;
+      tokenBalanceChangeAmount = splTokenBalanceChangeAmount;
+    }
+    console.log(transaction);
 
-    console.log({
-      postTokenBalance,
-      preTokenBalance,
-      tokenBalanceChangeAmount,
-      purchaseCount,
-      totalCost,
-    });
     if (totalCost === tokenBalanceChangeAmount) {
       txConfirmed = true;
       console.log("Transaction confirmed!");
     }
-    // if (
-    //   // @ts-ignore
-    //   postTokenBalance?.mint === MINT_ADDRESSES[paymentMethod] &&
-    //   postTokenBalance?.owner === publicKey.toString()
-    // ) {
-    //   if (
-    //     !preTokenBalance?.uiTokenAmount?.uiAmount ||
-    //     !postTokenBalance?.uiTokenAmount?.uiAmount
-    //   )
-    //     return;
-    //   const tokenBalanceChangeAmount =
-    //     preTokenBalance?.uiTokenAmount?.uiAmount -
-    //     postTokenBalance.uiTokenAmount.uiAmount;
-    //   if (purchaseCount === tokenBalanceChangeAmount) {
-    //     txConfirmed = true;
-    //     console.log("Transaction confirmed!");
-    //   }
-    // }
   });
 
   if (!txConfirmed) {
