@@ -64,17 +64,20 @@ const confirmTransaction = async (
     )
       return;
 
-    const tokenBalanceChangeAmount =
+    const tokenBalanceChangeAmount = (
       preTokenBalance?.uiTokenAmount?.uiAmount -
-      postTokenBalance.uiTokenAmount.uiAmount;
+      postTokenBalance.uiTokenAmount.uiAmount
+    ).toFixed(8);
+    const totalCost = (price * purchaseCount).toFixed(8);
+
     console.log({
       postTokenBalance,
       preTokenBalance,
       tokenBalanceChangeAmount,
       purchaseCount,
-      total: purchaseCount * price,
+      totalCost,
     });
-    if (purchaseCount * price === tokenBalanceChangeAmount) {
+    if (totalCost === tokenBalanceChangeAmount) {
       txConfirmed = true;
       console.log("Transaction confirmed!");
     }
