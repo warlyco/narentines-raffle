@@ -12,7 +12,6 @@ import {
   RPC_ENDPOINT,
   SENTRY_TRACE_SAMPLE_RATE,
 } from "constants/constants";
-import verifySignature from "utils/auth/verify-signature";
 import { Connection, PublicKey } from "@solana/web3.js";
 import retry from "async-retry";
 
@@ -30,6 +29,7 @@ const confirmTransaction = async (
   publicKey: PublicKey,
   numTx: number = 3,
   paymentMethod: SplTokens,
+  price: number,
   signature: string,
   purchaseCount: number,
   bail: (e: Error) => void
@@ -49,31 +49,57 @@ const confirmTransaction = async (
 
   if (!paymentMethod) return;
   let txConfirmed = false;
+
   unparsedTransactionDetails.forEach((transaction) => {
-    const postTokenBalance = transaction?.meta?.postTokenBalances?.[1];
-    const preTokenBalance = transaction?.meta?.preTokenBalances?.[1];
+    // console.log(MINT_ADDRESSES[paymentMethod], MINT_ADDRESSES);
+    const postTokenBalance = transaction?.meta?.postTokenBalances?.find(
+      (balance) => balance.owner === publicKey.toString()
+    );
+    const preTokenBalance = transaction?.meta?.preTokenBalances?.find(
+      (balance) => balance.owner === publicKey.toString()
+    );
     if (
-      // @ts-ignore
-      postTokenBalance?.mint === MINT_ADDRESSES[paymentMethod] &&
-      postTokenBalance?.owner === publicKey.toString()
-    ) {
-      if (
-        !preTokenBalance?.uiTokenAmount?.uiAmount ||
-        !postTokenBalance?.uiTokenAmount?.uiAmount
-      )
-        return;
-      const tokenBalanceChangeAmount =
-        preTokenBalance?.uiTokenAmount?.uiAmount -
-        postTokenBalance.uiTokenAmount.uiAmount;
-      if (purchaseCount === tokenBalanceChangeAmount) {
-        txConfirmed = true;
-        console.log("Transaction confirmed!");
-      }
+      !preTokenBalance?.uiTokenAmount?.uiAmount ||
+      !postTokenBalance?.uiTokenAmount?.uiAmount
+    )
+      return;
+
+    const tokenBalanceChangeAmount =
+      preTokenBalance?.uiTokenAmount?.uiAmount -
+      postTokenBalance.uiTokenAmount.uiAmount;
+    console.log({
+      postTokenBalance,
+      preTokenBalance,
+      tokenBalanceChangeAmount,
+      purchaseCount,
+      total: purchaseCount * price,
+    });
+    if (purchaseCount * price === tokenBalanceChangeAmount) {
+      txConfirmed = true;
+      console.log("Transaction confirmed!");
     }
+    // if (
+    //   // @ts-ignore
+    //   postTokenBalance?.mint === MINT_ADDRESSES[paymentMethod] &&
+    //   postTokenBalance?.owner === publicKey.toString()
+    // ) {
+    //   if (
+    //     !preTokenBalance?.uiTokenAmount?.uiAmount ||
+    //     !postTokenBalance?.uiTokenAmount?.uiAmount
+    //   )
+    //     return;
+    //   const tokenBalanceChangeAmount =
+    //     preTokenBalance?.uiTokenAmount?.uiAmount -
+    //     postTokenBalance.uiTokenAmount.uiAmount;
+    //   if (purchaseCount === tokenBalanceChangeAmount) {
+    //     txConfirmed = true;
+    //     console.log("Transaction confirmed!");
+    //   }
+    // }
   });
 
   if (!txConfirmed) {
-    // console.error("Transaction not confirmed, retrying");
+    console.error("Transaction not confirmed, retrying");
     throw new Error("Transaction not confirmed, retrying");
   }
 
@@ -120,7 +146,55 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
   const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
   const connection = new Connection(RPC_ENDPOINT);
 
+  const { raffles } = await request({
+    url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
+    document: query,
+    requestHeaders: {
+      "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+    },
+  });
+  const {
+    soldTicketCount,
+    priceInGoods,
+    priceInSol,
+    priceInDust,
+    priceInForge,
+    priceInGear,
+  } = raffles.find(({ id }: Raffle) => id === raffleId);
+
+  const client = new GraphQLClient(
+    process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
+    {
+      headers: {
+        "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+      },
+    }
+  );
+
   try {
+    let price: number;
+
+    switch (paymentMethod) {
+      case SplTokens.DUST:
+        price = priceInDust;
+        break;
+      case SplTokens.GOODS:
+        price = priceInGoods;
+        break;
+      case SplTokens.FORGE:
+        price = priceInForge;
+        break;
+      case SplTokens.GEAR:
+        price = priceInGear;
+        break;
+      case SplTokens.SOL:
+        price = priceInSol;
+        break;
+
+      default:
+        break;
+    }
+
     await retry(
       async (bail) => {
         await confirmTransaction(
@@ -128,6 +202,7 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
           new PublicKey(walletAddress),
           1,
           paymentMethod,
+          price,
           transactionSignature,
           newCount,
           bail
@@ -145,24 +220,6 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
 
   if (!raffleId || !walletAddress || oldCount === undefined || !newCount)
     throw new Error("Missing required fields");
-
-  const { raffles } = await request({
-    url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
-    document: query,
-    requestHeaders: {
-      "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
-    },
-  });
-  const { soldTicketCount } = raffles.find(({ id }: Raffle) => id === raffleId);
-
-  const client = new GraphQLClient(
-    process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
-    {
-      headers: {
-        "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
-      },
-    }
-  );
 
   try {
     const data = await client.request(ADD_RAFFLE_ENTRY, {

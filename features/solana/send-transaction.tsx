@@ -197,6 +197,14 @@ export const SendTransaction = ({
             <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
               <div>Your purchase could not be confirmed.</div>
               <div>Please open a support ticket in discord for assistance.</div>
+              <a
+                href={`https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline block ml-2"
+              >
+                View
+              </a>
             </div>
           );
           console.error(
@@ -225,6 +233,14 @@ export const SendTransaction = ({
             <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
               <div>Your purchase could not be confirmed.</div>
               <div>Please open a support ticket in discord for assistance.</div>
+              <a
+                href={`https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline block ml-2"
+              >
+                View
+              </a>
             </div>
           );
           return;
@@ -235,6 +251,14 @@ export const SendTransaction = ({
             <div className="flex flex-col bg-amber-200 rounded-xl text-xl deep-shadow p-3 border-slate-400 text-center">
               <div>Your purchase could not be confirmed.</div>
               <div>Please open a support ticket in discord for assistance.</div>
+              <a
+                href={`https://explorer.solana.com/tx/${signature}?cluster=${SOLANA_CLUSTER}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline block ml-2"
+              >
+                View
+              </a>
             </div>
           );
           toast("There was a problem. Please try again.");
