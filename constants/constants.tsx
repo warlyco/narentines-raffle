@@ -2,6 +2,11 @@ import { SplTokens } from "types/types";
 
 export const CREATOR_MINT_ID: string =
   process.env.NEXT_PUBLIC_CREATOR_MINT_ID || "";
+export const ENVIRONMENT_URL: string =
+  process.env.NEXT_PUBLIC_ENVIRONMENT_URL || "";
+export const TWITTER_CLIENT_ID: string =
+  process.env.NEXT_PUBLIC_TWITTER_CLIENT_ID || "";
+export const TWITTER_REDIRECT_URI: string = `${process.env.NEXT_PUBLIC_ENVIRONMENT_URL}/twitter-redirect`;
 
 export const RPC_ENDPOINT: string = process.env.NEXT_PUBLIC_RPC_ENDPOINT || "";
 export const SOLANA_CLUSTER = process.env.NEXT_PUBLIC_SOLANA_CLUSTER || "";

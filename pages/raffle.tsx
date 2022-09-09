@@ -11,6 +11,13 @@ import Overlay from "features/overlay";
 import { Balances, ModalTypes, SplTokens } from "types/types";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { getTokenMintAddress } from "features/solana/helpers";
+import {
+  ENVIRONMENT_URL,
+  TWITTER_CLIENT_ID,
+  TWITTER_REDIRECT_URI,
+} from "constants/constants";
+import { auth } from "twitter-api-sdk";
+import twitterAuthClient from "utils/auth/twitter-auth-client";
 
 type Token = Record<SplTokens, string>;
 
@@ -18,6 +25,7 @@ const RafflePage = () => {
   const { connection } = useConnection();
   const { publicKey } = useWallet();
   const [userBalances, setUserBalances] = useState<Balances | null>(null);
+  const [twitterAuthUrl, setTwitterAuthUrl] = useState<string | null>(null);
   const [isSendingTransaction, setIsSendingTransaction] =
     useState<boolean>(false);
 
@@ -55,6 +63,17 @@ const RafflePage = () => {
       return;
     }
     fetchUserBalances();
+    const { url, codeVerifier, state } =
+      twitterAuthClient.generateOAuth2AuthLink(
+        `${ENVIRONMENT_URL}/twitter-redirect`,
+        {
+          scope: ["tweet.read", "users.read", "offline.access"],
+        }
+      );
+    setTwitterAuthUrl(url);
+    // save session state
+    localStorage.setItem("twitterAuthState", state);
+    localStorage.setItem("twitterAuthCodeVerifier", codeVerifier);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey]);
 
@@ -91,6 +110,9 @@ const RafflePage = () => {
             </div>
             <div>
               <WalletMultiButton />
+              {TWITTER_CLIENT_ID}
+              {TWITTER_REDIRECT_URI}
+              <a href={twitterAuthUrl || ""}>connect to twitter</a>
             </div>
 
             <div className="text-sm italic">
