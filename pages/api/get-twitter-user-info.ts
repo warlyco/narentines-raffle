@@ -36,7 +36,7 @@ export default async function handler(
   const { code } = req.query;
 
   console.log({ code });
-
+  // @ts-ignore
   const client = new TwitterApi(code);
   console.log(client.currentUser());
 

@@ -110,9 +110,6 @@ const RafflePage = () => {
             </div>
             <div>
               <WalletMultiButton />
-              {TWITTER_CLIENT_ID}
-              {TWITTER_REDIRECT_URI}
-              <a href={twitterAuthUrl || ""}>connect to twitter</a>
             </div>
 
             <div className="text-sm italic">
