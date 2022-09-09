@@ -17,7 +17,12 @@ const showToast = ({
       <div>{primaryMessage}</div>
       {secondaryMessage && <div>{secondaryMessage}</div>}
       {link && (
-        <a href={link.url} target="_blank" rel="noopener noreferrer">
+        <a
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline"
+        >
           {link.title}
         </a>
       )}
