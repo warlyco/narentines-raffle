@@ -94,8 +94,12 @@ export type DiscordUser = {
 export type User = {
   id: string;
   username: string;
-  avatarUrl: string;
+  discordAvatarUrl: string;
   discordName: string;
+  discordId: string;
+  twitterId: string;
+  twitterUsername: string;
+  twitterName: string;
   walletAddress: string;
 };
 
@@ -110,7 +114,7 @@ export type VercelJobResponse = {
 };
 
 export enum ModalTypes {
-  SENDING_TRNASACTION = "SENDING_TRNASACTION",
+  SENDING_TRANSACTION = "SENDING_TRANSACTION",
 }
 
 export type Balances = {

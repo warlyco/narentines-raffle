@@ -1,18 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
-import { useQuery } from "@apollo/client";
-import { User } from "@sentry/types";
-import { useWallet } from "@solana/wallet-adapter-react";
-import Spinner from "features/UI/Spinner";
-import client from "graphql/apollo-client";
-import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
 import Image from "next/image";
+import { User } from "types/types";
 
-type Props = {
-  user: User | null;
-};
-
-const Prefs = ({ user }: Props) => {
+/* eslint-disable @next/next/no-img-element */
+const DiscordConnection = ({ user }: { user: User }) => {
   let href;
+
   switch (process.env.NEXT_PUBLIC_ENV) {
     case "production":
       href =
@@ -31,11 +23,11 @@ const Prefs = ({ user }: Props) => {
 
   return (
     <div>
-      {!!user ? (
+      {!!user.discordId ? (
         <div>
           <div className="py-4 flex w-full justify-center">
             <img
-              src={user.avatarUrl}
+              src={user.discordAvatarUrl}
               className="rounded-md"
               height="128"
               width="128"
@@ -45,29 +37,26 @@ const Prefs = ({ user }: Props) => {
           <div className="font-bold text-3xl text-black mb-2">
             {user.discordName}
           </div>
-          <div className="text-black text-sm">{user.walletAddress}</div>
         </div>
       ) : (
-        <div className="pb-4 pt-8">
-          <a
-            className="text-2xl bg-purple-700 text-amber-200 rounded-md px-4 py-2 inline-flex items-center justify-center uppercase"
-            href={href}
-          >
-            <div className="mr-2">Connect with</div>
-            <div className="mt-1">
-              <Image
-                height={20}
-                width={26}
-                src="/images/discord.svg"
-                alt="Discord"
-                className="block"
-              />
-            </div>
-          </a>
-        </div>
+        <a
+          className="text-xl bg-purple-700 text-amber-200 rounded-md px-4 py-2 inline-flex items-center justify-center uppercase space-x-3"
+          href={href}
+        >
+          <div className="mt-1">
+            <Image
+              height={20}
+              width={26}
+              src="/images/discord.svg"
+              alt="Discord"
+              className="block"
+            />
+          </div>
+          <div className="mr-2">Connect with Discord</div>
+        </a>
       )}
     </div>
   );
 };
 
-export default Prefs;
+export default DiscordConnection;

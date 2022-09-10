@@ -16,6 +16,7 @@
     "@bonfida/spl-name-service": "^0.1.44",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+    "@heroicons/react": "^2.0.10",
     "@metaplex-foundation/js": "^0.11.7",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.8.4",

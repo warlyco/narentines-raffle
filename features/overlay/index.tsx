@@ -12,7 +12,7 @@ type Props = {
 const Overlay = ({ onClick, isVisible, modalType }: Props) => {
   const getMessage = () => {
     switch (modalType) {
-      case ModalTypes.SENDING_TRNASACTION:
+      case ModalTypes.SENDING_TRANSACTION:
       default:
         return (
           <div className="text-center">
