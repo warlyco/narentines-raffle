@@ -4,15 +4,6 @@ import * as Sentry from "@sentry/node";
 import request, { GraphQLClient } from "graphql-request";
 import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 
-Sentry.init({
-  dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
-});
-
 const addRaffle: NextApiHandler = async (req, response) => {
   const { id, winnerWalletAddress } = req.body;
 
@@ -35,7 +26,7 @@ const addRaffle: NextApiHandler = async (req, response) => {
     response.json({ winner: res.update_raffles_by_pk.winner });
   } catch (error) {
     console.error(error);
-    Sentry.captureException(error);
+
     response.status(500).json({ error });
   }
 };

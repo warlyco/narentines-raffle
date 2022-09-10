@@ -4,15 +4,6 @@ import request from "graphql-request";
 import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 import { ADD_USER } from "graphql/mutations/add-user";
 
-Sentry.init({
-  dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
-});
-
 const addUser: NextApiHandler = async (req, response) => {
   const { walletAddress, discordName, avatarUrl, discordId } = req.body;
 
@@ -36,7 +27,7 @@ const addUser: NextApiHandler = async (req, response) => {
     response.json({ newUser });
   } catch (error) {
     console.error(error);
-    Sentry.captureException(error);
+
     response.status(500).json({ error });
   }
 };

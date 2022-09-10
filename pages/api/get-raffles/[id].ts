@@ -4,15 +4,6 @@ import { GraphQLClient } from "graphql-request";
 import * as Sentry from "@sentry/node";
 import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 
-Sentry.init({
-  dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
-});
-
 const getRaffles: NextApiHandler = async (request, response) => {
   const client = new GraphQLClient(
     process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
@@ -37,7 +28,6 @@ const getRaffles: NextApiHandler = async (request, response) => {
 
     response.json({ raffle });
   } catch (error) {
-    Sentry.captureException(error);
     response.status(500).json({ error });
   }
 };

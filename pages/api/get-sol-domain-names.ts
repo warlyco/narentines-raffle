@@ -9,15 +9,6 @@ import {
   performReverseLookupBatch,
 } from "@bonfida/spl-name-service";
 
-Sentry.init({
-  dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
-});
-
 const getSolDomainNames: NextApiHandler = async (req, response) => {
   const { publicKey } = req.body;
 
@@ -32,7 +23,6 @@ const getSolDomainNames: NextApiHandler = async (req, response) => {
 
     response.status(200).json({ domainNames });
   } catch (error) {
-    Sentry.captureException(error);
     response.status(500).json({ error });
   }
 };

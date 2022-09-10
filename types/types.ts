@@ -135,3 +135,9 @@ export enum AdminTabs {
   RAFFLE = "RAFFLE",
   RAIDS = "RAIDS",
 }
+
+export type Raid = {
+  id: string;
+  tweetId: string;
+  raiderWalletAddresses: string[];
+};

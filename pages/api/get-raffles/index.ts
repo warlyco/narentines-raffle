@@ -5,15 +5,6 @@ import { request } from "graphql-request";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
 import { isProduction, SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 
-Sentry.init({
-  dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
-});
-
 const getRaffles: NextApiHandler = async (_, response) => {
   const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;
 
@@ -28,7 +19,6 @@ const getRaffles: NextApiHandler = async (_, response) => {
 
     response.status(200).json({ raffles });
   } catch (error) {
-    Sentry.captureException(error);
     response.status(500).json({ error });
   }
 };

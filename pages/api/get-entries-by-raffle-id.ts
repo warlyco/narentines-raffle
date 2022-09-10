@@ -5,15 +5,6 @@ import GET_ENTRIES_BY_RAFFLE_ID from "graphql/queries/get-entries-by-raffle-id";
 import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 import request from "graphql-request";
 
-Sentry.init({
-  dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
-});
-
 const getEntriesById: NextApiHandler = async (req, response) => {
   const { id } = req.query;
 
@@ -31,7 +22,6 @@ const getEntriesById: NextApiHandler = async (req, response) => {
 
     response.json({ entries });
   } catch (error) {
-    Sentry.captureException(error);
     response.status(500).json({ error });
   }
 };

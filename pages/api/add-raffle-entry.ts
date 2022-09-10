@@ -21,15 +21,6 @@ import {
 } from "@solana/web3.js";
 import retry from "async-retry";
 
-Sentry.init({
-  dsn: "https://f28cee1f60984817b329898220a049bb@o1338574.ingest.sentry.io/6609786",
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: SENTRY_TRACE_SAMPLE_RATE,
-});
-
 const calculateSolCost = (
   transaction: TransactionResponse,
   price: number,
@@ -304,7 +295,6 @@ const addRaffleEntry: NextApiHandler = async (req, response) => {
       id: data.insert_entries.returning?.[0]?.id,
     });
   } catch (error) {
-    Sentry.captureException(error);
     response.status(500).json({ error });
   }
 };
