@@ -3,7 +3,6 @@ import Cors from "cors";
 import { ENVIRONMENT_URL } from "constants/constants";
 import twitterAuthClient from "utils/auth/twitter-auth-client";
 import request from "graphql-request";
-import UPDATE_USER_TWITTER_OAUTH from "graphql/mutations/update-user-twitter-oauth";
 import UPDATE_USER_TWITTER from "graphql/mutations/update-user-twitter";
 
 // Initializing the cors middleware
@@ -36,7 +35,7 @@ export default async function handler(
 ) {
   await runMiddleware(req, res, cors);
 
-  const { code, codeVerifier, walletAddress, state } = req.query;
+  const { code, codeVerifier, walletAddress } = req.body;
 
   if (!code || !codeVerifier) return;
 
@@ -62,8 +61,6 @@ export default async function handler(
       "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
     },
   });
-
-  // const { } = update_users
 
   console.log({ update_users });
   res.json({ update_users });

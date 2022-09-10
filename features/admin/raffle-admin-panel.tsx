@@ -1,12 +1,11 @@
 import classNames from "classnames";
-import { MouseEventHandler, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { ADD_RAFFLE } from "api/raffles/endpoints";
-import { Raffle, RaffleResponse, VercelJobResponse } from "types/types";
+import { Raffle, RaffleResponse } from "types/types";
 import dayjs from "dayjs";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { isProduction } from "constants/constants";
 
 const AdminPanel = () => {
   const [walletAddressInputValue, setWalletAddressInputValue] =
@@ -118,7 +117,7 @@ const AdminPanel = () => {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto pt-24">
+    <>
       <h1 className="text-2xl mb-2">Add Raffle</h1>
       <form className="space-y-4">
         <div>
@@ -321,7 +320,7 @@ const AdminPanel = () => {
           </button>
         </div>
       </form>
-    </div>
+    </>
   );
 };
 

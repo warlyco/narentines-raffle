@@ -3,7 +3,7 @@ import type { NextApiHandler } from "next";
 import request from "graphql-request";
 import UPDATE_USER_DISCORD from "graphql/mutations/update-user-discord";
 
-const updateUserDiscord: NextApiHandler = async (req, response) => {
+const updateUserDiscord: NextApiHandler = async (req, res) => {
   const { discordAvatarUrl, walletAddress, discordName, discordId } = req.body;
 
   if (!walletAddress || !discordName || !discordId)
@@ -27,15 +27,15 @@ const updateUserDiscord: NextApiHandler = async (req, response) => {
     console.log(update_users);
 
     if (!update_users?.returning?.[0]?.walletAddress) {
-      response.status(500).json({ error: "Missing wallet address" });
+      res.status(500).json({ error: "Missing wallet address" });
       return;
     }
     const { returning } = update_users;
-
-    response.json({ count: returning[0].walletAddress });
+    console.log({ update_users });
+    res.json({ update_users });
   } catch (error) {
     console.error(error);
-    response.status(500).json({ error });
+    res.status(500).json({ error });
   }
 };
 

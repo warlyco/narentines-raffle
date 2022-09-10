@@ -2,6 +2,8 @@ import { useLazyQuery } from "@apollo/client";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ADD_USER } from "api/users/endpoint";
 import axios from "axios";
+import { ENVIRONMENT_URL } from "constants/constants";
+import showToast from "features/toasts/show-toast";
 import Spinner from "features/UI/Spinner";
 import client from "graphql/apollo-client";
 import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
@@ -19,40 +21,53 @@ const DiscordRedirect = () => {
   const [error, setError] = useState<string | null>(null);
   const { publicKey } = useWallet();
   const router = useRouter();
-  const saveUser = useCallback(async () => {
-    if (!discordUser) return;
+  const saveUser = useCallback(
+    async (user: any) => {
+      if (!discordUser) return;
 
-    if (!publicKey) {
-      console.error("No public key found");
-      return;
-    }
-
-    try {
-      const { data: existingUserData } = await client.query({
-        query: GET_USER_BY_WALLET,
-        variables: { walletAddress: publicKey?.toString() },
-      });
-
-      if (existingUserData?.users?.[0]?.id) {
-        router.push("/");
-
+      if (!publicKey) {
+        console.error("No public key found");
         return;
       }
 
-      const { data } = await axios.post<Response>(ADD_USER, {
-        discordName: discordUser.username,
-        walletAddress: publicKey,
-        avatarUrl: discordUser?.avatar
-          ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
-          : null,
-      });
-    } catch (error: any) {
-      setError(error.message);
-      console.error(error);
-    } finally {
-      router.push("/");
-    }
-  }, [discordUser, publicKey, router]);
+      try {
+        // const { data: existingUserData } = await client.query({
+        //   query: GET_USER_BY_WALLET,
+        //   variables: { walletAddress: publicKey?.toString() },
+        // });
+
+        const { data } = await axios.post(
+          `${ENVIRONMENT_URL}/api/update-user-discord`,
+          {
+            walletAddress: publicKey,
+            discordId: user.id,
+            discordName: user.username,
+            discordAvatarUrl: user?.avatar
+              ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+              : null,
+          }
+        );
+
+        if (data) {
+          showToast({
+            primaryMessage: "Discord info saved!",
+          });
+          router.push("/preferences");
+        } else {
+          showToast({
+            primaryMessage: "Unable to save Discord info",
+          });
+          router.push("/");
+        }
+      } catch (error: any) {
+        setError(error.message);
+        console.error(error);
+      } finally {
+        router.push("/");
+      }
+    },
+    [discordUser, publicKey, router]
+  );
 
   const fetchDiscordUser = useCallback(
     async ({
@@ -63,13 +78,16 @@ const DiscordRedirect = () => {
       tokenType: string;
     }) => {
       try {
-        const { data } = await axios.get(`https://discord.com/api/users/@me`, {
-          headers: {
-            authorization: `${tokenType} ${accessToken}`,
-          },
-        });
+        const { data: user } = await axios.get(
+          `https://discord.com/api/users/@me`,
+          {
+            headers: {
+              authorization: `${tokenType} ${accessToken}`,
+            },
+          }
+        );
 
-        setDiscordUser(data);
+        saveUser(user);
       } catch (error: any) {
         setError(error.message);
       }
@@ -88,11 +106,7 @@ const DiscordRedirect = () => {
       return;
     }
     setAccessToken(accessToken);
-    if (discordUser) {
-      saveUser();
-    } else {
-      fetchDiscordUser({ accessToken, tokenType });
-    }
+    fetchDiscordUser({ accessToken, tokenType });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discordUser]);
 

@@ -56,7 +56,7 @@ const TwitterConnection = ({ user }: { user: User }) => {
   return (
     <div>
       {!!user.twitterId ? (
-        <div className="font-bold text-2xl mb-2 bg-blue-500 rounded-lg px-4 py-2 flex items-center space-x-3 text-amber-200">
+        <div className="font-bold text-xl mb-2 bg-blue-500 rounded-lg px-4 py-2 flex items-center space-x-3 text-amber-200 max-w-64">
           <Image
             height={20}
             width={26}
@@ -64,12 +64,12 @@ const TwitterConnection = ({ user }: { user: User }) => {
             alt="Twitter"
             className="block"
           />
-          <div>{user.twitterUsername}</div>
+          <div className="truncate">{user.twitterUsername}</div>
         </div>
       ) : (
         <div className="pb-4 pt-8">
           <a
-            className="text-2xl bg-blue-500 text-amber-200 rounded-md px-4 py-2 inline-flex items-center justify-center uppercase space-x-3"
+            className="text-xl bg-blue-500 text-amber-200 rounded-md px-4 py-2 inline-flex items-center justify-center uppercase space-x-3"
             href={twitterAuthUrl || ""}
           >
             <div className="mr-2">Connect with</div>

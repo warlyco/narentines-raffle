@@ -130,3 +130,8 @@ export type ToastLink = {
   url: string;
   title: string;
 };
+
+export enum AdminTabs {
+  RAFFLE = "RAFFLE",
+  RAIDS = "RAIDS",
+}

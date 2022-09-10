@@ -9,11 +9,10 @@ import { ENVIRONMENT_URL } from "constants/constants";
 import GET_USER_TWITTER_OAUTH_BY_WALLET from "graphql/queries/get-user-twitter-oauth-by-wallet";
 import showToast from "features/toasts/show-toast";
 
-const DiscordRedirect = () => {
+const TwitterRedirect = () => {
   const [oAuthCodeVerifier, setOAuthCodeVerifier] = useState<string | null>(
     null
   );
-  const [twitterUser, setTwitterUser] = useState<any | null>(null);
   const { publicKey } = useWallet();
   const router = useRouter();
   const [getUserTwitterOauthInfo, { loading, data }] = useLazyQuery(
@@ -24,28 +23,26 @@ const DiscordRedirect = () => {
     async (code: string, state: string) => {
       if (!oAuthCodeVerifier || !publicKey) return;
 
-      const { data } = await axios.get(
+      const { data } = await axios.post(
         `${ENVIRONMENT_URL}/api/update-user-twitter`,
         {
-          params: {
-            walletAddress: publicKey?.toString(),
-            code,
-            codeVerifier: oAuthCodeVerifier,
-            state,
-          },
+          walletAddress: publicKey?.toString(),
+          code,
+          codeVerifier: oAuthCodeVerifier,
+          state,
         }
       );
       if (data) {
-        setTwitterUser(data);
         showToast({
           primaryMessage: "Twitter info saved!",
         });
+        router.push("/preferences");
       } else {
         showToast({
           primaryMessage: "Unable to save Twitter info",
         });
+        router.push("/");
       }
-      router.push("/");
     },
     [oAuthCodeVerifier, publicKey, router]
   );
@@ -97,10 +94,9 @@ const DiscordRedirect = () => {
             <Spinner />
           </>
         )}
-        <div className="mr-4">{JSON.stringify(twitterUser)}</div>
       </div>
     </div>
   );
 };
 
-export default DiscordRedirect;
+export default TwitterRedirect;

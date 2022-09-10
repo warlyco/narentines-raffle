@@ -7,6 +7,7 @@ import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
 import { useCallback, useEffect, useState } from "react";
 import { User } from "types/types";
 import bg from "public/images/single-item-bg.png";
+import Image from "next/image";
 
 const Preferences = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -34,9 +35,20 @@ const Preferences = () => {
         className="flex flex-col items-center max-w-md mx-auto shadow-xl rounded-lg p-4"
         style={{ backgroundImage: `url(${bg.src})` }}
       >
-        <h1 className="text-4xl pb-4">Preferences</h1>
+        <h1 className="text-4xl">Preferences</h1>
         {!!user ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
+            {!!user?.discordAvatarUrl && (
+              <div className="py-4 flex w-full justify-center">
+                <Image
+                  src={user.discordAvatarUrl}
+                  className="rounded-md"
+                  height="128"
+                  width="128"
+                  alt="profile pic"
+                />
+              </div>
+            )}
             <DiscordConnection user={user} />
             <TwitterConnection user={user} />
           </div>

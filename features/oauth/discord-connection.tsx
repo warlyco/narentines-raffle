@@ -25,17 +25,15 @@ const DiscordConnection = ({ user }: { user: User }) => {
     <div>
       {!!user.discordId ? (
         <div>
-          <div className="py-4 flex w-full justify-center">
-            <img
-              src={user.discordAvatarUrl}
-              className="rounded-md"
-              height="128"
-              width="128"
-              alt="profile pic"
+          <div className="font-bold text-xl mb-2 bg-purple-700 rounded-lg px-4 py-2 flex items-center space-x-3 text-amber-200 max-w-64">
+            <Image
+              height={20}
+              width={26}
+              src="/images/discord.svg"
+              alt="Discord"
+              className="block"
             />
-          </div>
-          <div className="font-bold text-3xl text-black mb-2">
-            {user.discordName}
+            <div className="truncate">{user.discordName}</div>
           </div>
         </div>
       ) : (
