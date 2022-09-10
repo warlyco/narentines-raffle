@@ -11,15 +11,14 @@ import Overlay from "features/overlay";
 import { Balances, ModalTypes, SplTokens } from "types/types";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { getTokenMintAddress } from "features/solana/helpers";
-import {
-  ENVIRONMENT_URL,
-  TWITTER_CLIENT_ID,
-  TWITTER_REDIRECT_URI,
-} from "constants/constants";
+import { ENVIRONMENT_URL } from "constants/constants";
 import { auth } from "twitter-api-sdk";
 import twitterAuthClient from "utils/auth/twitter-auth-client";
-
-type Token = Record<SplTokens, string>;
+import { useMutation } from "@apollo/client";
+import UPDATE_USER_TWITTER_OAUTH from "graphql/mutations/update-user-twitter-oauth";
+import { Router } from "express";
+import { useRouter } from "next/router";
+import showToast from "features/toasts/show-toast";
 
 const RafflePage = () => {
   const { connection } = useConnection();
@@ -28,6 +27,11 @@ const RafflePage = () => {
   const [twitterAuthUrl, setTwitterAuthUrl] = useState<string | null>(null);
   const [isSendingTransaction, setIsSendingTransaction] =
     useState<boolean>(false);
+  const router = useRouter();
+
+  const [updateTwitterOAuthInfo, { loading, data }] = useMutation(
+    UPDATE_USER_TWITTER_OAUTH
+  );
 
   const fetchUserBalances = useCallback(async () => {
     if (!publicKey) return;
@@ -56,6 +60,28 @@ const RafflePage = () => {
     setUserBalances(balances);
   }, [connection, publicKey]);
 
+  const handleUpdateTwitterOAuthInfo = useCallback(
+    async (codeVerifier: string, state: string) => {
+      const { data } = await updateTwitterOAuthInfo({
+        variables: {
+          codeVerifier,
+          state,
+          walletAddress: publicKey?.toString(),
+        },
+      });
+      const { twitterOAuthCodeVerifier, twitterOAuthState } =
+        data.update_users.returning[0];
+      if (!twitterOAuthCodeVerifier || !twitterOAuthState) {
+        showToast({
+          primaryMessage: "Could not save Twitter info",
+        });
+        router.push("/");
+        return;
+      }
+    },
+    [publicKey, router, updateTwitterOAuthInfo]
+  );
+
   useEffect(() => {
     axios.post(ADD_RAFFLE_ENTRY, { noop: true });
     if (!publicKey) {
@@ -70,10 +96,9 @@ const RafflePage = () => {
           scope: ["tweet.read", "users.read", "offline.access"],
         }
       );
+
     setTwitterAuthUrl(url);
-    // save session state
-    localStorage.setItem("twitterAuthState", state);
-    localStorage.setItem("twitterAuthCodeVerifier", codeVerifier);
+    handleUpdateTwitterOAuthInfo(codeVerifier, state);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey]);
 
@@ -110,6 +135,8 @@ const RafflePage = () => {
             </div>
             <div>
               <WalletMultiButton />
+              {/* save oauth info first */}
+              <a href={twitterAuthUrl || ""}>connect to twitter</a>
             </div>
 
             <div className="text-sm italic">

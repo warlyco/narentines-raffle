@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
 import axios from "axios";
 import { TwitterApi } from "twitter-api-v2";
+import { ENVIRONMENT_URL, TWITTER_CLIENT_ID } from "constants/constants";
+import twitterAuthClient from "utils/auth/twitter-auth-client";
 
 // Initializing the cors middleware
 // You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
@@ -33,13 +35,21 @@ export default async function handler(
 ) {
   await runMiddleware(req, res, cors);
 
-  const { code } = req.query;
+  const { code, codeVerifier } = req.query;
+  console.log({ code, codeVerifier });
+  if (!code || !codeVerifier) return;
 
-  console.log({ code });
-  // @ts-ignore
-  const client = new TwitterApi(code);
-  console.log(client.currentUser());
+  const { client: loggedInClient } = await twitterAuthClient.loginWithOAuth2({
+    code: typeof code === "string" ? code : code?.[0],
+    codeVerifier:
+      typeof codeVerifier === "string" ? codeVerifier : codeVerifier?.[0],
+    redirectUri: `${ENVIRONMENT_URL}/twitter-redirect`,
+  });
+
+  const { data: userObject } = await loggedInClient.v2.me();
+
+  console.log(userObject);
 
   // Rest of the API logic
-  res.json({ message: "Hello Everyone!" });
+  res.json({ userObject });
 }
