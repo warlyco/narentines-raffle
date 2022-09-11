@@ -4,8 +4,8 @@ const Spinner = () => (
   <Image
     className="animate-spin"
     src="/images/loader.svg"
-    height={30}
-    width={30}
+    height={20}
+    width={20}
     alt="Loading"
   />
 );

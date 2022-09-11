@@ -24,26 +24,26 @@ const Me = () => {
   const createUser = useCallback(async () => {
     if (user) return;
     setCreatingUser(true);
-    try {
-      const { data } = await axios.post("/api/add-user", {
-        walletAddress: publicKey?.toString(),
-      });
+    // try {
+    //   const { data } = await axios.post("/api/add-user", {
+    //     walletAddress: publicKey?.toString(),
+    //   });
 
-      if (!data?.newUser?.id) {
-        showGenericErrorToast(E008);
-        router.push("/");
-        return;
-      }
+    //   if (!data?.newUser?.id) {
+    //     showGenericErrorToast(E008);
+    //     router.push("/");
+    //     return;
+    //   }
 
-      setUser(data.newUser);
-      console.log(user);
-      debugger;
-    } catch (e) {
-      showGenericErrorToast(E008);
-      router.push("/");
-    } finally {
-      setCreatingUser(false);
-    }
+    //   setUser(data.newUser);
+    //   console.log(user);
+    //   debugger;
+    // } catch (e) {
+    //   showGenericErrorToast(E008);
+    //   router.push("/");
+    // } finally {
+    //   setCreatingUser(false);
+    // }
   }, [publicKey, user, router]);
 
   const fetchUser = useCallback(async () => {
@@ -86,7 +86,7 @@ const Me = () => {
             <WalletMultiButton />
           </div>
         )}
-        {!!user ? (
+        {!!user && (
           <div className="space-y-2">
             {!!user?.discordAvatarUrl && (
               <div className="pb-4 flex w-full justify-center">
@@ -104,12 +104,12 @@ const Me = () => {
               <TwitterConnection user={user} />
             </div>
           </div>
-        ) : (
-          !!publicKey && <Spinner />
         )}
         {creatingUser && (
-          <div className="flex flex-col items-center justify-center">
-            <div className="text-4xl">Creating new user...</div>
+          <div className="flex items-center justify-center">
+            <div className="text-2xl mr-4 animate-pulse">
+              Creating new user...
+            </div>
             <Spinner />
           </div>
         )}
