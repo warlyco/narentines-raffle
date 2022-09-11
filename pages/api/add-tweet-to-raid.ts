@@ -6,6 +6,7 @@ import { ADD_TWEET_TO_RAID } from "graphql/mutations/add-tweet-to-raid";
 
 const addTweetToRaid: NextApiHandler = async (req, response) => {
   const {
+    tweetText,
     message,
     tweetId,
     tweetUrl,
@@ -14,9 +15,12 @@ const addTweetToRaid: NextApiHandler = async (req, response) => {
     signature,
     publicKey,
     publicKeyString,
+    posterUsername,
   } = req.body;
 
   if (
+    !posterUsername ||
+    !tweetText ||
     !tweetId ||
     !raidLengthInHours ||
     !payoutAmountInGoods ||
@@ -41,6 +45,8 @@ const addTweetToRaid: NextApiHandler = async (req, response) => {
       url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
       document: ADD_TWEET_TO_RAID,
       variables: {
+        tweetText,
+        posterUsername,
         tweetId,
         tweetUrl,
         raidLengthInHours,

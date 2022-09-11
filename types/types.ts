@@ -144,4 +144,6 @@ export type Raid = {
   raiderWalletAddresses: string[];
   payoutAmountInGoods: number;
   createdAt: string;
+  tweetText: string;
+  posterUsername: string;
 };

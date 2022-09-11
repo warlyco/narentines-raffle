@@ -2,6 +2,8 @@ import { gql } from "graphql-request";
 
 export const ADD_TWEET_TO_RAID = gql`
   mutation AddTweetToRaid(
+    $posterUsername: String
+    $tweetText: String
     $tweetId: String
     $payoutAmountInGoods: Int
     $raidLengthInHours: Int
@@ -13,6 +15,8 @@ export const ADD_TWEET_TO_RAID = gql`
         payoutAmountInGoods: $payoutAmountInGoods
         raidLengthInHours: $raidLengthInHours
         tweetUrl: $tweetUrl
+        posterUsername: $posterUsername
+        tweetText: $tweetText
       }
     ) {
       id
@@ -20,6 +24,8 @@ export const ADD_TWEET_TO_RAID = gql`
       payoutAmountInGoods
       tweetUrl
       raidLengthInHours
+      posterUsername
+      tweetText
     }
   }
 `;

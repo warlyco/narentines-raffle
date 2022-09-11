@@ -5,7 +5,7 @@ const tweetsEndpoint = "https://api.twitter.com/2/tweets";
 const tweetsSearchEndpoint = "https://api.twitter.com/2/tweets/search/recent";
 
 const getTweetById: NextApiHandler = async (req, response) => {
-  const { id } = req.body;
+  const { id } = req.query;
   console.log(id);
 
   try {

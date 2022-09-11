@@ -8,6 +8,7 @@ import { GET_TWEETS_TO_RAID } from "graphql/queries/get-tweets-to-raid";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Raid } from "types/types";
+import twitterAuthClient from "utils/auth/twitter-auth-client";
 
 const RaidAdminPanel = () => {
   const [tweetUrl, setTweetUrl] = useState("");
@@ -21,6 +22,12 @@ const RaidAdminPanel = () => {
 
   const { data, refetch } = useQuery(GET_TWEETS_TO_RAID);
 
+  const clearForm = () => {
+    setTweetUrl("");
+    setRaidLengthInHours("24");
+    setPayoutAmountInGoods("1");
+  };
+
   const handleAddRaid = async (event: any) => {
     event.preventDefault();
     if (!signMessage || !publicKey) return;
@@ -31,8 +38,20 @@ const RaidAdminPanel = () => {
 
     const tweetId = tweetUrl.split("/").pop();
 
+    const { data } = await axios.get("/api/get-tweet-by-id", {
+      params: {
+        id: tweetId,
+      },
+    });
+
+    const { tweet, includes } = data;
+    const { username: posterUsername } = includes?.users?.[0];
+    const { text: tweetText } = tweet?.[0];
+
     try {
       const { data } = await axios.post("/api/add-tweet-to-raid", {
+        posterUsername,
+        tweetText,
         tweetUrl,
         tweetId,
         raidLengthInHours: Number(raidLengthInHours),
@@ -103,7 +122,14 @@ const RaidAdminPanel = () => {
         <h1 className="text-2xl mb-2">Raids</h1>
         {!!data?.tweets_to_raid.length &&
           data.tweets_to_raid.map(
-            ({ tweetId, tweetUrl, raidLengthInHours, createdAt }: Raid) => (
+            ({
+              tweetId,
+              tweetUrl,
+              raidLengthInHours,
+              createdAt,
+              tweetText,
+              posterUsername,
+            }: Raid) => (
               <a
                 href={tweetUrl}
                 key={tweetId}
@@ -112,7 +138,23 @@ const RaidAdminPanel = () => {
                 rel="noreferrer"
               >
                 <div className="border-2 border-green-800 rounded p-4 hover:bg-amber-400 pointer">
-                  <div className="flex">{tweetId}</div>
+                  <div className="flex">
+                    <div className="font-bold mr-2 truncate text-lg mb-2">
+                      {tweetText}
+                    </div>
+                  </div>
+                  <div className="flex">
+                    <div>
+                      <div className="font-bold mr-2">Tweeted by:</div>
+                    </div>
+                    <div>{posterUsername}</div>
+                  </div>
+                  <div className="flex">
+                    <div>
+                      <div className="font-bold mr-2">Payout:</div>
+                    </div>
+                    <div>{payoutAmountInGoods} $GOODS</div>
+                  </div>
                   <div className="flex">
                     <div>
                       <div className="font-bold mr-2">Raid Length:</div>

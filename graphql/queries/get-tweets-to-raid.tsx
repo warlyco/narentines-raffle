@@ -10,6 +10,8 @@ export const GET_TWEETS_TO_RAID = gql`
       payoutAmountInGoods
       id
       createdAt
+      tweetText
+      posterUsername
     }
   }
 `;
