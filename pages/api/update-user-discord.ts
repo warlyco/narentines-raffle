@@ -4,6 +4,11 @@ import request from "graphql-request";
 import UPDATE_USER_DISCORD from "graphql/mutations/update-user-discord";
 
 const updateUserDiscord: NextApiHandler = async (req, res) => {
+  if (req?.body?.noop) {
+    res.status(200).json({ noop: true });
+    return;
+  }
+
   const { discordAvatarUrl, walletAddress, discordName, discordId } = req.body;
 
   if (!walletAddress || !discordName || !discordId)

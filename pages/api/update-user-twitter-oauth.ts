@@ -3,7 +3,12 @@ import type { NextApiHandler } from "next";
 import request from "graphql-request";
 import UPDATE_USER_TWITTER_OAUTH from "graphql/mutations/update-user-twitter-oauth";
 
-const updateUserDiscord: NextApiHandler = async (req, response) => {
+const updateUserDiscord: NextApiHandler = async (req, res) => {
+  if (req?.body?.noop) {
+    res.status(200).json({ noop: true });
+    return;
+  }
+
   const { walletAddress, codeVerifier, state } = req.body;
 
   if (!walletAddress || !codeVerifier || !state)
@@ -24,15 +29,15 @@ const updateUserDiscord: NextApiHandler = async (req, response) => {
     });
 
     if (!update_users?.returning?.[0]?.count) {
-      response.status(500).json({ error: "Unkown error" });
+      res.status(500).json({ error: "Unkown error" });
       return;
     }
     const { returning } = update_users;
 
-    response.json({ count: returning[0].count });
+    res.json({ count: returning[0].count });
   } catch (error) {
     console.error(error);
-    response.status(500).json({ error });
+    res.status(500).json({ error });
   }
 };
 

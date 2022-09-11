@@ -65,7 +65,7 @@ const Me = () => {
         {!!user ? (
           <div className="space-y-2">
             {!!user?.discordAvatarUrl && (
-              <div className="py-4 flex w-full justify-center">
+              <div className="pb-4 flex w-full justify-center">
                 <Image
                   src={user.discordAvatarUrl}
                   className="rounded-md"
@@ -75,8 +75,10 @@ const Me = () => {
                 />
               </div>
             )}
-            <DiscordConnection user={user} />
-            <TwitterConnection user={user} />
+            <div className="space-y-3 pb-2">
+              <DiscordConnection user={user} />
+              <TwitterConnection user={user} />
+            </div>
           </div>
         ) : (
           !!publicKey && <Spinner />

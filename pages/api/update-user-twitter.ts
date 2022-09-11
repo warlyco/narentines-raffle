@@ -33,6 +33,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  if (req?.body?.noop) {
+    res.status(200).json({ noop: true });
+    return;
+  }
+
   await runMiddleware(req, res, cors);
 
   const { code, codeVerifier, walletAddress } = req.body;
