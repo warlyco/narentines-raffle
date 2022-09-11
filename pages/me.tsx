@@ -63,7 +63,7 @@ const Me = () => {
           </div>
         )}
         {!!user ? (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {!!user?.discordAvatarUrl && (
               <div className="py-4 flex w-full justify-center">
                 <Image
