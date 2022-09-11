@@ -12,22 +12,35 @@ import axios from "axios";
 import { E008 } from "errors/types";
 import showGenericErrorToast from "features/toasts/show-generic-error-toast";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useRouter } from "next/router";
 
 const Me = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [userFetched, setUserFetched] = useState(false);
   const { publicKey } = useWallet();
+  const router = useRouter();
 
   const createUser = useCallback(async () => {
-    const { data } = await axios.post("/api/add-user", {
-      walletAddress: publicKey?.toString(),
-    });
+    if (user) return;
+    try {
+      const { data } = await axios.post("/api/add-user", {
+        walletAddress: publicKey?.toString(),
+      });
 
-    if (!data?.newUser?.id) {
+      if (!data?.newUser?.id) {
+        showGenericErrorToast(E008);
+        router.push("/");
+        return;
+      }
+
+      setUser(data.newUser);
+      console.log(user);
+      debugger;
+    } catch (e) {
       showGenericErrorToast(E008);
-      return;
+      router.push("/");
     }
-    setUser(user);
-  }, [user, publicKey]);
+  }, [publicKey, user, router]);
 
   const fetchUser = useCallback(async () => {
     if (!publicKey) return;
@@ -37,19 +50,25 @@ const Me = () => {
       variables: { walletAddress: publicKey?.toString() },
       fetchPolicy: "network-only",
     });
+    setUserFetched(true);
     const user = data?.users?.[0];
+    console.log(data);
+    debugger;
     if (user?.id) {
       setUser(user);
-    } else {
-      createUser();
     }
-  }, [createUser, publicKey]);
+  }, [publicKey]);
 
   useEffect(() => {
     if (!publicKey) return;
-
-    fetchUser();
-  }, [fetchUser, publicKey]);
+    if (!user && !userFetched) {
+      fetchUser();
+      return;
+    }
+    if (!user && userFetched) {
+      createUser();
+    }
+  }, [createUser, fetchUser, publicKey, user, userFetched]);
 
   return (
     <div className="mt-28 mx-auto max-w-5xl">
