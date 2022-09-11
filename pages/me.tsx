@@ -53,11 +53,11 @@ const Me = () => {
         className="flex flex-col items-center justify-center max-w-md mx-auto shadow-xl rounded-lg p-4"
         style={{ backgroundImage: `url(${bg.src})` }}
       >
-        <h1 className="text-4xl mb-4">Preferences</h1>
+        <h1 className="text-4xl mb-2">Preferences</h1>
         {!!user ? (
-          <div className="space-y-3">
+          <div className="space-y-1 mb-2">
             {!!user?.discordAvatarUrl && (
-              <div className="py-4 flex w-full justify-center">
+              <div className="pb-4 flex w-full justify-center">
                 <Image
                   src={user.discordAvatarUrl}
                   className="rounded-md"
@@ -67,8 +67,10 @@ const Me = () => {
                 />
               </div>
             )}
-            <DiscordConnection user={user} />
-            <TwitterConnection user={user} />
+            <div className="space-y-3">
+              <DiscordConnection user={user} />
+              <TwitterConnection user={user} />
+            </div>
           </div>
         ) : (
           <Spinner />
