@@ -36,7 +36,7 @@ const TwitterRedirect = () => {
         showToast({
           primaryMessage: "Twitter info saved!",
         });
-        router.push("/preferences");
+        router.push("/me");
       } else {
         showToast({
           primaryMessage: "Unable to save Twitter info",

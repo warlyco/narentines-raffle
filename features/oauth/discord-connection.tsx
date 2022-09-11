@@ -41,7 +41,7 @@ const DiscordConnection = ({ user }: { user: User }) => {
           className="text-xl bg-purple-700 text-amber-200 rounded-md px-4 py-2 inline-flex items-center justify-center uppercase space-x-3"
           href={href}
         >
-          <div className="mt-1">
+          <div className="mt-2">
             <Image
               height={20}
               width={26}

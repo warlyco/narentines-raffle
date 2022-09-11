@@ -1,15 +1,11 @@
-import { useLazyQuery } from "@apollo/client";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { ADD_USER } from "api/users/endpoint";
 import axios from "axios";
 import { ENVIRONMENT_URL } from "constants/constants";
 import showToast from "features/toasts/show-toast";
 import Spinner from "features/UI/Spinner";
-import client from "graphql/apollo-client";
-import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { DiscordUser, User } from "types/types";
+import { DiscordUser } from "types/types";
 
 type Response = {
   id: string;
@@ -21,9 +17,10 @@ const DiscordRedirect = () => {
   const [error, setError] = useState<string | null>(null);
   const { publicKey } = useWallet();
   const router = useRouter();
+
   const saveUser = useCallback(
     async (user: any) => {
-      if (!discordUser) return;
+      if (!user) return;
 
       if (!publicKey) {
         console.error("No public key found");
@@ -35,8 +32,7 @@ const DiscordRedirect = () => {
         //   query: GET_USER_BY_WALLET,
         //   variables: { walletAddress: publicKey?.toString() },
         // });
-
-        const { data } = await axios.post(
+        const res = await axios.post(
           `${ENVIRONMENT_URL}/api/update-user-discord`,
           {
             walletAddress: publicKey,
@@ -48,11 +44,11 @@ const DiscordRedirect = () => {
           }
         );
 
-        if (data) {
+        if (res.data) {
           showToast({
             primaryMessage: "Discord info saved!",
           });
-          router.push("/preferences");
+          router.push("/me");
         } else {
           showToast({
             primaryMessage: "Unable to save Discord info",
@@ -60,13 +56,17 @@ const DiscordRedirect = () => {
           router.push("/");
         }
       } catch (error: any) {
-        setError(error.message);
         console.error(error);
-      } finally {
-        router.push("/");
+        const { message } = error.response.data.error.response.errors[0];
+        if (message.includes("Uniqueness violation")) {
+          showToast({
+            primaryMessage: "This Discord account is linked to another wallet",
+          });
+          router.push("/");
+        }
       }
     },
-    [discordUser, publicKey, router]
+    [publicKey, router]
   );
 
   const fetchDiscordUser = useCallback(
@@ -92,7 +92,7 @@ const DiscordRedirect = () => {
         setError(error.message);
       }
     },
-    []
+    [saveUser]
   );
 
   useEffect(() => {
@@ -107,13 +107,12 @@ const DiscordRedirect = () => {
     }
     setAccessToken(accessToken);
     fetchDiscordUser({ accessToken, tokenType });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discordUser]);
+  }, [discordUser, fetchDiscordUser, router]);
 
   return (
     <div className="flex w-full h-full items-center justify-center">
-      <div className="text-4xl mt-48 flex items-center space-x-4">
-        <div className="mr-4">Saving User Info</div>
+      <div className="flex flex-col text-4xl mt-48 items-center justify-center space-x-4">
+        <div className="mb-8">Saving User Info</div>
         <Spinner />
       </div>
     </div>

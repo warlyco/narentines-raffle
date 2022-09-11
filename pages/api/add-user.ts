@@ -1,7 +1,5 @@
 import type { NextApiHandler } from "next";
-import * as Sentry from "@sentry/node";
 import request from "graphql-request";
-import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 import { ADD_USER } from "graphql/mutations/add-user";
 
 const addUser: NextApiHandler = async (req, response) => {
@@ -14,10 +12,7 @@ const addUser: NextApiHandler = async (req, response) => {
       url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
       document: ADD_USER,
       variables: {
-        avatarUrl,
         walletAddress,
-        discordName,
-        discordId,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,

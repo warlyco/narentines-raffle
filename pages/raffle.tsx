@@ -11,13 +11,6 @@ import Overlay from "features/overlay";
 import { Balances, ModalTypes, SplTokens } from "types/types";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { getTokenMintAddress } from "features/solana/helpers";
-import { ENVIRONMENT_URL } from "constants/constants";
-
-import twitterAuthClient from "utils/auth/twitter-auth-client";
-import { useMutation } from "@apollo/client";
-import UPDATE_USER_TWITTER_OAUTH from "graphql/mutations/update-user-twitter-oauth";
-import { useRouter } from "next/router";
-import showToast from "features/toasts/show-toast";
 import UserButton from "features/navbar/user-button";
 
 const RafflePage = () => {

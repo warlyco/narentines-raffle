@@ -30,3 +30,7 @@ export const E007 = {
   code: "E007",
   message: "Unable to create transaction instruction",
 };
+export const E008 = {
+  code: "E008",
+  message: "Unable to create new user",
+};

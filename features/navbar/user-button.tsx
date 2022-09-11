@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Preferences from "features/navbar/preferences";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -12,28 +11,12 @@ import Link from "next/link";
 const UserButton = () => {
   const { publicKey } = useWallet();
 
-  const showPreferencesModal = async () => {
-    if (!publicKey) return;
-
-    const { data } = await client.query({
-      query: GET_USER_BY_WALLET,
-      variables: { walletAddress: publicKey?.toString() },
-      fetchPolicy: "network-only",
-    });
-
-    // SwalReact.fire({
-    //   showCloseButton: true,
-    //   showConfirmButton: false,
-    //   html: <Preferences user={data?.users?.[0]} />,
-    // });
-  };
-
   const walletAddress = publicKey?.toString();
   if (!walletAddress) return <></>;
 
   return (
     <button className="py-2 px-2 bg-green-800 hover:bg-green-900 rounded">
-      <Link href="/preferences">
+      <Link href="/me">
         <Cog8ToothIcon className="h-8 w-8 text-amber-400" />
       </Link>
     </button>
