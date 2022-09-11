@@ -24,26 +24,26 @@ const Me = () => {
   const createUser = useCallback(async () => {
     if (user) return;
     setCreatingUser(true);
-    // try {
-    //   const { data } = await axios.post("/api/add-user", {
-    //     walletAddress: publicKey?.toString(),
-    //   });
+    try {
+      const { data } = await axios.post("/api/add-user", {
+        walletAddress: publicKey?.toString(),
+      });
 
-    //   if (!data?.newUser?.id) {
-    //     showGenericErrorToast(E008);
-    //     router.push("/");
-    //     return;
-    //   }
+      if (!data?.newUser?.id) {
+        showGenericErrorToast(E008);
+        router.push("/");
+        return;
+      }
 
-    //   setUser(data.newUser);
-    //   console.log(user);
-    //   debugger;
-    // } catch (e) {
-    //   showGenericErrorToast(E008);
-    //   router.push("/");
-    // } finally {
-    //   setCreatingUser(false);
-    // }
+      setUser(data.newUser);
+      console.log(user);
+      debugger;
+    } catch (e) {
+      showGenericErrorToast(E008);
+      router.push("/");
+    } finally {
+      setCreatingUser(false);
+    }
   }, [publicKey, user, router]);
 
   const fetchUser = useCallback(async () => {
