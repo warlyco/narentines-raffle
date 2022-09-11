@@ -1,7 +1,10 @@
+import { useQuery } from "@apollo/client";
 import { useWallet } from "@solana/wallet-adapter-react";
 import axios from "axios";
 import classNames from "classnames";
+import dayjs from "dayjs";
 import showToast from "features/toasts/show-toast";
+import { GET_TWEETS_TO_RAID } from "graphql/queries/get-tweets-to-raid";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Raid } from "types/types";
@@ -12,8 +15,11 @@ const RaidAdminPanel = () => {
   const [raidLengthInHours, setRaidLengthInHours] = useState<string>("24");
   const [payoutAmountInGoods, setPayoutAmountInGoods] = useState<string>("1");
   const [addedRaid, setAddedRaid] = useState<Raid | null>(null);
+  const [raids, setRaids] = useState<Raid[]>([]);
 
   const { publicKey, signMessage } = useWallet();
+
+  const { data, refetch } = useQuery(GET_TWEETS_TO_RAID);
 
   const handleAddRaid = async (event: any) => {
     event.preventDefault();
@@ -37,6 +43,7 @@ const RaidAdminPanel = () => {
         publicKeyString: publicKey.toString(),
       });
       setAddedRaid(data.raid);
+      refetch();
       showToast({ primaryMessage: "Raid added!" });
     } catch (error) {
       console.error(error);
@@ -48,7 +55,7 @@ const RaidAdminPanel = () => {
   return (
     <div className="m-auto">
       <h1 className="text-2xl mb-2">Add Raid</h1>
-      <form className="w-full max-w-lg space-y-2">
+      <form className="w-full max-w-lg space-y-2 mb-8">
         <label htmlFor="mint-address" className="flex space-x-4 items-center">
           <div className="whitespace-nowrap">Tweet url</div>
           <input
@@ -92,6 +99,56 @@ const RaidAdminPanel = () => {
           {isLoading ? "Saving..." : "Save"}
         </button>
       </form>
+      <div className="space-y-2">
+        <h1 className="text-2xl mb-2">Raids</h1>
+        {!!data?.tweets_to_raid.length &&
+          data.tweets_to_raid.map(
+            ({ tweetId, tweetUrl, raidLengthInHours, createdAt }: Raid) => (
+              <a
+                href={tweetUrl}
+                key={tweetId}
+                className="block"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="border-2 border-green-800 rounded p-4 hover:bg-amber-400 pointer">
+                  <div className="flex">{tweetId}</div>
+                  <div className="flex">
+                    <div>
+                      <div className="font-bold mr-2">Raid Length:</div>
+                    </div>
+                    <div>{raidLengthInHours}</div>
+                  </div>
+                  <div className="flex">
+                    <div>
+                      <div className="font-bold mr-2">Ends at:</div>
+                    </div>
+                    <div>
+                      {dayjs(createdAt)
+                        .add(raidLengthInHours, "hour")
+                        .format("M/D/YY, h:mm a")}
+                    </div>
+                  </div>
+                  <div className="flex">
+                    <div>
+                      <div className="font-bold mr-2">Time remaining:</div>
+                    </div>
+                    <div>
+                      {Math.abs(
+                        dayjs(Date.now()).diff(
+                          dayjs(createdAt).add(raidLengthInHours, "hour"),
+                          "hour",
+                          true
+                        )
+                      ).toFixed(2)}{" "}
+                      hours
+                    </div>
+                  </div>
+                </div>
+              </a>
+            )
+          )}
+      </div>
     </div>
   );
 };

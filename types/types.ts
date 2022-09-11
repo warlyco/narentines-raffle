@@ -139,5 +139,9 @@ export enum AdminTabs {
 export type Raid = {
   id: string;
   tweetId: string;
+  tweetUrl: string;
+  raidLengthInHours: number;
   raiderWalletAddresses: string[];
+  payoutAmountInGoods: number;
+  createdAt: string;
 };
