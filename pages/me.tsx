@@ -11,6 +11,7 @@ import Image from "next/image";
 import axios from "axios";
 import { E008 } from "errors/types";
 import showGenericErrorToast from "features/toasts/show-generic-error-toast";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const Me = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -44,8 +45,10 @@ const Me = () => {
   }, [createUser, publicKey]);
 
   useEffect(() => {
+    if (!publicKey) return;
+
     fetchUser();
-  }, [fetchUser]);
+  }, [fetchUser, publicKey]);
 
   return (
     <div className="mt-28 mx-auto max-w-5xl">
@@ -54,6 +57,11 @@ const Me = () => {
         style={{ backgroundImage: `url(${bg.src})` }}
       >
         <h1 className="text-4xl mb-4">Preferences</h1>
+        {!publicKey && (
+          <div className="mb-2">
+            <WalletMultiButton />
+          </div>
+        )}
         {!!user ? (
           <div className="space-y-3">
             {!!user?.discordAvatarUrl && (
@@ -71,7 +79,7 @@ const Me = () => {
             <TwitterConnection user={user} />
           </div>
         ) : (
-          <Spinner />
+          !!publicKey && <Spinner />
         )}
       </div>
     </div>
