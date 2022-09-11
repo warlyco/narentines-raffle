@@ -6,17 +6,13 @@ import dayjs from "dayjs";
 import showToast from "features/toasts/show-toast";
 import { GET_TWEETS_TO_RAID } from "graphql/queries/get-tweets-to-raid";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { Raid } from "types/types";
-import twitterAuthClient from "utils/auth/twitter-auth-client";
 
 const RaidAdminPanel = () => {
   const [tweetUrl, setTweetUrl] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [raidLengthInHours, setRaidLengthInHours] = useState<string>("24");
   const [payoutAmountInGoods, setPayoutAmountInGoods] = useState<string>("1");
-  const [addedRaid, setAddedRaid] = useState<Raid | null>(null);
-  const [raids, setRaids] = useState<Raid[]>([]);
 
   const { publicKey, signMessage } = useWallet();
 
@@ -61,9 +57,9 @@ const RaidAdminPanel = () => {
         publicKey: JSON.stringify(publicKey.toBytes()),
         publicKeyString: publicKey.toString(),
       });
-      setAddedRaid(data.raid);
       refetch();
       showToast({ primaryMessage: "Raid added!" });
+      clearForm();
     } catch (error) {
       console.error(error);
     } finally {
