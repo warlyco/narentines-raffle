@@ -17,11 +17,13 @@ import { useRouter } from "next/router";
 const Me = () => {
   const [user, setUser] = useState<User | null>(null);
   const [userFetched, setUserFetched] = useState(false);
+  const [creatingUser, setCreatingUser] = useState(false);
   const { publicKey } = useWallet();
   const router = useRouter();
 
   const createUser = useCallback(async () => {
     if (user) return;
+    setCreatingUser(true);
     try {
       const { data } = await axios.post("/api/add-user", {
         walletAddress: publicKey?.toString(),
@@ -39,6 +41,8 @@ const Me = () => {
     } catch (e) {
       showGenericErrorToast(E008);
       router.push("/");
+    } finally {
+      setCreatingUser(false);
     }
   }, [publicKey, user, router]);
 
@@ -102,6 +106,12 @@ const Me = () => {
           </div>
         ) : (
           !!publicKey && <Spinner />
+        )}
+        {creatingUser && (
+          <div className="flex flex-col items-center justify-center">
+            <div className="text-4xl">Creating new user...</div>
+            <Spinner />
+          </div>
         )}
       </div>
     </div>

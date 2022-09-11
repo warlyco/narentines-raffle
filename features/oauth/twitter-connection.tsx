@@ -61,6 +61,8 @@ const TwitterConnection = ({ user }: { user: User }) => {
           scope: ["tweet.read", "users.read", "offline.access"],
         }
       );
+
+    console.log("Twitter redirect uri:", `${ENVIRONMENT_URL}/twitter-redirect`);
     setTwitterAuthUrl(url);
     handleUpdateTwitterOAuthInfo(codeVerifier, state);
   }, [handleUpdateTwitterOAuthInfo]);
