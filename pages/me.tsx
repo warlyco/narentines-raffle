@@ -36,12 +36,12 @@ const Me = () => {
       fetchPolicy: "network-only",
     });
     const user = data?.users?.[0];
-    if (user.id) {
+    if (user?.id) {
       setUser(user);
     } else {
       createUser();
     }
-  }, [publicKey]);
+  }, [createUser, publicKey]);
 
   useEffect(() => {
     fetchUser();
