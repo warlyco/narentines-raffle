@@ -21,7 +21,8 @@ const Me = () => {
     const { data } = await axios.post("/api/add-user", {
       walletAddress: publicKey?.toString(),
     });
-    if (!user?.id) {
+
+    if (!data?.newUser?.id) {
       showGenericErrorToast(E008);
       return;
     }
