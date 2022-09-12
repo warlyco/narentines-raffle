@@ -26,7 +26,7 @@ const RaidCard = ({ raid }: Props) => {
       target="_blank"
       rel="noreferrer"
     >
-      <div className="w-full p-4 bg-amber-200 space-y-1 flex-shrink-0 rounded-lg flex flex-col justify-between relative shadow-deep hover:shadow-deep-float hover:scale-[1.03] duration-500">
+      <div className="w-full p-4 bg-amber-200 space-y-1 flex-shrink-0 rounded-lg flex flex-col justify-between relative shadow-deep hover:shadow-deep-float hover:scale-[1.03] duration-500 cursor-pointer">
         <div className="w-full bg-green-800 text-amber-200 text-xl text-center py-2 rounded-t-lg absolute left-0 top-0">
           {payoutAmountInGoods} $GOODS
         </div>
@@ -36,10 +36,7 @@ const RaidCard = ({ raid }: Props) => {
           </div>
         </div>
         <div className="flex">
-          <div>
-            <div className="font-bold mr-2">Tweeted by:</div>
-          </div>
-          <div>{posterUsername}</div>
+          <div>@{posterUsername}</div>
         </div>
         <div className="flex">
           <div>
