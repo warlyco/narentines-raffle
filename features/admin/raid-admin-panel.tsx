@@ -155,7 +155,7 @@ const RaidAdminPanel = () => {
                     <div>
                       <div className="font-bold mr-2">Raid Length:</div>
                     </div>
-                    <div>{raidLengthInHours}</div>
+                    <div>{raidLengthInHours} hours</div>
                   </div>
                   <div className="flex">
                     <div>

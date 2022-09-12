@@ -53,6 +53,7 @@
     "passport-twitter": "^1.0.4",
     "query-string": "^7.1.1",
     "react": "18.2.0",
+    "react-countdown": "^2.3.2",
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.3.0",
     "react-redux": "^8.0.2",
@@ -75,6 +76,7 @@
     "yarn": "^1.22.19"
   },
   "devDependencies": {
+    "@tailwindcss/line-clamp": "^0.4.2",
     "@types/async-retry": "^1.4.5",
     "@types/cors": "^2.8.12",
     "@types/node": "18.0.3",
