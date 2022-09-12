@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
+import Link from "next/link";
 import bg from "public/images/single-item-bg.png";
 import { User } from "types/types";
 
@@ -17,37 +18,47 @@ const RaidEarnings = () => {
   );
   const user: User = userData?.users?.[0];
 
-  if (!user) return <div>Connect your wallet to see your earnings</div>;
-
-  const { raidGoodsUnclaimedAmount, totalRaidGoodsEarnedAmount } = user;
-
   return (
     <div
       className="mt-32 bg-amber-200 p-4 rounded-lg shadow-xl"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
       <h1 className="text-4xl text-center mb-4">Raid Earnings</h1>
-      <div className="flex mx-auto">
-        <div className="w-full lg:w-1/2 flex flex-col">
-          <div className="text-center text-2xl font-bold mb-2">Unclaimed</div>
-          <div className="text-center text-5xl font-bold">
-            {raidGoodsUnclaimedAmount || 0} $GOODS
-          </div>
+      {!user && (
+        <div className="text-center text-2xl mb-4">
+          <Link href="/me">
+            <a className="underline">Connect with Twitter and Discord</a>
+          </Link>{" "}
+          to participate in raids.
         </div>
-        <div className="w-full lg:w-1/2 flex flex-col">
-          <div className="text-center text-2xl font-bold mb-2">
-            Total Earned Raiding
+      )}
+      {!!user && (
+        <>
+          <div className="flex mx-auto">
+            <div className="w-full lg:w-1/2 flex flex-col">
+              <div className="text-center text-2xl font-bold mb-2">
+                Unclaimed
+              </div>
+              <div className="text-center text-5xl font-bold">
+                {user.raidGoodsUnclaimedAmount || 0} $GOODS
+              </div>
+            </div>
+            <div className="w-full lg:w-1/2 flex flex-col">
+              <div className="text-center text-2xl font-bold mb-2">
+                Total Earned Raiding
+              </div>
+              <div className="text-center text-5xl font-bold">
+                {user.totalRaidGoodsEarnedAmount || 0} $GOODS
+              </div>
+            </div>
           </div>
-          <div className="text-center text-5xl font-bold">
-            {totalRaidGoodsEarnedAmount || 0} $GOODS
+          <div className="flex justify-center py-2">
+            <button className="text-2xl flex p-2 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800">
+              <span className="mt-[2px]">Claim $GOODS</span>
+            </button>
           </div>
-        </div>
-      </div>
-      <div className="flex justify-center py-2">
-        <button className="text-2xl flex p-2 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800">
-          <span className="mt-[2px]">Claim $GOODS</span>
-        </button>
-      </div>
+        </>
+      )}
     </div>
   );
 };

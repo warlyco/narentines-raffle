@@ -59,9 +59,6 @@ const TwitterRedirect = () => {
         data?.users?.[0];
 
       if (twitterOAuthState !== state) {
-        console.log({ state, twitterOAuthState });
-        debugger;
-        debugger;
         showToast({
           primaryMessage: "Unable to save Twitter info",
         });

@@ -36,8 +36,6 @@ const Me = () => {
       }
 
       setUser(data.newUser);
-      console.log(user);
-      debugger;
     } catch (e) {
       showGenericErrorToast(E008);
       router.push("/");
@@ -56,8 +54,7 @@ const Me = () => {
     });
     setUserFetched(true);
     const user = data?.users?.[0];
-    console.log(data);
-    debugger;
+
     if (user?.id) {
       setUser(user);
     }

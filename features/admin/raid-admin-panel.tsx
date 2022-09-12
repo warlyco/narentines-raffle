@@ -42,8 +42,6 @@ const RaidAdminPanel = () => {
 
     const { tweet, includes } = data;
     const { username: posterUsername } = includes?.users?.[0];
-    console.log(tweet);
-    debugger;
 
     try {
       const { data } = await axios.post("/api/add-tweet-to-raid", {
