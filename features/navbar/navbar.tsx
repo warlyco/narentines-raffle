@@ -41,6 +41,14 @@ export const Navbar = ({ toggleSidebar }: Props) => {
           >
             Explore the Valley
           </a>
+          <Link href="/raids" target="_blank" rel="noopener noreferrer">
+            <a
+              href=""
+              className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-xl"
+            >
+              Raids
+            </a>
+          </Link>
           <a
             className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-xl"
             href="//stake.narentines.com"

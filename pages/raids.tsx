@@ -25,7 +25,7 @@ const Raids = () => {
         <RaidEarnings />
       </div>
       <h1 className="text-4xl text-center">Raids</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-8 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-16 mt-4">
         {!!tweetsToRaid.length &&
           tweetsToRaid.map((raid: Raid) => (
             <RaidCard key={raid.tweetId} raid={raid} />

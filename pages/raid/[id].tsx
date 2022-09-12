@@ -19,6 +19,7 @@ import { useState } from "react";
 
 const Raid = () => {
   const [isCompletedByUser, setIsCompletedByUser] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const { publicKey } = useWallet();
   const router = useRouter();
   const { id } = router.query;
@@ -57,6 +58,7 @@ const Raid = () => {
   const raidIsOver = dayjs().isAfter(raidEndTime);
 
   const handleConfirmRaidInteraction = async () => {
+    setIsConfirming(true);
     const { data } = await axios.get(`/api/get-tweet-by-id?id=${tweetId}`);
     const { usersWhoLiked } = data;
     const isInteractedWith = usersWhoLiked.some(
@@ -72,6 +74,7 @@ const Raid = () => {
         primaryMessage: "Could not verify interaction",
       });
     }
+    setIsConfirming(false);
   };
 
   return (
@@ -117,8 +120,20 @@ const Raid = () => {
                 onClick={handleConfirmRaidInteraction}
                 className="flex p-1 px-2 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800"
               >
-                <EyeIcon className="h-6 w-6 mr-2" />
-                <div className="text-lg font-bold">Confirm</div>
+                {isConfirming ? (
+                  <div className="mr-2 flex items-center -mt-[1px]">
+                    <Spinner />
+                  </div>
+                ) : (
+                  <EyeIcon className="h-6 w-6 mr-2" />
+                )}
+                {isConfirming ? (
+                  <div className="text-lg font-bold animate-pulse">
+                    Confirming
+                  </div>
+                ) : (
+                  <div className="text-lg font-bold">Confirm</div>
+                )}
               </button>
             )}
           </div>
