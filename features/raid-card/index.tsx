@@ -20,13 +20,15 @@ const RaidCard = ({ raid }: Props) => {
   } = raid;
   return (
     <Link
-      style={{ backgroundImage: `url(${bg.src})` }}
       href={`/raid/${tweetId}`}
       key={tweetId}
       target="_blank"
       rel="noreferrer"
     >
-      <div className="w-full p-4 bg-amber-200 space-y-1 flex-shrink-0 rounded-lg flex flex-col justify-between relative shadow-deep hover:shadow-deep-float hover:scale-[1.03] duration-500 cursor-pointer">
+      <div
+        className="w-full p-4 bg-amber-200 space-y-1 flex-shrink-0 rounded-lg flex flex-col justify-between relative shadow-deep hover:shadow-deep-float hover:scale-[1.03] duration-500 cursor-pointer"
+        style={{ backgroundImage: `url(${bg.src})` }}
+      >
         <div className="w-full bg-green-800 text-amber-200 text-xl text-center py-2 rounded-t-lg absolute left-0 top-0">
           {payoutAmountInGoods} $GOODS
         </div>

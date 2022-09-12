@@ -3,7 +3,7 @@ import React from "react";
 import Countdown from "react-countdown";
 import { Raid } from "types/types";
 
-const Completed = () => <span>Raid complete</span>;
+const Completed = () => <span className="italic">This raid has ended</span>;
 
 const RaidCountdown = ({ raid }: { raid: Raid }) => {
   const { createdAt, raidLengthInHours } = raid;

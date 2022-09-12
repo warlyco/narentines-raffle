@@ -1,10 +1,13 @@
 import { useQuery } from "@apollo/client";
 import RaidCard from "features/raid-card";
+import RaidEarnings from "features/raid-earnings";
 import Spinner from "features/UI/Spinner";
 import { GET_TWEETS_TO_RAID } from "graphql/queries/get-tweets-to-raid";
+import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
 import { Raid } from "types/types";
 
 const Raids = () => {
+  const { data: userData, loading, error } = useQuery(GET_USER_BY_WALLET);
   const { data, refetch } = useQuery(GET_TWEETS_TO_RAID);
 
   if (!data?.tweets_to_raid)
@@ -18,6 +21,9 @@ const Raids = () => {
 
   return (
     <div className="mt-32">
+      <div className="pb-16">
+        <RaidEarnings />
+      </div>
       <h1 className="text-4xl text-center">Raids</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-8 mt-4">
         {!!tweetsToRaid.length &&

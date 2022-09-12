@@ -11,6 +11,8 @@ export const GET_USER_BY_WALLET = gql`
       discordName
       walletAddress
       name
+      totalRaidGoodsEarnedAmount
+      raidGoodsUnclaimedAmount
     }
   }
 `;

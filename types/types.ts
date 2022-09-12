@@ -101,6 +101,8 @@ export type User = {
   twitterUsername: string;
   twitterName: string;
   walletAddress: string;
+  totalRaidGoodsEarnedAmount: number;
+  raidGoodsUnclaimedAmount: number;
 };
 
 type VercelJob = {
