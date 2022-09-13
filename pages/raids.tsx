@@ -17,13 +17,16 @@ const Raids = () => {
     useState(false);
   const [completedRaids, setCompletedRaids] = useState<CompletedRaid[]>([]);
   const { data: userData, refetch: refetchUser } = useQuery(GET_USER_BY_WALLET);
-  const { data, refetch } = useQuery(GET_TWEETS_TO_RAID);
+  const { data, refetch } = useQuery(GET_TWEETS_TO_RAID, {
+    fetchPolicy: "network-only",
+  });
   const { data: completedRaidsData, loading: loadingRaidStatus } = useQuery(
     GET_COMPLETED_RAIDS_BY_WALLET,
     {
       variables: {
         walletAddress: publicKey?.toString(),
       },
+      fetchPolicy: "network-only",
     }
   );
 
