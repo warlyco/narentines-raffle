@@ -34,3 +34,7 @@ export const E008 = {
   code: "E008",
   message: "Unable to create new user",
 };
+export const E009 = {
+  code: "E009",
+  message: "Unable to save raid completion",
+};

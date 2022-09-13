@@ -34,8 +34,16 @@ const RaidEarnings = () => {
       )}
       {!!user && (
         <>
-          <div className="flex mx-auto">
-            <div className="w-full lg:w-1/2 flex flex-col">
+          <div className="flex flex-wrap mx-auto">
+            <div className="w-full lg:w-1/3 flex flex-col py-3">
+              <div className="text-center text-2xl font-bold mb-2">
+                Raids Completed
+              </div>
+              <div className="text-center text-5xl font-bold">
+                {user.raidCompletedAmount || 0}
+              </div>
+            </div>
+            <div className="w-full lg:w-1/3 flex flex-col py-3">
               <div className="text-center text-2xl font-bold mb-2">
                 Unclaimed
               </div>
@@ -43,9 +51,9 @@ const RaidEarnings = () => {
                 {user.raidGoodsUnclaimedAmount || 0} $GOODS
               </div>
             </div>
-            <div className="w-full lg:w-1/2 flex flex-col">
+            <div className="w-full lg:w-1/3 flex flex-col py-3">
               <div className="text-center text-2xl font-bold mb-2">
-                Total Earned Raiding
+                Total Earnings
               </div>
               <div className="text-center text-5xl font-bold">
                 {user.totalRaidGoodsEarnedAmount || 0} $GOODS

@@ -12,7 +12,9 @@ export const GET_USER_BY_WALLET = gql`
       walletAddress
       name
       totalRaidGoodsEarnedAmount
+      raidCompletedAmount
       raidGoodsUnclaimedAmount
+      totalRaidGoodsEarnedAmount
     }
   }
 `;

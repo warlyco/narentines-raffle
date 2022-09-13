@@ -16,6 +16,8 @@ import axios from "axios";
 import { User } from "types/types";
 import showToast from "features/toasts/show-toast";
 import { useState } from "react";
+import showGenericErrorToast from "features/toasts/show-generic-error-toast";
+import { E009 } from "errors/types";
 
 const Raid = () => {
   const [isCompletedByUser, setIsCompletedByUser] = useState(false);
@@ -57,24 +59,43 @@ const Raid = () => {
   const raidEndTime = dayjs(createdAt).add(raidLengthInHours, "hour");
   const raidIsOver = dayjs().isAfter(raidEndTime);
 
+  const saveCompletedRaid = async () => {
+    debugger;
+    try {
+      await axios.post("/api/add-completed-raid", {
+        raidId: raid.id,
+        walletAddress: publicKey?.toString(),
+        payoutInGoods: payoutAmountInGoods,
+      });
+      showToast({
+        primaryMessage: "Raid complete!",
+      });
+      setIsCompletedByUser(true);
+    } catch (error) {
+      showGenericErrorToast(E009);
+    }
+    setIsConfirming(false);
+  };
+
   const handleConfirmRaidInteraction = async () => {
     setIsConfirming(true);
     const { data } = await axios.get(`/api/get-tweet-by-id?id=${tweetId}`);
-    const { usersWhoLiked } = data;
-    const isInteractedWith = usersWhoLiked.some(
+    const { usersWhoLiked, usersWhoRetweeted } = data;
+    const hasBeenLiked = usersWhoLiked.some(
       ({ id }: { id: String }) => user?.twitterId === id
     );
-    if (isInteractedWith) {
-      showToast({
-        primaryMessage: "Interaction confirmed!",
-      });
-      setIsCompletedByUser(true);
+    const hasBeenRetweeted = usersWhoRetweeted.some(
+      ({ id }: { id: String }) => user?.twitterId === id
+    );
+    if (hasBeenLiked && hasBeenRetweeted) {
+      saveCompletedRaid();
     } else {
       showToast({
         primaryMessage: "Could not verify interaction",
+        secondaryMessage: "Be sure to like, retweet, and reply to the tweet",
       });
+      setIsConfirming(false);
     }
-    setIsConfirming(false);
   };
 
   return (

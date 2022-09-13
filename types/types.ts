@@ -103,6 +103,7 @@ export type User = {
   walletAddress: string;
   totalRaidGoodsEarnedAmount: number;
   raidGoodsUnclaimedAmount: number;
+  raidCompletedAmount: number;
 };
 
 type VercelJob = {
