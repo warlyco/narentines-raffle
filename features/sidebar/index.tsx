@@ -78,15 +78,32 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
               </div>
               <div>
                 <div className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold py-[4px] inline-block -mt-1">
-                  <a
+                  <Link
                     target="_blank"
                     rel="noopener noreferrer"
-                    href="//bazaar.narentines.com/raffle"
-                    onClick={handleCloseSidebar}
-                    className="inline-block"
+                    href="/raffle"
                   >
-                    Raffle
-                  </a>
+                    <a
+                      href=""
+                      onClick={handleCloseSidebar}
+                      className="inline-block"
+                    >
+                      Raffle
+                    </a>
+                  </Link>
+                </div>
+              </div>
+              <div>
+                <div className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold py-[4px] inline-block -mt-1">
+                  <Link target="_blank" rel="noopener noreferrer" href="/raids">
+                    <a
+                      href=""
+                      onClick={handleCloseSidebar}
+                      className="inline-block"
+                    >
+                      Raids
+                    </a>
+                  </Link>
                 </div>
               </div>
               {/* <div>

@@ -61,9 +61,11 @@ const RaidEarnings = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-center py-2">
-            <RaidPayoutClaimButton user={user} />
-          </div>
+          {user.raidGoodsUnclaimedAmount > 0 && (
+            <div className="flex justify-center py-2">
+              <RaidPayoutClaimButton user={user} />
+            </div>
+          )}
         </>
       )}
     </div>

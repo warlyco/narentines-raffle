@@ -9,19 +9,26 @@ type Props = {
   modalType?: ModalTypes;
 };
 
+const showMessage = (lineOne: string, lineTwo: string) => (
+  <div className="text-center">
+    <div className="font-bold text-2xl">{lineOne}</div>
+    <div className="py-4 italic">{lineTwo}</div>
+    <div>
+      <Spinner />
+    </div>
+  </div>
+);
+
 const Overlay = ({ onClick, isVisible, modalType }: Props) => {
   const getMessage = () => {
     switch (modalType) {
+      case ModalTypes.CLAIMING_GOODS:
+        return showMessage("Claiming Goods", "Please do not close this window");
       case ModalTypes.SENDING_TRANSACTION:
       default:
-        return (
-          <div className="text-center">
-            <div className="font-bold text-2xl">Submitting Transaction</div>
-            <div className="py-4 italic">Please do not close this window</div>
-            <div>
-              <Spinner />
-            </div>
-          </div>
+        return showMessage(
+          "Submitting Transaction",
+          "Please do not close this window"
         );
     }
   };
