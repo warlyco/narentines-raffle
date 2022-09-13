@@ -13,11 +13,12 @@ import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
 import dayjs from "dayjs";
 import bg from "public/images/single-item-bg.png";
 import axios from "axios";
-import { User } from "types/types";
+import { CompletedRaid, User } from "types/types";
 import showToast from "features/toasts/show-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import showGenericErrorToast from "features/toasts/show-generic-error-toast";
 import { E009 } from "errors/types";
+import { GET_COMPLETED_RAIDS_BY_WALLET } from "graphql/queries/get-completed-raids";
 
 const Raid = () => {
   const [isCompletedByUser, setIsCompletedByUser] = useState(false);
@@ -26,6 +27,14 @@ const Raid = () => {
   const router = useRouter();
   const { id } = router.query;
 
+  const { data: completedRaids, loading: loadingRaidStatus } = useQuery(
+    GET_COMPLETED_RAIDS_BY_WALLET,
+    {
+      variables: {
+        walletAddress: publicKey?.toString(),
+      },
+    }
+  );
   const { data, loading, error } = useQuery(GET_RAID_BY_TWITTER_ID, {
     variables: {
       tweetId: id,
@@ -40,9 +49,35 @@ const Raid = () => {
       },
     }
   );
+
   const user: User = userData?.users?.[0];
 
-  if (!data?.tweets_to_raid_by_pk) return <Spinner />;
+  useEffect(() => {
+    if (
+      !data?.tweets_to_raid_by_pk ||
+      !completedRaids?.raids_completed?.length ||
+      !user
+    )
+      return;
+    console.log(completedRaids?.raids_completed);
+
+    const isComplete = completedRaids?.raids_completed.some(
+      (completedRaid: CompletedRaid) => {
+        return data.tweets_to_raid_by_pk.id === completedRaid.raidId;
+      }
+    );
+
+    setIsCompletedByUser(isComplete);
+  }, [
+    completedRaids,
+    id,
+    data,
+    user,
+    user?.twitterId,
+    data?.tweets_to_raid_by_pk?.id,
+  ]);
+
+  if (!data?.tweets_to_raid_by_pk) return null;
 
   const { tweets_to_raid_by_pk: raid } = data;
 
@@ -105,7 +140,7 @@ const Raid = () => {
     >
       <p className="text-3xl py-2">{tweetText}</p>
       <div className="mb-2">@{posterUsername}</div>
-      {loading && <Spinner />}
+      {loading || loadingUser || (loadingRaidStatus && <Spinner />)}
       <div className="flex flex-col items-center text-lg space-y-2">
         <div className="flex">
           <div className="font-bold mr-2">Payout:</div>
@@ -116,16 +151,16 @@ const Raid = () => {
           <RaidCountdown raid={raid} />
         </div>
         {!raidIsOver && !!user && !!user.twitterId && !!user.discordId && (
-          <div className="flex justify-around space-x-4 py-3">
+          <div className="flex justify-around space-x-4 py-2">
             {!isCompletedByUser && (
               <a
                 href={tweetUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex p-1 px-2 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800"
+                className="flex p-1 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800"
               >
                 <GlobeAltIcon className="h-6 w-6 mr-2" />
-                <div className="text-lg font-bold">Go to tweet</div>
+                <div className="text-lg font-bold leading-10">Go to tweet</div>
               </a>
             )}
             {isCompletedByUser ? (
@@ -134,12 +169,12 @@ const Raid = () => {
                 className="flex p-1 px-2 rounded-lg border-2 border-green-800 text-amber-200 bg-green-800 justify-center items-center uppercase "
               >
                 <CheckCircleIcon className="h-6 w-6 mr-2" />
-                <div className="text-lg font-bold">Complete!</div>
+                <div className="text-lg font-bold leading-10">Complete!</div>
               </button>
             ) : (
               <button
                 onClick={handleConfirmRaidInteraction}
-                className="flex p-1 px-2 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800"
+                className="flex p-1 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800"
               >
                 {isConfirming ? (
                   <div className="mr-2 flex items-center -mt-[1px]">
@@ -153,7 +188,7 @@ const Raid = () => {
                     Confirming
                   </div>
                 ) : (
-                  <div className="text-lg font-bold">Confirm</div>
+                  <div className="text-lg font-bold leading-10">Confirm</div>
                 )}
               </button>
             )}
