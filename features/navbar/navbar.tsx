@@ -49,7 +49,7 @@ export const Navbar = ({ toggleSidebar }: Props) => {
               Raids
             </a>
           </Link>
-          <Link href="/raffles" target="_blank" rel="noopener noreferrer">
+          <Link href="/raffle" target="_blank" rel="noopener noreferrer">
             <a
               href=""
               className="bg-amber-200 hover:bg-black hover:text-amber-200 text-lg px-3 py-1 uppercase rounded-lg font-bold shadow-xl"
