@@ -1,5 +1,9 @@
 import { SplTokens } from "types/types";
 
+export const GOODS_TOKEN_MINT_ADDRESS: string =
+  process.env.NEXT_PUBLIC_GOODS_TOKEN_MINT_ADDRESS || "";
+export const RAID_PAYOUT_WALLET_ADDRESS: string =
+  process.env.NEXT_PUBLIC_RAID_PAYOUT_WALLET_ADDRESS || "";
 export const CREATOR_MINT_ID: string =
   process.env.NEXT_PUBLIC_CREATOR_MINT_ID || "";
 export const ENVIRONMENT_URL: string =

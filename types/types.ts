@@ -150,3 +150,11 @@ export type Raid = {
   tweetText: string;
   posterUsername: string;
 };
+
+export type CompletedRaid = {
+  completedAt: string;
+  id: string;
+  payoutInGoods: number;
+  raidId: string;
+  walletAddress: string;
+};

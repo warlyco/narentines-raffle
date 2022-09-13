@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { useWallet } from "@solana/wallet-adapter-react";
+import RaidPayoutClaimButton from "features/raid-payout-claim-button";
 import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
 import Link from "next/link";
 import bg from "public/images/single-item-bg.png";
@@ -61,9 +62,7 @@ const RaidEarnings = () => {
             </div>
           </div>
           <div className="flex justify-center py-2">
-            <button className="text-2xl flex p-2 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800">
-              <span className="mt-[2px]">Claim $GOODS</span>
-            </button>
+            <RaidPayoutClaimButton user={user} />
           </div>
         </>
       )}
