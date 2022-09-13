@@ -35,7 +35,6 @@ const getTweetById: NextApiHandler = async (req, response) => {
       },
     });
 
-    console.log(conversationData);
     const { data: replies, meta } = conversationData;
 
     response.status(200).json({ replies, meta });

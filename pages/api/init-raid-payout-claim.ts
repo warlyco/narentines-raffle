@@ -26,34 +26,10 @@ import { CompletedRaid } from "types/types";
 
 // With Payout From Backend
 const initRewardClaim: NextApiHandler = async (req, res) => {
-  const {
-    totalRaidGoodsEarnedAmount,
-    raidGoodsUnclaimedAmount,
-    walletAddress,
-    raidCompletedAmount,
-  } = req.body;
+  const { walletAddress } = req.body;
 
-  console.log({
-    totalRaidGoodsEarnedAmount,
-    raidGoodsUnclaimedAmount,
-    walletAddress,
-    raidCompletedAmount,
-  });
-
-  if (
-    !totalRaidGoodsEarnedAmount ||
-    !walletAddress ||
-    !raidCompletedAmount ||
-    !process.env.PRIVATE_KEY
-  )
+  if (!walletAddress || !process.env.PRIVATE_KEY)
     throw new Error("Missing required fields");
-
-  if (
-    typeof raidGoodsUnclaimedAmount !== "number" ||
-    raidGoodsUnclaimedAmount < 0
-  ) {
-    throw new Error("Invalid raid goods unclaimed amount");
-  }
 
   const { raids_completed: completedRaids } = await request({
     url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
@@ -66,13 +42,11 @@ const initRewardClaim: NextApiHandler = async (req, res) => {
     },
   });
 
-  console.log("completedRaids", completedRaids);
   const raidPayoutTotal = completedRaids.reduce(
     (partialSum: number, raid: CompletedRaid) =>
-      partialSum + raid.payoutInGoods,
+      partialSum + raid.payoutAmountInGoods,
     0
   );
-  console.log("raidPayoutTotal", raidPayoutTotal);
 
   const connection = new Connection(RPC_ENDPOINT);
   const keypair = Keypair.fromSecretKey(bs58.decode(process.env.PRIVATE_KEY));
@@ -163,25 +137,32 @@ const initRewardClaim: NextApiHandler = async (req, res) => {
       res.status(500).json({ error: "User not found" });
     }
 
+    const { raidCompletedAmount, totalRaidGoodsEarnedAmount } = userToUpdate;
+
     const { update_users } = await request({
       url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
       document: UPDATE_USER_RAID_EARNINGS,
       variables: {
         walletAddress,
-        raidCompletedAmount: userToUpdate.raidCompletedAmount,
+        raidCompletedAmount,
+        totalRaidGoodsEarnedAmount,
         raidGoodsUnclaimedAmount: 0,
-        totalRaidGoodsEarnedAmount:
-          userToUpdate.totalRaidGoodsEarnedAmount + raidPayoutTotal,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
       },
     });
+    const updatedUserEarnings = update_users.returning?.[0];
+
+    res.json({
+      txConfirmation: confirmation,
+      updatedUserEarnings,
+      raidPayoutTotal,
+    });
   } catch (error) {
     res.status(500).json({ error });
     return;
   }
-  res.json({ confirmation });
 };
 
 export default initRewardClaim;

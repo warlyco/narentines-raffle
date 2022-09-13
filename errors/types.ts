@@ -38,3 +38,7 @@ export const E009 = {
   code: "E009",
   message: "Unable to save raid completion",
 };
+export const E010 = {
+  code: "E009",
+  message: "Unable to claim raids payout",
+};

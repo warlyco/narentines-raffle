@@ -46,7 +46,6 @@ export default async function handler(
 
   const redirectUri = `${ENVIRONMENT_URL}/twitter-redirect`;
 
-  console.log(`${ENVIRONMENT_URL}/twitter-redirect`);
   const { client: loggedInClient } = await twitterAuthClient.loginWithOAuth2({
     code: typeof code === "string" ? code : code?.[0],
     codeVerifier:

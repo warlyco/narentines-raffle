@@ -4,7 +4,7 @@ export const GET_COMPLETED_RAIDS_BY_WALLET = gql`
     raids_completed(where: { walletAddress: { _eq: $walletAddress } }) {
       completedAt
       id
-      payoutInGoods
+      payoutAmountInGoods
       raidId
       walletAddress
     }

@@ -62,7 +62,6 @@ const TwitterConnection = ({ user }: { user: User }) => {
         }
       );
 
-    console.log("Twitter redirect uri:", `${ENVIRONMENT_URL}/twitter-redirect`);
     setTwitterAuthUrl(url);
     handleUpdateTwitterOAuthInfo(codeVerifier, state);
   }, [handleUpdateTwitterOAuthInfo]);

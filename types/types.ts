@@ -155,7 +155,7 @@ export type Raid = {
 export type CompletedRaid = {
   completedAt: string;
   id: string;
-  payoutInGoods: number;
+  payoutAmountInGoods: number;
   raidId: string;
   walletAddress: string;
 };

@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import showGenericErrorToast from "features/toasts/show-generic-error-toast";
 import { E009 } from "errors/types";
 import { GET_COMPLETED_RAIDS_BY_WALLET } from "graphql/queries/get-completed-raids";
+import classNames from "classnames";
 
 const Raid = () => {
   const [isCompletedByUser, setIsCompletedByUser] = useState(false);
@@ -59,7 +60,6 @@ const Raid = () => {
       !user
     )
       return;
-    console.log(completedRaids?.raids_completed);
 
     const isComplete = completedRaids?.raids_completed.some(
       (completedRaid: CompletedRaid) => {
@@ -95,12 +95,10 @@ const Raid = () => {
   const raidIsOver = dayjs().isAfter(raidEndTime);
 
   const saveCompletedRaid = async () => {
-    debugger;
     try {
-      await axios.post("/api/add-completed-raid", {
-        raidId: raid.id,
+      const { data } = await axios.post("/api/add-completed-raid", {
+        tweetId,
         walletAddress: publicKey?.toString(),
-        payoutInGoods: payoutAmountInGoods,
       });
       showToast({
         primaryMessage: "Raid complete!",
@@ -116,10 +114,10 @@ const Raid = () => {
     setIsConfirming(true);
     const { data } = await axios.get(`/api/get-tweet-by-id?id=${tweetId}`);
     const { usersWhoLiked, usersWhoRetweeted } = data;
-    const hasBeenLiked = usersWhoLiked.some(
+    const hasBeenLiked = usersWhoLiked?.some(
       ({ id }: { id: String }) => user?.twitterId === id
     );
-    const hasBeenRetweeted = usersWhoRetweeted.some(
+    const hasBeenRetweeted = usersWhoRetweeted?.some(
       ({ id }: { id: String }) => user?.twitterId === id
     );
     if (hasBeenLiked && hasBeenRetweeted) {
@@ -160,7 +158,9 @@ const Raid = () => {
                 className="flex p-1 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800"
               >
                 <GlobeAltIcon className="h-6 w-6 mr-2" />
-                <div className="text-lg font-bold leading-10">Go to tweet</div>
+                <div className="text-lg font-bold leading-10 mt-[3px]">
+                  Go to tweet
+                </div>
               </a>
             )}
             {isCompletedByUser ? (
@@ -169,12 +169,19 @@ const Raid = () => {
                 className="flex p-1 px-2 rounded-lg border-2 border-green-800 text-amber-200 bg-green-800 justify-center items-center uppercase "
               >
                 <CheckCircleIcon className="h-6 w-6 mr-2" />
-                <div className="text-lg font-bold leading-10">Complete!</div>
+                <div className="text-lg font-bold leading-10 mt-[3px]">
+                  Complete!
+                </div>
               </button>
             ) : (
               <button
                 onClick={handleConfirmRaidInteraction}
-                className="flex p-1 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800"
+                disabled={isConfirming}
+                className={classNames({
+                  "flex p-1 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800":
+                    true,
+                  "hover:bg-green-800": !isConfirming,
+                })}
               >
                 {isConfirming ? (
                   <div className="mr-2 flex items-center -mt-[1px]">
@@ -184,11 +191,13 @@ const Raid = () => {
                   <EyeIcon className="h-6 w-6 mr-2" />
                 )}
                 {isConfirming ? (
-                  <div className="text-lg font-bold animate-pulse">
-                    Confirming
+                  <div className="text-lg font-bold animate-pulse mt-[3px]">
+                    Confirming...
                   </div>
                 ) : (
-                  <div className="text-lg font-bold leading-10">Confirm</div>
+                  <div className="text-lg font-bold leading-10 mt-[3px]">
+                    Confirm
+                  </div>
                 )}
               </button>
             )}

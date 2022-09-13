@@ -3,20 +3,37 @@ import request from "graphql-request";
 import { ADD_COMPLETED_RAID } from "graphql/mutations/add-completed-raid";
 import UPDATE_USER_RAID_EARNINGS from "graphql/mutations/update-user-raid-earnings";
 import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
+import { GET_RAID_BY_TWITTER_ID } from "graphql/queries/get-raid-by-twitter-id";
 
 const addCompletedRaid: NextApiHandler = async (req, res) => {
-  const { raidId, walletAddress, payoutInGoods } = req.body;
+  const { tweetId, walletAddress } = req.body;
 
-  if (!raidId || !walletAddress) throw new Error("Missing required fields");
+  if (!tweetId || !walletAddress) throw new Error("Missing required fields");
 
   try {
+    const { tweets_to_raid_by_pk: tweet } = await request({
+      url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
+      document: GET_RAID_BY_TWITTER_ID,
+      variables: {
+        tweetId,
+      },
+      requestHeaders: {
+        "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+      },
+    });
+
+    if (!tweet) {
+      throw new Error("Raid not found");
+    }
+    const { payoutAmountInGoods, id } = tweet;
+
     const { insert_raids_completed_one } = await request({
       url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
       document: ADD_COMPLETED_RAID,
       variables: {
-        payoutInGoods,
+        payoutAmountInGoods,
         walletAddress,
-        raidId,
+        raidId: id,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
@@ -47,9 +64,9 @@ const addCompletedRaid: NextApiHandler = async (req, res) => {
         walletAddress,
         raidCompletedAmount: userToUpdate.raidCompletedAmount + 1,
         raidGoodsUnclaimedAmount:
-          userToUpdate.raidGoodsUnclaimedAmount + payoutInGoods,
+          userToUpdate.raidGoodsUnclaimedAmount + payoutAmountInGoods,
         totalRaidGoodsEarnedAmount:
-          userToUpdate.totalRaidGoodsEarnedAmount + payoutInGoods,
+          userToUpdate.totalRaidGoodsEarnedAmount + payoutAmountInGoods,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,

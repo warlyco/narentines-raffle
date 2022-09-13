@@ -35,7 +35,6 @@ const updateUserDiscord: NextApiHandler = async (req, res) => {
       res.status(500).json({ error: "Missing wallet address" });
       return;
     }
-    const { returning } = update_users;
     console.log({ update_users });
     res.json({ update_users });
   } catch (error) {

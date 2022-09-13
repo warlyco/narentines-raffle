@@ -29,7 +29,7 @@ const RaidCard = ({ raid }: Props) => {
         className="w-full p-4 bg-amber-200 space-y-1 flex-shrink-0 rounded-lg flex flex-col justify-between relative shadow-deep hover:shadow-deep-float hover:scale-[1.03] duration-500 cursor-pointer"
         style={{ backgroundImage: `url(${bg.src})` }}
       >
-        <div className="w-full bg-green-800 text-amber-200 text-xl text-center py-2 rounded-t-lg absolute left-0 top-0">
+        <div className="w-full bg-green-800 text-amber-200 text-2xl text-center py-2 pt-3 rounded-t-lg absolute left-0 top-0">
           {payoutAmountInGoods} $GOODS
         </div>
         <div className="flex flex-1 pt-10">
