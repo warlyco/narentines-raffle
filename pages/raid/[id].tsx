@@ -34,6 +34,7 @@ const Raid = () => {
       variables: {
         walletAddress: publicKey?.toString(),
       },
+      fetchPolicy: "network-only",
     }
   );
   const { data, loading, error } = useQuery(GET_RAID_BY_TWITTER_ID, {
@@ -48,6 +49,7 @@ const Raid = () => {
       variables: {
         walletAddress: publicKey?.toString(),
       },
+      fetchPolicy: "network-only",
     }
   );
 
