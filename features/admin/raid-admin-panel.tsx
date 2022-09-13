@@ -124,6 +124,7 @@ const RaidAdminPanel = () => {
               createdAt,
               tweetText,
               posterUsername,
+              payoutAmountInGoods,
             }: Raid) => (
               <a
                 href={tweetUrl}
