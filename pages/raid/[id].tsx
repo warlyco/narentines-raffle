@@ -36,6 +36,7 @@ const Raid = () => {
     variables: {
       walletAddress: publicKey?.toString(),
     },
+    skip: !publicKey,
     fetchPolicy: "network-only",
   });
   const { data, loading, error } = useQuery(GET_RAID_BY_TWITTER_ID, {
@@ -50,6 +51,7 @@ const Raid = () => {
       variables: {
         walletAddress: publicKey?.toString(),
       },
+      skip: !publicKey,
       fetchPolicy: "network-only",
     }
   );
@@ -60,12 +62,18 @@ const Raid = () => {
         return data.tweets_to_raid_by_pk.id === completedRaid.raidId;
       });
     },
-    [data?.tweets_to_raid_by_pk.id]
+    [data?.tweets_to_raid_by_pk?.id]
   );
 
   const user: User = userData?.users?.[0];
 
   useEffect(() => {
+    if (!loading && !data?.tweets_to_raid_by_pk?.id) {
+      showToast({
+        primaryMessage: "Raid not found",
+      });
+      router.push("/");
+    }
     if (
       !data?.tweets_to_raid_by_pk ||
       !completedRaids?.raids_completed?.length ||
@@ -84,8 +92,10 @@ const Raid = () => {
     data,
     user,
     user?.twitterId,
-    data?.tweets_to_raid_by_pk.id,
+    data?.tweets_to_raid_by_pk?.id,
     getIsRaidCompletedByUser,
+    loading,
+    router,
   ]);
 
   if (!data?.tweets_to_raid_by_pk) return null;
@@ -109,6 +119,7 @@ const Raid = () => {
     try {
       const { data } = await axios.post("/api/add-completed-raid", {
         tweetId,
+        raidId: raid.id,
         walletAddress: publicKey?.toString(),
       });
       showToast({
@@ -123,7 +134,6 @@ const Raid = () => {
 
   const handleConfirmRaidInteraction = async () => {
     setIsConfirming(true);
-    await refetchCompletedRaids();
     if (isCompletedByUser) {
       showToast({
         primaryMessage: "You've already completed this raid",
@@ -179,10 +189,10 @@ const Raid = () => {
                   href={tweetUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex p-1 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800"
+                  className="flex p-1 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800 h-12"
                 >
                   <GlobeAltIcon className="h-6 w-6 mr-2" />
-                  <div className="text-lg font-bold leading-10 mt-[3px]">
+                  <div className="text-lg font-bold leading-10 mt-[2px]">
                     Go to tweet
                   </div>
                 </a>
@@ -193,7 +203,7 @@ const Raid = () => {
                   className="flex p-1 px-2 rounded-lg border-2 border-green-800 text-amber-200 bg-green-800 justify-center items-center uppercase "
                 >
                   <CheckCircleIcon className="h-6 w-6 mr-2" />
-                  <div className="text-lg font-bold leading-10 mt-[3px]">
+                  <div className="text-lg font-bold leading-10 mt-[2px]">
                     Complete!
                   </div>
                 </button>
@@ -215,11 +225,11 @@ const Raid = () => {
                     <EyeIcon className="h-6 w-6 mr-2" />
                   )}
                   {isConfirming ? (
-                    <div className="text-lg font-bold animate-pulse mt-[3px]">
+                    <div className="text-lg font-bold animate-pulse mt-[2px]">
                       Confirming...
                     </div>
                   ) : (
-                    <div className="text-lg font-bold leading-10 mt-[3px]">
+                    <div className="text-lg font-bold leading-10 mt-[2px]">
                       Confirm
                     </div>
                   )}

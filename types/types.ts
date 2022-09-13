@@ -158,4 +158,5 @@ export type CompletedRaid = {
   payoutAmountInGoods: number;
   raidId: string;
   walletAddress: string;
+  isPaidOut: boolean;
 };

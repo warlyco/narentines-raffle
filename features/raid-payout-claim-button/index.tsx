@@ -43,15 +43,15 @@ const RaidPayoutClaimButton = ({
       <button
         disabled={isClaimingRaidPayout}
         className={classNames({
-          "text-2xl flex p-2 px-3 rounded-lg border-2 border-green-800 hover:bg-green-800 hover:text-amber-200 justify-center items-center uppercase text-green-800 h-16":
+          "text-2xl flex p-2 px-3 rounded-lg border-2 border-green-800 justify-center items-center uppercase text-green-800 h-16":
             true,
-          "hover:bg-green-800": !isClaimingRaidPayout,
+          "hover:bg-green-800 hover:text-amber-200": !isClaimingRaidPayout,
         })}
         onClick={handleClaimPayout}
       >
         {isClaimingRaidPayout ? (
           <>
-            <div className="mr-2">
+            <div className="mr-2 mt-[2px]">
               <Spinner />
             </div>
             <span className="animate-pulse">Claiming...</span>

@@ -7,6 +7,7 @@ export const GET_COMPLETED_RAIDS_BY_WALLET = gql`
       payoutAmountInGoods
       raidId
       walletAddress
+      isPaidOut
     }
   }
 `;

@@ -42,7 +42,12 @@ const getTweetById: NextApiHandler = async (req, response) => {
   try {
     response
       .status(200)
-      .json({ tweet, includes, usersWhoLiked, usersWhoRetweeted });
+      .json({
+        tweet,
+        includes,
+        usersWhoLiked: usersWhoLiked,
+        usersWhoRetweeted,
+      });
   } catch (error) {
     console.log(error);
     response.status(500).json({ error });

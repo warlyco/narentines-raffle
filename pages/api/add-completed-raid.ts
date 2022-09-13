@@ -8,9 +8,10 @@ import { GET_COMPLETED_RAIDS_BY_WALLET } from "graphql/queries/get-completed-rai
 import { CompletedRaid } from "types/types";
 
 const addCompletedRaid: NextApiHandler = async (req, res) => {
-  const { tweetId, walletAddress } = req.body;
+  const { tweetId, walletAddress, raidId } = req.body;
 
-  if (!tweetId || !walletAddress) throw new Error("Missing required fields");
+  if (!tweetId || !raidId || !walletAddress)
+    throw new Error("Missing required fields");
 
   try {
     const { raids_completed: completedRaids } = await request({
@@ -28,7 +29,7 @@ const addCompletedRaid: NextApiHandler = async (req, res) => {
     //   (raid: CompletedRaid) => raid.raidId === id
     // );
     const completedRaid = completedRaids.find(
-      (raid: CompletedRaid) => raid.raidId === id
+      (raid: CompletedRaid) => raid.id === raidId
     );
 
     if (completedRaid) {

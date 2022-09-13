@@ -23,6 +23,7 @@ import UPDATE_USER_RAID_EARNINGS from "graphql/mutations/update-user-raid-earnin
 import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
 import { GET_COMPLETED_RAIDS_BY_WALLET } from "graphql/queries/get-completed-raids";
 import { CompletedRaid } from "types/types";
+import { UPDATE_COMPLETED_RAIDS_AS_PAID_OUT } from "graphql/mutations/update-completed-raids-as-paid-out";
 
 // With Payout From Backend
 const initRewardClaim: NextApiHandler = async (req, res) => {
@@ -42,7 +43,11 @@ const initRewardClaim: NextApiHandler = async (req, res) => {
     },
   });
 
-  const raidPayoutTotal = completedRaids.reduce(
+  const unpaidRaids = completedRaids.filter(
+    (raid: CompletedRaid) => !raid.isPaidOut
+  );
+
+  const raidPayoutTotal = unpaidRaids.reduce(
     (partialSum: number, raid: CompletedRaid) =>
       partialSum + raid.payoutAmountInGoods,
     0
@@ -138,6 +143,18 @@ const initRewardClaim: NextApiHandler = async (req, res) => {
     }
 
     const { raidCompletedAmount, totalRaidGoodsEarnedAmount } = userToUpdate;
+
+    // update paid out status of all raids being paid out
+    const { update_raids_completed } = await request({
+      url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
+      document: UPDATE_COMPLETED_RAIDS_AS_PAID_OUT,
+      variables: {
+        raidIds: unpaidRaids.map((raid: CompletedRaid) => raid.id),
+      },
+      requestHeaders: {
+        "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+      },
+    });
 
     const { update_users } = await request({
       url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
