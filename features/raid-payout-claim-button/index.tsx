@@ -1,6 +1,7 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import axios from "axios";
 import classNames from "classnames";
+import { SOLANA_CLUSTER } from "constants/constants";
 import { E001, E009, E010 } from "errors/types";
 import showGenericErrorToast from "features/toasts/show-generic-error-toast";
 import showToast from "features/toasts/show-toast";
@@ -24,11 +25,15 @@ const RaidPayoutClaimButton = ({
       const { data } = await axios.post("/api/init-raid-payout-claim", {
         walletAddress: publicKey?.toString(),
       });
-      const { raidPayoutTotal } = data;
+      const { raidPayoutTotal, txConfirmation } = data;
 
       showToast({
         primaryMessage: "Payout claimed!",
         secondaryMessage: `Successfully claimed ${raidPayoutTotal} $GOODS`,
+        link: {
+          url: `https://explorer.solana.com/tx/${txConfirmation}?cluster=${SOLANA_CLUSTER}`,
+          title: "View on Explorer",
+        },
       });
       refetch();
     } catch (error) {

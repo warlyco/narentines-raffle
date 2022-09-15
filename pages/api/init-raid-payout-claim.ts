@@ -32,8 +32,6 @@ const initRewardClaim: NextApiHandler = async (req, res) => {
   if (!walletAddress || !process.env.PRIVATE_KEY)
     throw new Error("Missing required fields");
 
-  return res.status(500).json({ error: "nope" });
-
   const { raids_completed: completedRaids } = await request({
     url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
     document: GET_COMPLETED_RAIDS_BY_WALLET,
@@ -45,11 +43,11 @@ const initRewardClaim: NextApiHandler = async (req, res) => {
     },
   });
 
-  const unpaidRaids = completedRaids.filter(
+  const unpaidRaids = completedRaids?.filter(
     (raid: CompletedRaid) => !raid.isPaidOut
   );
 
-  const raidPayoutTotal = unpaidRaids.reduce(
+  const raidPayoutTotal = unpaidRaids?.reduce(
     (partialSum: number, raid: CompletedRaid) =>
       partialSum + raid.payoutAmountInGoods,
     0
@@ -145,18 +143,21 @@ const initRewardClaim: NextApiHandler = async (req, res) => {
     }
 
     const { raidCompletedAmount, totalRaidGoodsEarnedAmount } = userToUpdate;
+    const raidIds = unpaidRaids.map(({ raidId }: CompletedRaid) => raidId);
 
     // update paid out status of all raids being paid out
     const { update_raids_completed } = await request({
       url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
       document: UPDATE_COMPLETED_RAIDS_AS_PAID_OUT,
       variables: {
-        raidIds: unpaidRaids.map((raid: CompletedRaid) => raid.id),
+        raidIds,
       },
       requestHeaders: {
         "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
       },
     });
+
+    console.log({ raidIds, update_raids_completed });
 
     const { update_users } = await request({
       url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
