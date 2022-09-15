@@ -1,8 +1,5 @@
 import { useQuery } from "@apollo/client";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import Overlay from "features/overlay";
-import RaidPayoutClaimButton from "features/raid-payout-claim-button";
 import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
 import Link from "next/link";
 import bg from "public/images/single-item-bg.png";
@@ -66,9 +63,6 @@ const RaidEarnings = () => {
           </>
         )}
         <div className="flex flex-col items-center text-center text-2xl mb-4">
-          <div className="py-2">
-            <WalletMultiButton />
-          </div>
           {(!user?.twitterId || !user?.discordId) && (
             <div>
               <Link href="/me">

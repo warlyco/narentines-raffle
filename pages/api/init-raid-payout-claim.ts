@@ -32,6 +32,8 @@ const initRewardClaim: NextApiHandler = async (req, res) => {
   if (!walletAddress || !process.env.PRIVATE_KEY)
     throw new Error("Missing required fields");
 
+  return res.status(500).json({ error: "nope" });
+
   const { raids_completed: completedRaids } = await request({
     url: process.env.NEXT_PUBLIC_ADMIN_GRAPHQL_API_ENDPOINT!,
     document: GET_COMPLETED_RAIDS_BY_WALLET,
@@ -54,7 +56,7 @@ const initRewardClaim: NextApiHandler = async (req, res) => {
   );
 
   const connection = new Connection(RPC_ENDPOINT);
-  const keypair = Keypair.fromSecretKey(bs58.decode(process.env.PRIVATE_KEY));
+  const keypair = Keypair.fromSecretKey(bs58.decode(process.env.PRIVATE_KEY!));
 
   let fromTokenAccount;
   try {

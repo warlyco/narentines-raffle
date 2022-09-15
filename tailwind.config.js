@@ -4,6 +4,7 @@ module.exports = {
   theme: {
     extend: {
       fontSize: {
+        xs: "0.9rem",
         sm: "1.1rem",
       },
       backgroundImage: {
