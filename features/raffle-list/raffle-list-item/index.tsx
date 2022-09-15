@@ -392,7 +392,7 @@ export const RaffleListItem = ({
               rel="noopener noreferrer"
             >
               <div className="flex items-center justify-center p-1 px-2 border-2 border-black rounded-lg">
-                MR:&nbsp;
+                Rarity:&nbsp;
                 {moonRankRarity}&nbsp;/&nbsp;{collectionSize}
               </div>
             </a>
