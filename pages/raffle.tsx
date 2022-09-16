@@ -89,11 +89,6 @@ const RafflePage = () => {
               Aye, Aye. Roll the dice ya amphibian coward!
             </div>
 
-            <div className="flex space-x-2">
-              <WalletMultiButton />
-              <UserButton />
-            </div>
-
             <div className="text-sm italic">
               Have an issue or bug to report? <br /> Open a support ticket on
               our &nbsp;
