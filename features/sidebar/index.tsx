@@ -1,3 +1,4 @@
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import classNames from "classnames";
 import ClientOnly from "features/client-only";
 import Overlay from "features/overlay";
@@ -46,6 +47,7 @@ export const Sidebar = ({ isOpenSidebar, toggleSidebar }: Props) => {
               />
             </button>
             <div className="flex flex-col space-y-8 flex-grow">
+              <WalletMultiButton />
               <div>
                 <a
                   className="bg-amber-200 hover:bg-amber-400 text-2xl px-3 uppercase rounded-lg font-bold"
