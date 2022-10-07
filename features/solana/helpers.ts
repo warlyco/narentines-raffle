@@ -1,3 +1,4 @@
+import bigDecimal from "js-big-decimal";
 import {
   LAMPORTS_PER_SOL,
   PublicKey,
@@ -22,9 +23,20 @@ export const createSolanaTransaction = ({
   fromPublicKey: PublicKey;
   toPublicKey: PublicKey;
 }) => {
-  const amountOfSol = numberOfTicketsToBuy * pricePerTicket;
-  const solInLamports = LAMPORTS_PER_SOL * amountOfSol;
-
+  const bdNumberOfTicketsToBuy = new bigDecimal(numberOfTicketsToBuy);
+  const bdPricePerTicket = new bigDecimal(pricePerTicket);
+  // @ts-ignore
+  const amountOfSol = Number(
+    bigDecimal.multiply(numberOfTicketsToBuy, pricePerTicket)
+  );
+  console.log({
+    amountOfSol,
+    numberOfTicketsToBuy,
+    pricePerTicket,
+  });
+  const solInLamports = Number(
+    bigDecimal.multiply(LAMPORTS_PER_SOL, amountOfSol)
+  );
   return new Transaction().add(
     SystemProgram.transfer({
       fromPubkey: fromPublicKey,

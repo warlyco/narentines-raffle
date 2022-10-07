@@ -1,7 +1,7 @@
 import type { NextApiHandler } from "next";
 import { ADD_RAFFLE_ENTRY } from "graphql/mutations/add-raffle-entry";
 import { GraphQLClient } from "graphql-request";
-import * as Sentry from "@sentry/node";
+
 import { Raffle, SplTokens } from "types/types";
 import { request } from "graphql-request";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
@@ -20,6 +20,7 @@ import {
   TransactionResponse,
 } from "@solana/web3.js";
 import retry from "async-retry";
+import bigDecimal from "js-big-decimal";
 
 const calculateSolCost = (
   transaction: TransactionResponse,
@@ -37,8 +38,18 @@ const calculateSolCost = (
       tokenBalanceChangeAmount: 0,
     };
   }
-  const tokenBalanceChangeAmount = preTokenBalance - (postTokenBalance + fee);
-  const totalCost = price * purchaseCount * LAMPORTS_PER_SOL;
+  const tokenBalanceChangeAmount = Number(
+    bigDecimal.subtract(
+      preTokenBalance,
+      Number(bigDecimal.multiply(postTokenBalance, fee))
+    )
+  );
+  const totalCost = Number(
+    bigDecimal.multiply(
+      price,
+      Number(bigDecimal.multiply(purchaseCount, LAMPORTS_PER_SOL))
+    )
+  );
 
   console.log("calculateSolCost", {
     postTokenBalance,
@@ -82,7 +93,9 @@ const calculateSplCost = (
     preTokenBalance?.uiTokenAmount?.uiAmount -
     postTokenBalance.uiTokenAmount.uiAmount
   ).toFixed(8);
-  const totalCost = (price * purchaseCount).toFixed(8);
+  const totalCost = Number(bigDecimal.multiply(price, purchaseCount)).toFixed(
+    8
+  );
 
   console.log("calculateSplCost", {
     postTokenBalance,

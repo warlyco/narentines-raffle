@@ -1,6 +1,5 @@
 import type { NextApiHandler } from "next";
 import { ADD_RAFFLE } from "graphql/mutations/add-raffle";
-import * as Sentry from "@sentry/node";
 import request from "graphql-request";
 import verifySignature from "utils/auth/verify-signature";
 import verifyAdmin from "utils/auth/verify-admin";

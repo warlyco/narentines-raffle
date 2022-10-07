@@ -1,9 +1,9 @@
 import type { NextApiHandler } from "next";
 import { GET_RAFFLES } from "graphql/queries/get-raffles";
-import * as Sentry from "@sentry/node";
+
 import { request } from "graphql-request";
 import { GET_TEST_RAFFLES } from "graphql/queries/get-test-raffles";
-import { isProduction, SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
+import { isProduction } from "constants/constants";
 
 const getRaffles: NextApiHandler = async (_, response) => {
   const query = isProduction ? GET_RAFFLES : GET_TEST_RAFFLES;

@@ -24,6 +24,7 @@ import { GET_USER_BY_WALLET } from "graphql/queries/get-user-by-wallet";
 import { GET_COMPLETED_RAIDS_BY_WALLET } from "graphql/queries/get-completed-raids";
 import { CompletedRaid } from "types/types";
 import { UPDATE_COMPLETED_RAIDS_AS_PAID_OUT } from "graphql/mutations/update-completed-raids-as-paid-out";
+import bigDecimal from "js-big-decimal";
 
 // With Payout From Backend
 const initRewardClaim: NextApiHandler = async (req, res) => {
@@ -98,7 +99,7 @@ const initRewardClaim: NextApiHandler = async (req, res) => {
       fromTokenAccount.address,
       toTokenAccount.address,
       new PublicKey(RAID_PAYOUT_WALLET_ADDRESS),
-      raidPayoutTotal * 100,
+      Number(bigDecimal.multiply(raidPayoutTotal, 100)),
       [],
       TOKEN_PROGRAM_ID
     )

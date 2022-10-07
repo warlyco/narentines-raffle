@@ -1,8 +1,5 @@
 import type { NextApiHandler } from "next";
-import { GET_RAFFLES } from "graphql/queries/get-raffles";
-import * as Sentry from "@sentry/node";
 import { RPC_ENDPOINT } from "constants/constants";
-import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 import { Connection, PublicKey } from "@solana/web3.js";
 import {
   getAllDomains,

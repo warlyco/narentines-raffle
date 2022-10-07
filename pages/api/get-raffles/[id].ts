@@ -1,8 +1,6 @@
 import type { NextApiHandler } from "next";
 import { GET_RAFFLE_BY_ID } from "graphql/queries/get-raffle-by-id";
 import { GraphQLClient } from "graphql-request";
-import * as Sentry from "@sentry/node";
-import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 
 const getRaffles: NextApiHandler = async (request, response) => {
   const client = new GraphQLClient(

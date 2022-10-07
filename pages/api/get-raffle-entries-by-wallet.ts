@@ -1,8 +1,6 @@
 import type { NextApiHandler } from "next";
 import GET_ENTRIES_BY_WALLET from "graphql/queries/get-entries-by-wallet";
 import { GraphQLClient } from "graphql-request";
-import * as Sentry from "@sentry/node";
-import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 
 const getRaffleEntriesByWallet: NextApiHandler = async (request, response) => {
   const { raffleId, walletAddress } = request.query;

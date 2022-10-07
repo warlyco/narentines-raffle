@@ -33,6 +33,7 @@ import { E001, E002, E003, E004, E005, E006, E007 } from "errors/types";
 import showTransactionSuccessToast from "features/toasts/show-transaction-success-toast";
 import showGenericErrorToast from "features/toasts/show-generic-error-toast";
 import showCouldNotConfirmTransactionToast from "features/toasts/show-could-not-confirm-transaction-toast";
+import bigDecimal from "js-big-decimal";
 
 const SwalReact = withReactContent(Swal);
 
@@ -228,6 +229,7 @@ export const SendTransaction = ({
 
       handleSendTransaction({ transaction, latestBlockHash });
     } catch (error) {
+      console.error(error);
       showGenericErrorToast(E007);
       return;
     }
@@ -245,15 +247,34 @@ export const SendTransaction = ({
     (token: SplTokens) => {
       switch (token) {
         case SplTokens.GOODS:
-          return numberOfTicketsToBuy * raffle.priceInGoods;
+          return Number(
+            bigDecimal.multiply(numberOfTicketsToBuy, raffle.priceInGoods)
+          );
         case SplTokens.SOL:
-          return numberOfTicketsToBuy * raffle.priceInSol;
+          return Number(
+            bigDecimal.multiply(numberOfTicketsToBuy, raffle.priceInSol)
+          );
         case SplTokens.DUST:
-          return numberOfTicketsToBuy * raffle.priceInDust * 10000000;
+          return Number(
+            bigDecimal.multiply(
+              numberOfTicketsToBuy,
+              Number(bigDecimal.multiply(raffle.priceInDust, 10000000))
+            )
+          );
         case SplTokens.FORGE:
-          return numberOfTicketsToBuy * raffle.priceInForge * 10000000;
+          return Number(
+            bigDecimal.multiply(
+              numberOfTicketsToBuy,
+              Number(bigDecimal.multiply(raffle.priceInForge, 10000000))
+            )
+          );
         case SplTokens.GEAR:
-          return numberOfTicketsToBuy * raffle.priceInGear * 10000000;
+          return Number(
+            bigDecimal.multiply(
+              numberOfTicketsToBuy,
+              Number(bigDecimal.multiply(raffle.priceInGear, 10000000))
+            )
+          );
       }
     },
     [
@@ -311,7 +332,7 @@ export const SendTransaction = ({
             fromTokenAccount.address,
             toTokenAccount.address,
             fromPublicKey,
-            amount * 100, // tokens have 6 decimals of precision so your amount needs to have the same
+            Number(bigDecimal.multiply(amount, 100)), // tokens have 6 decimals of precision so your amount needs to have the same
             [],
             TOKEN_PROGRAM_ID
           )

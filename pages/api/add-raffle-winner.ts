@@ -1,8 +1,7 @@
 import type { NextApiHandler } from "next";
 import { ADD_RAFFLE_WINNER } from "graphql/mutations/add-raffle-winner";
-import * as Sentry from "@sentry/node";
+
 import request, { GraphQLClient } from "graphql-request";
-import { SENTRY_TRACE_SAMPLE_RATE } from "constants/constants";
 
 const addRaffle: NextApiHandler = async (req, response) => {
   const { id, winnerWalletAddress } = req.body;

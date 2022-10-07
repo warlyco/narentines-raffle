@@ -1,7 +1,7 @@
 import { gql } from "graphql-request";
 
 export const ADD_RAFFLE_ENTRY = gql`
-  mutation upsert_entries(
+  mutation insert_entries(
     $walletAddress: String
     $raffleId: uuid
     $count: Int
